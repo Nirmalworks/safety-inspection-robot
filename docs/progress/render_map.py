@@ -2,16 +2,18 @@
 """Presentation renderings of a saved 2D lidar map (slam_toolbox / map_saver .pgm + .yaml).
 
     python3 docs/progress/render_map.py [<map.yaml>]     # default: the 2026-11-13 lab map
+    python3 docs/progress/render_map.py maps/lab2d_11_18_2/maps_2d/lab2d_11_18_2.yaml \
+        --checkpoints maps/lab2d_11_18_2/checkpoints/lab2d_11_18_2.yaml --name map_lab_1118 --date 2026-11-18
 
-Writes to docs/progress/figures/:
-  map_lab_dark.png    slide version: walls with a glow on a dark background, metric grid,
+Writes to docs/progress/figures/ (<name> defaults to map_lab):
+  <name>_dark.png    slide version: walls with a glow on a dark background, metric grid,
                       scale bar, start pose and robot footprint to scale
   map_lab_light.png   the same for the printed report
   map_lab_3d.png      wall cells extruded to a nominal height, perspective view
 Only cells the lidar marked occupied are drawn; nothing is filled in or smoothed.
 """
+import argparse
 import os
-import sys
 
 import cv2
 import matplotlib
@@ -26,7 +28,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT = os.path.join(HERE, '..', '..', 'debug_logs', '20261113_195519', 'maps_2d', 'lab_map_new.yaml')
 OUT = os.path.join(HERE, 'figures')
 FOOTPRINT = (0.33, 0.28)            # JetAuto base, m (ame505_description)
-SUBTITLE = 'slam_toolbox · RPLidar A1 · AMCL start pose · mapped 2026-11-13'
+SUBTITLE = 'slam_toolbox · RPLidar A1 · AMCL start pose · mapped {date}'
 
 THEMES = {
     'dark': dict(bg='#0b1020', unknown='#111a2e', grid='#23304d', wall='#5ee6ff', glow='#1fb6ff',
@@ -53,7 +55,7 @@ def load(path):
                                                oy + ys.min() * res, oy + (ys.max() + 1) * res)
 
 
-def flat(crop, extent, res, n_occ, bbox, theme, name):
+def flat(crop, extent, res, n_occ, bbox, theme, name, checkpoints=(), subtitle=SUBTITLE):
     t = THEMES[theme]
     w_m, h_m = extent[1] - extent[0], extent[3] - extent[2]
     fig = plt.figure(figsize=(13, 13 * h_m / w_m + 1.6), facecolor=t['bg'])
@@ -84,6 +86,15 @@ def flat(crop, extent, res, n_occ, bbox, theme, name):
     ax.annotate('start / home pose\n(robot footprint to scale)', (0, 0), (14, -34), textcoords='offset points',
                 color=t['text'], fontsize=10, zorder=6,
                 path_effects=[pe.withStroke(linewidth=3, foreground=t['unknown'])])
+    # patrol checkpoints: numbered disc + the direction the camera faces there
+    for i, c in enumerate(checkpoints, 1):
+        x, y, yaw = c['x'], c['y'], c.get('yaw', 0.0)
+        ax.add_patch(FancyArrow(x, y, 0.75 * np.cos(yaw), 0.75 * np.sin(yaw), width=0.05, head_width=0.22,
+                                head_length=0.2, color='#ffb020', zorder=6, lw=0))
+        ax.scatter([x], [y], s=330, color='#ffb020', edgecolors=t['bg'], linewidths=1.5, zorder=7)
+        ax.text(x, y, str(i), color='#111', ha='center', va='center', fontsize=10, weight='bold', zorder=8)
+        ax.annotate(c.get('id', f'cp_{i:02d}'), (x, y), (12, 10), textcoords='offset points', color=t['text'],
+                    fontsize=10, zorder=8, path_effects=[pe.withStroke(linewidth=3, foreground=t['unknown'])])
     # scale bar
     sx, sy = extent[0] + 0.6, extent[2] + 0.5
     ax.plot([sx, sx + 2], [sy, sy], color=t['text'], lw=3, solid_capstyle='butt', zorder=6)
@@ -99,7 +110,8 @@ def flat(crop, extent, res, n_occ, bbox, theme, name):
     bx = bbox[1] - bbox[0]
     by = bbox[3] - bbox[2]
     fig.text(0.05, 0.955, 'Lab map from 2D lidar SLAM', color=t['text'], fontsize=22, weight='bold', va='top')
-    fig.text(0.05, 0.905, SUBTITLE, color=t['muted'], fontsize=12, va='top')
+    fig.text(0.05, 0.905, subtitle + (f' · {len(checkpoints)} checkpoints'
+                                      if checkpoints else ''), color=t['muted'], fontsize=12, va='top')
     fig.text(0.95, 0.955, f'{bx:.1f} m × {by:.1f} m', color=t['text'], fontsize=18, weight='bold',
              ha='right', va='top')
     fig.text(0.95, 0.905, f'{res * 100:.0f} cm cells · {n_occ:,} occupied cells', color=t['muted'],
@@ -112,7 +124,7 @@ def flat(crop, extent, res, n_occ, bbox, theme, name):
     return path
 
 
-def extruded(crop, extent, res, theme='dark', name='map_lab_3d.png', height=0.6):
+def extruded(crop, extent, res, theme='dark', name='map_lab_3d.png', height=0.6, subtitle=SUBTITLE):
     t = THEMES[theme]
     ys, xs = np.nonzero(crop)
     x = extent[0] + xs * res
@@ -133,7 +145,7 @@ def extruded(crop, extent, res, theme='dark', name='map_lab_3d.png', height=0.6)
     ax.view_init(elev=42, azim=-65)
     ax.set_axis_off()
     fig.text(0.04, 0.95, 'Lab map: lidar obstacles extruded', color=t['text'], fontsize=20, weight='bold', va='top')
-    fig.text(0.04, 0.90, f'{SUBTITLE} · walls drawn {height} m high for display · robot in red',
+    fig.text(0.04, 0.90, f'{subtitle} · walls drawn {height} m high for display · robot in red',
              color=t['muted'], fontsize=11, va='top')
     path = os.path.join(OUT, name)
     fig.savefig(path, dpi=180, facecolor=t['bg'])
@@ -142,8 +154,19 @@ def extruded(crop, extent, res, theme='dark', name='map_lab_3d.png', height=0.6)
 
 
 if __name__ == '__main__':
+    ap = argparse.ArgumentParser()
+    ap.add_argument('map', nargs='?', default=DEFAULT, help='map .yaml (map_saver)')
+    ap.add_argument('--checkpoints', help='checkpoints .yaml (dashboard / checkpoint_recorder)')
+    ap.add_argument('--name', default='map_lab', help='output file prefix')
+    ap.add_argument('--date', default='2026-11-13', help='mapping date for the subtitle')
+    a = ap.parse_args()
+    cps = (yaml.safe_load(open(a.checkpoints)) or {}).get('checkpoints', []) if a.checkpoints else []
+    sub = SUBTITLE.format(date=a.date)
     os.makedirs(OUT, exist_ok=True)
-    crop, extent, res, n_occ, bbox = load(sys.argv[1] if len(sys.argv) > 1 else DEFAULT)
-    print(flat(crop, extent, res, n_occ, bbox, 'dark', 'map_lab_dark.png'))
-    print(flat(crop, extent, res, n_occ, bbox, 'light', 'map_lab_light.png'))
-    print(extruded(crop, extent, res))
+    crop, extent, res, n_occ, bbox = load(a.map)
+    print(flat(crop, extent, res, n_occ, bbox, 'dark', f'{a.name}_dark.png', cps, sub))
+    print(flat(crop, extent, res, n_occ, bbox, 'light', f'{a.name}_light.png', cps, sub))
+    try:
+        print(extruded(crop, extent, res, name=f'{a.name}_3d.png', subtitle=sub))
+    except ValueError as e:      # Jetson: the system mpl_toolkits shadows a pip matplotlib -> no '3d'
+        print(f'3D view skipped ({e}); run on a laptop for {a.name}_3d.png')
