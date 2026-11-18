@@ -1,0 +1,300 @@
+[component_container_isolated-16] [WARN] [1794600229.735434590] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600229.847684148] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600229.852276709] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600229.883509343] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600229.977757472] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.006476421] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.014929538] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.025051360] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.138549244] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.148474132] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.183316791] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.183740452] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.200457252] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.206268919] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.216434857] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.254280594] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.315576600] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.434360716] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.510060782] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.515753747] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.569522452] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [INFO] [1794600230.599024763] [controller_server]: Passing new path to controller.
+[component_container_isolated-16] [WARN] [1794600230.764306644] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.959057294] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600230.985317561] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.007733107] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.087520820] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.100183047] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.343732222] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.359284917] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.539675936] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [INFO] [1794600231.599066717] [controller_server]: Passing new path to controller.
+[component_container_isolated-16] [WARN] [1794600231.662024398] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.670729972] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.727479461] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.736402854] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.763896760] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.825444911] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.869902291] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.963958017] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600231.986584144] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600232.000811634] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [WARN] [1794600232.102789156] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [INFO] [1794600232.138239493] [controller_server]: Reached the goal!
+[component_container_isolated-16] [WARN] [1794600232.151886599] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-16] [INFO] [1794600232.171355632] [bt_navigator]: Goal succeeded
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[component_container_isolated-16] [INFO] [1794600266.167775822] [rclcpp]: signal_handler(signum=2)
+[component_container_isolated-16] [INFO] [1794600266.168226308] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[component_container_isolated-16] [INFO] [1794600266.168447775] [map_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794600266.168518090] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[INFO] [apply_calib-5]: process has finished cleanly [pid 22895]
+[INFO] [robot_state_publisher-1]: process has finished cleanly [pid 22884]
+[INFO] [complementary_filter_node-6]: process has finished cleanly [pid 22897]
+[INFO] [game_controller_node-12]: process has finished cleanly [pid 22921]
+[INFO] [sllidar_node-10]: process has finished cleanly [pid 22916]
+[INFO] [scan_to_scan_filter_chain-11]: process has finished cleanly [pid 22918]
+[INFO] [ekf_node-7]: process has finished cleanly [pid 22900]
+[INFO] [lifecycle_guard-14]: process has finished cleanly [pid 22928]
+[ERROR] [init_pose-9]: process has died [pid 22914, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmp8_3dvvte'].
+[game_controller_node-12] [INFO] [1794600266.167930463] [rclcpp]: signal_handler(signum=2)
+[ekf_node-7] [INFO] [1794600266.168153753] [rclcpp]: signal_handler(signum=2)
+[complementary_filter_node-6] [INFO] [1794600266.168380637] [rclcpp]: signal_handler(signum=2)
+[apply_calib-5] [INFO] [1794600266.168517256] [rclcpp]: signal_handler(signum=2)
+[INFO] [component_container_isolated-16]: sending signal 'SIGINT' to process[component_container_isolated-16]
+[INFO] [checkpoint_recorder-15]: sending signal 'SIGINT' to process[checkpoint_recorder-15]
+[ERROR] [xbox_teleop-13]: process has died [pid 22925, exit code 1, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml'].
+[ERROR] [checkpoint_recorder-15]: process has died [pid 22934, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/checkpoint_recorder --ros-args -r __node:=checkpoint_recorder --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml --params-file /tmp/launch_params_i5olh8vr'].
+[ERROR] [servo_controller-8]: process has died [pid 22911, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params_g1vz4e6s'].
+[INFO] [joint_state_publisher-2]: process has finished cleanly [pid 22887]
+[INFO] [odom_publisher-4]: sending signal 'SIGINT' to process[odom_publisher-4]
+[INFO] [ros_robot_controller-3]: sending signal 'SIGINT' to process[ros_robot_controller-3]
+[robot_state_publisher-1] [INFO] [1794600266.170600720] [rclcpp]: signal_handler(signum=2)
+[xbox_teleop-13] Traceback (most recent call last):
+[xbox_teleop-13]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop", line 33, in <module>
+[xbox_teleop-13]     sys.exit(load_entry_point('ame505-bringup', 'console_scripts', 'xbox_teleop')())
+[xbox_teleop-13]   File "/home/ubuntu/ame505-safety-inspection-robot/build/ame505_bringup/ame505_bringup/xbox_teleop.py", line 115, in main
+[xbox_teleop-13]     node.stop()
+[xbox_teleop-13]   File "/home/ubuntu/ame505-safety-inspection-robot/build/ame505_bringup/ame505_bringup/xbox_teleop.py", line 78, in stop
+[xbox_teleop-13]     self.pub.publish(Twist())
+[xbox_teleop-13]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[xbox_teleop-13]     self.__publisher.publish(msg)
+[xbox_teleop-13] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[servo_controller-8] Traceback (most recent call last):
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller", line 33, in <module>
+[servo_controller-8]     sys.exit(load_entry_point('servo-controller', 'console_scripts', 'servo_controller')())
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 100, in main
+[servo_controller-8]     rclpy.spin(node)  # 循环等待ROS2退出
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[servo_controller-8]     executor.spin_once()
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[servo_controller-8] Exception in thread Thread-1 (publish_joint_states):
+[servo_controller-8] Traceback (most recent call last):
+[servo_controller-8]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[servo_controller-8]     self._spin_once_impl(timeout_sec)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[servo_controller-8]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[servo_controller-8]     return next(self._cb_iter)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[servo_controller-8]     wait_set.wait(timeout_nsec)
+[servo_controller-8] KeyboardInterrupt
+[init_pose-9] Traceback (most recent call last):
+[init_pose-9]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose", line 33, in <module>
+[init_pose-9]     sys.exit(load_entry_point('controller', 'console_scripts', 'init_pose')())
+[init_pose-9]   File "/home/ubuntu/ros2_ws/build/controller/controller/init_pose.py", line 53, in main
+[init_pose-9]     rclpy.spin(node)  # 循环等待ROS2退出
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[init_pose-9]     executor.spin_once()
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[init_pose-9]     self._spin_once_impl(timeout_sec)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[init_pose-9]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[init_pose-9]     return next(self._cb_iter)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[init_pose-9]     wait_set.wait(timeout_nsec)
+[init_pose-9] KeyboardInterrupt
+[component_container_isolated-16] [INFO] [1794600266.200282097] [map_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600266.200429238] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600266.200483563] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[component_container_isolated-16] [INFO] [1794600266.200578723] [planner_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794600266.200717166] [global_costmap.global_costmap]: Deactivating
+[component_container_isolated-16] [INFO] [1794600266.316952267] [lifecycle_manager_localization]: Have not received a heartbeat from map_server.
+[component_container_isolated-16] [ERROR] [1794600266.317062792] [lifecycle_manager_localization]: CRITICAL FAILURE: SERVER map_server IS DOWN after not receiving a heartbeat for 30000 ms. Shutting down related nodes.
+[component_container_isolated-16] [INFO] [1794600266.317181182] [lifecycle_manager_localization]: Terminating bond timer...
+[component_container_isolated-16] [INFO] [1794600266.317223163] [lifecycle_manager_localization]: Resetting managed nodes...
+[component_container_isolated-16] [INFO] [1794600266.317258216] [lifecycle_manager_localization]: Deactivating amcl
+[component_container_isolated-16] [INFO] [1794600266.325722701] [amcl]: Deactivating
+[component_container_isolated-16] [INFO] [1794600266.325881613] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600267.173523498] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[component_container_isolated-16] [INFO] [1794600267.173664233] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[scan_to_scan_filter_chain-11] [INFO] [1794600266.203687902] [rclcpp]: signal_handler(signum=2)
+[complementary_filter_node-6] [INFO] [1794600266.207360957] [imu_filter]: Destroying ComplementaryFilterROS
+[sllidar_node-10] [INFO] [1794600266.301915816] [sllidar_node]: Stop motor
+[component_container_isolated-16] [INFO] [1794600267.289997984] [planner_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600267.369225860] [rclcpp]: signal_handler(signum=2)
+[component_container_isolated-16] [INFO] [1794600267.425200309] [lifecycle_manager_navigation]: Have not received a heartbeat from planner_server.
+[component_container_isolated-16] [ERROR] [1794600267.425345002] [lifecycle_manager_navigation]: CRITICAL FAILURE: SERVER planner_server IS DOWN after not receiving a heartbeat for 30000 ms. Shutting down related nodes.
+[component_container_isolated-16] [INFO] [1794600267.425401775] [lifecycle_manager_navigation]: Terminating bond timer...
+[component_container_isolated-16] [INFO] [1794600267.425443860] [lifecycle_manager_navigation]: Resetting managed nodes...
+[component_container_isolated-16] [INFO] [1794600267.425481413] [lifecycle_manager_navigation]: Deactivating collision_monitor
+[component_container_isolated-16] [INFO] [1794600267.427972445] [collision_monitor]: Deactivating
+[component_container_isolated-16] [INFO] [1794600267.428171983] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600267.896746068] [lifecycle_manager_localization]: Deactivating map_server
+[component_container_isolated-16] [INFO] [1794600267.917607634] [lifecycle_manager_navigation]: Deactivating velocity_smoother
+[component_container_isolated-16] [INFO] [1794600267.918257658] [velocity_smoother]: Deactivating
+[component_container_isolated-16] [INFO] [1794600267.918401049] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-16] [WARN] [1794600267.988971516] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794600267.989053602] [map_server]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [ERROR] [1794600267.993125266] [lifecycle_manager_localization]: Failed to change state for node: map_server
+[component_container_isolated-16] [INFO] [1794600267.993220374] [lifecycle_manager_localization]: Cleaning up amcl
+[component_container_isolated-16] [INFO] [1794600267.993809615] [amcl]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.057431487] [lifecycle_manager_navigation]: Deactivating waypoint_follower
+[component_container_isolated-16] [INFO] [1794600268.058888313] [waypoint_follower]: Deactivating
+[component_container_isolated-16] [INFO] [1794600268.059099362] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.136327892] [global_costmap.global_costmap]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.181252707] [lifecycle_manager_navigation]: Deactivating bt_navigator
+[component_container_isolated-16] [INFO] [1794600268.187134751] [bt_navigator]: Deactivating
+[component_container_isolated-16] [INFO] [1794600268.187261683] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.225751881] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[component_container_isolated-16] [INFO] [1794600268.225984442] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[component_container_isolated-16] [INFO] [1794600268.233034655] [lifecycle_manager_localization]: Cleaning up map_server
+[component_container_isolated-16] [WARN] [1794600268.233695722] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794600268.233741140] [map_server]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [INFO] [1794600268.234572942] [lifecycle_manager_localization]: Managed nodes have been reset
+[component_container_isolated-16] [INFO] [1794600268.311766992] [lifecycle_manager_navigation]: Deactivating behavior_server
+[component_container_isolated-16] [INFO] [1794600268.312485092] [behavior_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794600268.312621763] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.368433707] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.368601577] [collision_monitor]: Running Nav2 LifecycleNode rcl preshutdown (collision_monitor)
+[component_container_isolated-16] [INFO] [1794600268.368725905] [collision_monitor]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.368800387] [collision_monitor]: [PolygonStop]: Destroying Polygon
+[component_container_isolated-16] [INFO] [1794600268.368875702] [collision_monitor]: [FootprintApproach]: Destroying Polygon
+[component_container_isolated-16] [INFO] [1794600268.368936017] [collision_monitor]: [scan]: Destroying Scan
+[component_container_isolated-16] [INFO] [1794600268.369249050] [collision_monitor]: [depth]: Destroying PointCloud
+[component_container_isolated-16] [INFO] [1794600268.396052245] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.396168552] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[component_container_isolated-16] [INFO] [1794600268.427220553] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[component_container_isolated-16] [INFO] [1794600268.427349204] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.427395299] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[component_container_isolated-16] [INFO] [1794600268.427493011] [controller_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794600268.427682966] [local_costmap.local_costmap]: Deactivating
+[component_container_isolated-16] [INFO] [1794600268.438719632] [lifecycle_manager_navigation]: Deactivating planner_server
+[component_container_isolated-16] [WARN] [1794600268.442036423] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794600268.442103717] [planner_server]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [ERROR] [1794600268.450326058] [lifecycle_manager_navigation]: Failed to change state for node: planner_server
+[component_container_isolated-16] [INFO] [1794600268.450503408] [lifecycle_manager_navigation]: Deactivating smoother_server
+[component_container_isolated-16] [INFO] [1794600268.451307032] [smoother_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794600268.451442037] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.562693722] [lifecycle_manager_navigation]: Deactivating controller_server
+[component_container_isolated-16] [WARN] [1794600268.563264577] [rcl_lifecycle]: No transition matching 4 found for current state deactivating
+[component_container_isolated-16] [ERROR] [1794600268.563337601] [controller_server]: Unable to start transition 4 from current state deactivating: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [ERROR] [1794600268.564500613] [lifecycle_manager_navigation]: Failed to change state for node: controller_server
+[component_container_isolated-16] [INFO] [1794600268.564586762] [lifecycle_manager_navigation]: Cleaning up collision_monitor
+[component_container_isolated-16] [WARN] [1794600268.565138814] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794600268.565184910] [collision_monitor]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [INFO] [1794600268.566206250] [lifecycle_manager_navigation]: Cleaning up velocity_smoother
+[component_container_isolated-16] [INFO] [1794600268.566833513] [velocity_smoother]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.578865789] [lifecycle_manager_navigation]: Cleaning up waypoint_follower
+[component_container_isolated-16] [INFO] [1794600268.579730405] [waypoint_follower]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.616251831] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.626779154] [controller_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.629592697] [local_costmap.local_costmap]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.724371106] [lifecycle_manager_navigation]: Cleaning up bt_navigator
+[component_container_isolated-16] [INFO] [1794600268.725293797] [bt_navigator]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600268.937561417] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.937666160] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[component_container_isolated-16] [INFO] [1794600268.937719808] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.937756320] [local_costmap.local_costmap]: Running Nav2 LifecycleNode rcl preshutdown (local_costmap)
+[component_container_isolated-16] [INFO] [1794600268.937798718] [local_costmap.local_costmap]: Destroying bond (local_costmap) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600268.937837729] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[component_container_isolated-16] [INFO] [1794600269.481601309] [bt_navigator]: Completed Cleaning up
+[component_container_isolated-16] [INFO] [1794600269.482915004] [lifecycle_manager_navigation]: Cleaning up behavior_server
+[component_container_isolated-16] [INFO] [1794600269.483450441] [behavior_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600269.698248000] [lifecycle_manager_navigation]: Cleaning up planner_server
+[component_container_isolated-16] [WARN] [1794600269.699763421] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794600269.699816132] [planner_server]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [INFO] [1794600269.700526471] [lifecycle_manager_navigation]: Cleaning up smoother_server
+[component_container_isolated-16] [INFO] [1794600269.700987530] [smoother_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794600269.784355197] [lifecycle_manager_navigation]: Cleaning up controller_server
+[component_container_isolated-16] [WARN] [1794600269.799210600] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794600269.799296176] [controller_server]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [INFO] [1794600269.803923069] [lifecycle_manager_navigation]: Managed nodes have been reset
+[component_container_isolated-16] [INFO] [1794600269.900710668] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[component_container_isolated-16] [INFO] [1794600269.900885987] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600269.901004897] [global_costmap.global_costmap]: Running Nav2 LifecycleNode rcl preshutdown (global_costmap)
+[component_container_isolated-16] [INFO] [1794600269.901067921] [global_costmap.global_costmap]: Destroying bond (global_costmap) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600269.901104432] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[component_container_isolated-16] [INFO] [1794600269.901147403] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600269.901180269] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[component_container_isolated-16] [INFO] [1794600269.901221885] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794600269.901257824] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[component_container_isolated-16] [INFO] [1794600269.901296211] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [component_container_isolated-16]: sending signal 'SIGTERM' to process[component_container_isolated-16]
+[component_container_isolated-16] [INFO] [1794600272.277030368] [rclcpp]: signal_handler(signum=15)
+[ERROR] [odom_publisher-4]: process[odom_publisher-4] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[ERROR] [ros_robot_controller-3]: process[ros_robot_controller-3] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [odom_publisher-4]: sending signal 'SIGTERM' to process[odom_publisher-4]
+[INFO] [ros_robot_controller-3]: sending signal 'SIGTERM' to process[ros_robot_controller-3]
+[odom_publisher-4] [INFO] [1794600272.308274252] [odom_publisher]: shutdown
+[odom_publisher-4] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[odom_publisher-4] Traceback (most recent call last):
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher", line 33, in <module>
+[odom_publisher-4]     sys.exit(load_entry_point('controller', 'console_scripts', 'odom_publisher')())
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 246, in main
+[odom_publisher-4]     rclpy.spin(node)  # 循环等待ROS2退出
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[odom_publisher-4]     executor.spin_once()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[odom_publisher-4]     self._spin_once_impl(timeout_sec)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[odom_publisher-4]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[odom_publisher-4]     return next(self._cb_iter)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[odom_publisher-4]     wait_set.wait(timeout_nsec)
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 141, in shutdown
+[odom_publisher-4]     rclpy.shutdown()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[odom_publisher-4]     _shutdown(context=context)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[odom_publisher-4]     return context.shutdown()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[odom_publisher-4]     self.__context.shutdown()
+[odom_publisher-4] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ros_robot_controller-3] [INFO] [1794600272.321513604] [ros_robot_controller]: shutdown
+[ros_robot_controller-3] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller", line 33, in <module>
+[ros_robot_controller-3]     sys.exit(load_entry_point('ros-robot-controller', 'console_scripts', 'ros_robot_controller')())
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 265, in main
+[ros_robot_controller-3]     rclpy.spin(node)                                 # 循环等待ROS2退出
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[ros_robot_controller-3]     executor.spin_once()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[ros_robot_controller-3]     self._spin_once_impl(timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[ros_robot_controller-3]     return next(self._cb_iter)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[ros_robot_controller-3]     wait_set.wait(timeout_nsec)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 58, in shutdown
+[ros_robot_controller-3]     rclpy.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[ros_robot_controller-3]     _shutdown(context=context)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[ros_robot_controller-3]     return context.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[ros_robot_controller-3]     self.__context.shutdown()
+[ros_robot_controller-3] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ERROR] [odom_publisher-4]: process has died [pid 22891, exit code 1, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher --ros-args -r __node:=odom_publisher --params-file /home/ubuntu/ros2_ws/src/driver/controller/config/calibrate_params.yaml --params-file /tmp/launch_params_lugc5uos'].
+[ERROR] [ros_robot_controller-3]: process has died [pid 22889, exit code 1, cmd '/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller --ros-args --params-file /tmp/launch_params_2300x0zb'].
+[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[INFO] [component_container_isolated-16]: sending signal 'SIGKILL' to process[component_container_isolated-16]
+[ERROR] [component_container_isolated-16]: process has died [pid 23288, exit code -9, cmd '/opt/ros/humble/lib/rclcpp_components/component_container_isolated --ros-args -r __node:=nav2_container -r __ns:=/ --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/nav2_params.yaml --params-file /tmp/launch_params_m68vo2b2'].

@@ -1,0 +1,300 @@
+[component_container_isolated-18] [INFO] [1794602325.760728602] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-18] [INFO] [1794602326.240873322] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 392 X 362 at 0.050000 m/pix
+[component_container_isolated-18] [INFO] [1794602326.347142366] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner/NavfnPlanner
+[component_container_isolated-18] [INFO] [1794602326.354009989] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[component_container_isolated-18] [INFO] [1794602326.393741410] [planner_server]: Planner Server has GridBased  planners available.
+[ekf_node-7] Failed to meet update rate! Took 0.038406324999999998104seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[component_container_isolated-18] [INFO] [1794602327.178042985] [lifecycle_manager_navigation]: Configuring behavior_server
+[component_container_isolated-18] [INFO] [1794602327.180578329] [behavior_server]: Configuring
+[component_container_isolated-18] [INFO] [1794602327.518151135] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors/Spin
+[component_container_isolated-18] [INFO] [1794602327.566292679] [behavior_server]: Configuring spin
+[component_container_isolated-18] [INFO] [1794602327.982799664] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
+[component_container_isolated-18] [INFO] [1794602328.049965276] [behavior_server]: Configuring backup
+[component_container_isolated-18] [INFO] [1794602328.485755557] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors/DriveOnHeading
+[component_container_isolated-18] [INFO] [1794602328.542738800] [behavior_server]: Configuring drive_on_heading
+[component_container_isolated-18] [INFO] [1794602328.976490576] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
+[component_container_isolated-18] [INFO] [1794602329.076159661] [behavior_server]: Configuring wait
+[component_container_isolated-18] [INFO] [1794602329.427708243] [lifecycle_manager_navigation]: Configuring bt_navigator
+[component_container_isolated-18] [INFO] [1794602329.429947223] [bt_navigator]: Configuring
+[component_container_isolated-18] [INFO] [1794602331.233314300] [amcl]: initialPoseReceived
+[component_container_isolated-18] [WARN] [1794602331.233596237] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1794602331.233442 but the latest data is at time 1794602331.186665, when looking up transform from frame [base_footprint] to frame [odom])
+[component_container_isolated-18] [INFO] [1794602331.233693479] [amcl]: Setting pose (1794602331.233692): 0.000 0.000 0.000
+[component_container_isolated-18] [INFO] [1794602331.298449064] [amcl]: initialPoseReceived
+[component_container_isolated-18] [WARN] [1794602331.304021696] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1794602331.298571 but the latest data is at time 1794602331.273432, when looking up transform from frame [base_footprint] to frame [odom])
+[component_container_isolated-18] [INFO] [1794602331.304147169] [amcl]: Setting pose (1794602331.304146): 0.000 0.000 0.000
+[component_container_isolated-18] [INFO] [1794602331.371849518] [amcl]: initialPoseReceived
+[component_container_isolated-18] [WARN] [1794602331.372069734] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1794602331.371962 but the latest data is at time 1794602331.336872, when looking up transform from frame [base_footprint] to frame [odom])
+[component_container_isolated-18] [INFO] [1794602331.372134215] [amcl]: Setting pose (1794602331.372133): 0.000 0.000 0.000
+[component_container_isolated-18] [INFO] [1794602331.622538610] [amcl]: Requesting no-motion update
+[component_container_isolated-18] [INFO] [1794602331.836457264] [amcl]: Requesting no-motion update
+[component_container_isolated-18] [INFO] [1794602332.057075828] [amcl]: Requesting no-motion update
+[component_container_isolated-18] [INFO] [1794602332.261512085] [amcl]: Requesting no-motion update
+[component_container_isolated-18] [INFO] [1794602332.505411785] [amcl]: Requesting no-motion update
+[ekf_node-7] Failed to meet update rate! Took 0.037044664999999997457seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036621422000000000696seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.042941527000000000169seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602335.823912113] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.5 Hz
+[component_container_isolated-18] [INFO] [1794602335.882478534] [lifecycle_manager_navigation]: Configuring waypoint_follower
+[component_container_isolated-18] [INFO] [1794602335.885903387] [waypoint_follower]: Configuring
+[component_container_isolated-18] [INFO] [1794602336.504074662] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[component_container_isolated-18] [INFO] [1794602336.520874021] [lifecycle_manager_navigation]: Configuring velocity_smoother
+[component_container_isolated-18] [INFO] [1794602336.527547732] [velocity_smoother]: Configuring velocity smoother
+[component_container_isolated-18] [INFO] [1794602337.065304830] [lifecycle_manager_navigation]: Configuring collision_monitor
+[component_container_isolated-18] [INFO] [1794602337.069780916] [collision_monitor]: Configuring
+[component_container_isolated-18] [INFO] [1794602337.519960476] [collision_monitor]: [PolygonStop]: Creating Polygon
+[component_container_isolated-18] [INFO] [1794602337.628554649] [collision_monitor]: [FootprintApproach]: Creating Polygon
+[component_container_isolated-18] [INFO] [1794602337.779471371] [collision_monitor]: [scan]: Creating Scan
+[component_container_isolated-18] [INFO] [1794602337.815387978] [collision_monitor]: [depth]: Creating PointCloud
+[component_container_isolated-18] [INFO] [1794602337.952569922] [lifecycle_manager_navigation]: Activating controller_server
+[component_container_isolated-18] [INFO] [1794602337.970496662] [controller_server]: Activating
+[component_container_isolated-18] [INFO] [1794602337.970653438] [local_costmap.local_costmap]: Activating
+[component_container_isolated-18] [INFO] [1794602337.970719899] [local_costmap.local_costmap]: Checking transform
+[component_container_isolated-18] [INFO] [1794602337.970946937] [local_costmap.local_costmap]: start
+[component_container_isolated-18] [INFO] [1794602338.222910186] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602338.524179601] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[component_container_isolated-18] [INFO] [1794602338.524447006] [lifecycle_manager_navigation]: Activating smoother_server
+[component_container_isolated-18] [INFO] [1794602338.529460974] [smoother_server]: Activating
+[component_container_isolated-18] [INFO] [1794602338.529624313] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602338.988779274] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[component_container_isolated-18] [INFO] [1794602338.988903758] [lifecycle_manager_navigation]: Activating planner_server
+[component_container_isolated-18] [INFO] [1794602338.989694044] [planner_server]: Activating
+[component_container_isolated-18] [INFO] [1794602338.989873113] [global_costmap.global_costmap]: Activating
+[component_container_isolated-18] [INFO] [1794602338.991987922] [global_costmap.global_costmap]: Checking transform
+[component_container_isolated-18] [INFO] [1794602338.992200117] [global_costmap.global_costmap]: start
+[component_container_isolated-18] [INFO] [1794602340.064925992] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[component_container_isolated-18] [INFO] [1794602340.213103769] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602340.481267087] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[component_container_isolated-18] [INFO] [1794602340.481427873] [lifecycle_manager_navigation]: Activating behavior_server
+[component_container_isolated-18] [INFO] [1794602340.483579663] [behavior_server]: Activating
+[component_container_isolated-18] [INFO] [1794602340.483699772] [behavior_server]: Activating spin
+[component_container_isolated-18] [INFO] [1794602340.483821651] [behavior_server]: Activating backup
+[component_container_isolated-18] [INFO] [1794602340.483887538] [behavior_server]: Activating drive_on_heading
+[component_container_isolated-18] [INFO] [1794602340.483943113] [behavior_server]: Activating wait
+[component_container_isolated-18] [INFO] [1794602340.484008792] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602340.834187901] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[component_container_isolated-18] [INFO] [1794602340.834310614] [lifecycle_manager_navigation]: Activating bt_navigator
+[component_container_isolated-18] [INFO] [1794602340.845961573] [bt_navigator]: Activating
+[ekf_node-7] Failed to meet update rate! Took 0.04616679099999999869seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.038957177000000002554seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602344.706948791] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.4 Hz
+[component_container_isolated-18] [INFO] [1794602345.512829622] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602345.851788099] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[component_container_isolated-18] [INFO] [1794602345.851899718] [lifecycle_manager_navigation]: Activating waypoint_follower
+[component_container_isolated-18] [INFO] [1794602345.852761777] [waypoint_follower]: Activating
+[component_container_isolated-18] [INFO] [1794602345.852902147] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602346.509812987] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[component_container_isolated-18] [INFO] [1794602346.509950023] [lifecycle_manager_navigation]: Activating velocity_smoother
+[component_container_isolated-18] [INFO] [1794602346.516951401] [velocity_smoother]: Activating
+[component_container_isolated-18] [INFO] [1794602346.517145105] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602347.248832852] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[component_container_isolated-18] [INFO] [1794602347.248950095] [lifecycle_manager_navigation]: Activating collision_monitor
+[component_container_isolated-18] [INFO] [1794602347.250233992] [collision_monitor]: Activating
+[component_container_isolated-18] [INFO] [1794602347.250494313] [collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-18] [INFO] [1794602349.275746506] [lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[component_container_isolated-18] [INFO] [1794602349.275874688] [lifecycle_manager_navigation]: Managed nodes are active
+[component_container_isolated-18] [INFO] [1794602349.275926564] [lifecycle_manager_navigation]: Creating bond timer...
+[ekf_node-7] Failed to meet update rate! Took 0.039759129999999996696seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.035720091000000002424seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602355.790379303] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.26733855000000000812seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602367.125168512] [astra_bridge]: in: depth 3.7 Hz, colour 2.0 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.061942731000000000874seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.042788501999999999093seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602375.744971932] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.050354846000000001716seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602384.228397811] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.04429277000000000214seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602394.702773808] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.047565482999999998681seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.086874494999999996026seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602405.586952609] [astra_bridge]: in: depth 4.0 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.048413844999999997021seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602415.518040179] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.062059191999999999134seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.035033870000000001677seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602424.185238191] [astra_bridge]: in: depth 4.7 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.042911786999999999848seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.033365429000000002002seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.08176849299999999765seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.040807446999999996695seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.087007520000000004856seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.049865038000000000418seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.13392277299999999496seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602433.987770248] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.072118536999999996451seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.034941263000000000183seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.038675292000000000003seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.042145408000000002258seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.088230007999999998658seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602445.169489747] [astra_bridge]: in: depth 6.0 Hz, colour 2.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.053862045999999996759seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.064340727000000000335seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.043750616999999998591seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.042013580000000001757seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602456.816277894] [astra_bridge]: in: depth 4.7 Hz, colour 2.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.055715129000000002124seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.042757458999999997662seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.062367119999999998115seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602465.041394323] [astra_bridge]: in: depth 4.7 Hz, colour 2.3 Hz | out: 0.3 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.10822457700000000236seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.063656693999999999778seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.04142335199999999662seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036510845999999999578seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.046697277000000002312seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.045251708000000001597seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.048794065999999997052seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602474.982843069] [astra_bridge]: in: depth 2.7 Hz, colour 1.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.041717841999999998037seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.051559053000000000522seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036740332000000000545seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602485.258556751] [astra_bridge]: in: depth 3.3 Hz, colour 1.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.038320853000000001942seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602495.462728686] [astra_bridge]: in: depth 2.3 Hz, colour 1.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.061828195000000002457seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.044105942000000002146seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.076116742000000001123seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.069912004999999999288seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.047573087000000000013seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.093183610000000000051seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602508.531882008] [astra_bridge]: in: depth 5.0 Hz, colour 2.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.040180343000000000309seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602516.185055309] [astra_bridge]: in: depth 5.3 Hz, colour 2.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.034517707000000001638seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602525.298085081] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.5 Hz
+[astra_bridge-12] [INFO] [1794602535.298040663] [astra_bridge]: in: depth 5.3 Hz, colour 2.3 Hz | out: 0.6 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.083702306000000004094seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602543.621952763] [astra_bridge]: in: depth 6.0 Hz, colour 2.7 Hz | out: 0.6 Hz
+[astra_bridge-12] [INFO] [1794602554.308273860] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.6 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.035884106999999998422seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602564.618104246] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.036048798999999999426seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602574.935791767] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.6 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.0738029669999999971seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.039780484999999997375seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602585.072872207] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.035946244000000002194seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602594.319815064] [astra_bridge]: in: depth 5.0 Hz, colour 2.0 Hz | out: 0.6 Hz
+[astra_bridge-12] [INFO] [1794602604.285182624] [astra_bridge]: in: depth 5.3 Hz, colour 2.3 Hz | out: 0.6 Hz
+[astra_bridge-12] [INFO] [1794602614.497203569] [astra_bridge]: in: depth 4.7 Hz, colour 2.3 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.043661864000000001618seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.041534606000000001691seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602623.733147833] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.5 Hz
+[astra_bridge-12] [INFO] [1794602634.181699328] [astra_bridge]: in: depth 4.0 Hz, colour 2.0 Hz | out: 0.6 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.033817370999999998848seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.033457776000000001571seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.03741837600000000319seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.037001173999999997788seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602645.783285090] [astra_bridge]: in: depth 4.0 Hz, colour 2.0 Hz | out: 0.6 Hz
+[astra_bridge-12] [INFO] [1794602654.823467968] [astra_bridge]: in: depth 5.7 Hz, colour 3.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.033779192999999999025seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.034873552000000002105seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602665.813185685] [astra_bridge]: in: depth 5.3 Hz, colour 3.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.035390757000000001853seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602676.231412112] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.034641617999999999022seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.048453585999999999878seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602685.467210485] [astra_bridge]: in: depth 5.3 Hz, colour 2.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.037162326000000002468seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.074005683000000002658seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602695.886109174] [astra_bridge]: in: depth 6.0 Hz, colour 3.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.046909054999999998115seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036763510999999998718seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.044928363999999998413seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.063542054000000000591seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602704.957958675] [astra_bridge]: in: depth 5.3 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.073707808999999999133seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.062026692000000001326seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.04145611400000000224seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602716.311076981] [astra_bridge]: in: depth 5.7 Hz, colour 2.7 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.039452609999999999069seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602726.492823017] [astra_bridge]: in: depth 4.0 Hz, colour 1.7 Hz | out: 0.5 Hz
+[astra_bridge-12] [INFO] [1794602735.311185363] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.055931385000000000129seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602745.025839872] [astra_bridge]: in: depth 3.3 Hz, colour 1.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.043129607000000000361seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.037054248999999997438seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.040740048000000000927seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602755.273753570] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.037124148000000002645seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602767.024483964] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.076087106000000001571seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.071700136999999997123seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602776.334923614] [astra_bridge]: in: depth 4.0 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.04927824799999999672seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036168489999999997586seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.048824170999999999543seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602786.139159269] [astra_bridge]: in: depth 4.0 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.098272893000000000052seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602795.069528142] [astra_bridge]: in: depth 5.7 Hz, colour 3.0 Hz | out: 0.4 Hz
+[astra_bridge-12] [INFO] [1794602805.966855140] [astra_bridge]: in: depth 5.7 Hz, colour 3.0 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.061770954000000002915seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.041290014999999999357seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602816.398482584] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.055364997999999998601seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602825.005960152] [astra_bridge]: in: depth 4.3 Hz, colour 1.7 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.047669351999999998171seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.035682506000000002722seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.062467602999999996549seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602836.361801242] [astra_bridge]: in: depth 4.3 Hz, colour 2.3 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.044971649000000002427seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602845.402783512] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.4 Hz
+[astra_bridge-12] [INFO] [1794602857.148097787] [astra_bridge]: in: depth 4.0 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.041775385999999997688seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602864.757036257] [astra_bridge]: in: depth 3.7 Hz, colour 2.0 Hz | out: 0.3 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.04884720800000000307seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602875.301877981] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.10679943599999999759seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602884.951683717] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.4 Hz
+[astra_bridge-12] [INFO] [1794602896.971669935] [astra_bridge]: in: depth 9.0 Hz, colour 4.0 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.051200418999999997016seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602904.066221372] [astra_bridge]: in: depth 5.7 Hz, colour 3.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.03989698400000000339seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602916.021453185] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.6 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.033774519000000002844seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602927.382076378] [astra_bridge]: in: depth 9.3 Hz, colour 4.7 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.035460831999999997688seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.12411168599999999884seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036916352999999998974seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.096076960000000002915seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.084194127999999993084seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.03409520900000000132seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602935.713791033] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.3 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.064863472000000005346seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.072377653000000000127seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.040189285999999997678seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.055063841000000002257seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.059499942000000000109seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.040192880000000000273seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602946.833877699] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.061740441000000000071seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.049647236999999996843seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602957.097533802] [astra_bridge]: in: depth 3.0 Hz, colour 1.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.037404444000000001969seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.035510780999999998209seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602965.225251968] [astra_bridge]: in: depth 3.7 Hz, colour 1.7 Hz | out: 0.3 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.040836079999999996826seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602974.776570343] [astra_bridge]: in: depth 3.7 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.037451737999999998308seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602987.750928215] [astra_bridge]: in: depth 4.7 Hz, colour 2.0 Hz | out: 0.5 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.053254035999999997653seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.034019215999999997957seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.033617169000000002299seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.042632396000000002956seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.037247563999999996898seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794602995.485463998] [astra_bridge]: in: depth 3.7 Hz, colour 2.0 Hz | out: 0.3 Hz
+[component_container_isolated-18] [INFO] [1794603000.858259712] [local_costmap.local_costmap]: Message Filter dropping message: frame 'lidar_frame' at time 1794602999.202 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[astra_bridge-12] [INFO] [1794603005.854010405] [astra_bridge]: in: depth 4.7 Hz, colour 2.3 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.042865738000000000452seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.11029086600000000129seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.048151868999999999921seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.041724497999999998754seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794603014.896841233] [astra_bridge]: in: depth 3.7 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.04804780300000000004seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.036110491000000001505seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.05147141799999999795seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.038340676999999996621seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794603024.953067857] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.044531996999999996778seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.08170346400000000342seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[astra_bridge-12] [INFO] [1794603034.757498168] [astra_bridge]: in: depth 4.3 Hz, colour 2.0 Hz | out: 0.4 Hz
+[ekf_node-7] Failed to meet update rate! Took 0.072586307000000002687seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.

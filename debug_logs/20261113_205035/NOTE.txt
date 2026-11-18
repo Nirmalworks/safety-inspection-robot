@@ -1,0 +1,1 @@
+2026-11-13 evening: lab_new_maps (4 tables in a row) - user reported table aliasing; nav run 201450 had repeated Set pose + Failed to make progress; landmarks node first run (no markers printed yet)

@@ -1,0 +1,145 @@
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2026-11-13-20-36-55-522072-jetauto-6295
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: [ame505] 2D NAVIGATION on "lab_new_maps" (/home/ubuntu/share/tmp/ame505_data/maps_2d/lab_new_maps.yaml), AMCL start pose x=0.0 y=0.0 yaw=0.0
+[INFO] [robot_state_publisher-1]: process started with pid [6407]
+[INFO] [joint_state_publisher-2]: process started with pid [6409]
+[INFO] [ros_robot_controller-3]: process started with pid [6411]
+[INFO] [odom_publisher-4]: process started with pid [6413]
+[INFO] [apply_calib-5]: process started with pid [6415]
+[INFO] [complementary_filter_node-6]: process started with pid [6417]
+[INFO] [ekf_node-7]: process started with pid [6419]
+[INFO] [servo_controller-8]: process started with pid [6421]
+[INFO] [init_pose-9]: process started with pid [6424]
+[INFO] [sllidar_node-10]: process started with pid [6428]
+[INFO] [scan_to_scan_filter_chain-11]: process started with pid [6442]
+[INFO] [astra_bridge-12]: process started with pid [6446]
+[INFO] [game_controller_node-13]: process started with pid [6449]
+[INFO] [xbox_teleop-14]: process started with pid [6451]
+[INFO] [landmarks-15]: process started with pid [6461]
+[INFO] [lifecycle_guard-16]: process started with pid [6467]
+[INFO] [checkpoint_recorder-17]: process started with pid [6469]
+[robot_state_publisher-1] [INFO] [1794602221.745202930] [robot_state_publisher]: got segment back_shell_link
+[robot_state_publisher-1] [INFO] [1794602221.745501846] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-1] [INFO] [1794602221.745550962] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-1] [INFO] [1794602221.745581067] [robot_state_publisher]: got segment depth_cam_frame
+[robot_state_publisher-1] [INFO] [1794602221.745608881] [robot_state_publisher]: got segment depth_cam_link
+[robot_state_publisher-1] [INFO] [1794602221.745637632] [robot_state_publisher]: got segment imu_link
+[robot_state_publisher-1] [INFO] [1794602221.745664195] [robot_state_publisher]: got segment lidar_frame
+[robot_state_publisher-1] [INFO] [1794602221.745691904] [robot_state_publisher]: got segment lidar_link
+[robot_state_publisher-1] [INFO] [1794602221.745718624] [robot_state_publisher]: got segment lidar_sim_frame
+[robot_state_publisher-1] [INFO] [1794602221.745745656] [robot_state_publisher]: got segment mic_link
+[robot_state_publisher-1] [INFO] [1794602221.745773730] [robot_state_publisher]: got segment screen_link
+[robot_state_publisher-1] [INFO] [1794602221.745802064] [robot_state_publisher]: got segment speaker_link
+[robot_state_publisher-1] [INFO] [1794602221.745831388] [robot_state_publisher]: got segment wheel_left_back_link
+[robot_state_publisher-1] [INFO] [1794602221.745861598] [robot_state_publisher]: got segment wheel_left_front_link
+[robot_state_publisher-1] [INFO] [1794602221.745889255] [robot_state_publisher]: got segment wheel_right_back_link
+[robot_state_publisher-1] [INFO] [1794602221.745916964] [robot_state_publisher]: got segment wheel_right_front_link
+[complementary_filter_node-6] [INFO] [1794602221.804480468] [imu_filter]: Starting ComplementaryFilterROS
+[sllidar_node-10] [INFO] [1794602221.862829798] [sllidar_node]: SLLidar running on ROS2 package SLLidar.ROS2 SDK Version:1.0.1, SLLIDAR SDK Version:2.1.0
+[sllidar_node-10] [INFO] [1794602221.919803510] [sllidar_node]: SLLidar S/N: 9AFDECF0C3E09ED2A0EA98F309254110
+[sllidar_node-10] [INFO] [1794602221.919927785] [sllidar_node]: Firmware Ver: 1.29
+[sllidar_node-10] [INFO] [1794602221.919970547] [sllidar_node]: Hardware Rev: 7
+[sllidar_node-10] [INFO] [1794602221.927141462] [sllidar_node]: SLLidar health status : 0
+[sllidar_node-10] [INFO] [1794602221.927257403] [sllidar_node]: SLLidar health status : OK.
+[sllidar_node-10] [INFO] [1794602222.239210713] [sllidar_node]: current scan mode: Sensitivity, sample rate: 8 Khz, max_distance: 12.0 m, scan frequency:10.0 Hz, 
+[game_controller_node-13] [INFO] [1794602223.605387568] [joy_node]: Controller Found: device_id=0, device_name=Xbox Series X Controller
+[game_controller_node-13] [INFO] [1794602223.605900137] [joy_node]: Opened game controller: Xbox Series X Controller,  deadzone: 0.080000, rumble: No
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[joint_state_publisher-2] [INFO] [1794602232.695327876] [joint_state_publisher]: Waiting for robot_description to be published on the robot_description topic...
+[INFO] [apply_calib-5]: process has finished cleanly [pid 6415]
+[INFO] [scan_to_scan_filter_chain-11]: process has finished cleanly [pid 6442]
+[INFO] [sllidar_node-10]: process has finished cleanly [pid 6428]
+[INFO] [game_controller_node-13]: process has finished cleanly [pid 6449]
+[INFO] [robot_state_publisher-1]: process has finished cleanly [pid 6407]
+[INFO] [complementary_filter_node-6]: process has finished cleanly [pid 6417]
+[INFO] [ekf_node-7]: process has finished cleanly [pid 6419]
+[INFO] [odom_publisher-4]: process has finished cleanly [pid 6413]
+[xbox_teleop-14] [INFO] [1794602232.794012502] [xbox_teleop]: Xbox teleop ready -> controller/cmd_vel. Hold LB to drive, RB for turbo, B = E-STOP, START = clear E-STOP.
+[INFO] [component_container_isolated-18]: process started with pid [6824]
+[apply_calib-5] [INFO] [1794602233.268387343] [imu_calib]: Calibrating gyros; do not move the IMU
+[apply_calib-5] [INFO] [1794602240.978536075] [imu_calib]: Gyro calibration complete! (bias = [-0.009, 0.022, -0.004])
+[apply_calib-5] [INFO] [1794602256.211087993] [rclcpp]: signal_handler(signum=2)
+[astra_bridge-12] [INFO] [1794602235.588187687] [astra_bridge]: infrared stream switched off for depth
+[astra_bridge-12] [INFO] [1794602239.750371817] [astra_bridge]: bridging /astra_cam/depth/image_raw/compressedDepth + /astra_cam/rgb/image_raw/compressed -> /depth_cam/depth/image_raw + /depth_cam/rgb/image_raw at 320x240, 6 Hz
+[astra_bridge-12] [INFO] [1794602253.520122948] [astra_bridge]: in: depth 5.0 Hz, colour 2.3 Hz | out: 0.6 Hz
+[ros_robot_controller-3] [INFO] [1794602238.228027442] [ros_robot_controller]: start
+[servo_controller-8] [INFO] [1794602239.550058770] [servo_manager]: start
+[servo_controller-8] [INFO] [1794602247.655511597] [controller_manager]: start
+[servo_controller-8] Traceback (most recent call last):
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller", line 33, in <module>
+[checkpoint_recorder-17] [INFO] [1794602240.311529067] [checkpoint_recorder]: Checkpoint file: /home/ubuntu/share/tmp/ame505_data/checkpoints/lab_new_maps.yaml (0 loaded). Y = save pose, X = undo last.
+[ekf_node-7] Failed to meet update rate! Took 0.056820998999999997037seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.094187757999999996428seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.087304353000000001206seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.11940557300000000096seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.034344262999999999875seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.22007917099999999011seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[ekf_node-7] Failed to meet update rate! Took 0.17199627500000000402seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[landmarks-15] [INFO] [1794602242.452379728] [landmarks]: 0 known markers for map "lab_new_maps" (/home/ubuntu/share/tmp/ame505_data/landmarks/lab_new_maps.yaml); marker size 0.15 m, dictionary DICT_4X4_50
+[odom_publisher-4] [INFO] [1794602244.405253220] [odom_publisher]: 1.000000 1.040000
+[odom_publisher-4] [INFO] [1794602244.749316136] [odom_publisher]: start
+[init_pose-9] [INFO] [1794602251.835189537] [init_pose]: start
+[init_pose-9] Traceback (most recent call last):
+[init_pose-9]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose", line 33, in <module>
+[init_pose-9]     sys.exit(load_entry_point('controller', 'console_scripts', 'init_pose')())
+[init_pose-9]   File "/home/ubuntu/ros2_ws/build/controller/controller/init_pose.py", line 53, in main
+[scan_to_scan_filter_chain-11] [INFO] [1794602256.207496259] [rclcpp]: signal_handler(signum=2)
+[robot_state_publisher-1] [INFO] [1794602256.208208210] [rclcpp]: signal_handler(signum=2)
+[complementary_filter_node-6] [INFO] [1794602256.211364043] [rclcpp]: signal_handler(signum=2)
+[game_controller_node-13] [INFO] [1794602256.211864893] [rclcpp]: signal_handler(signum=2)
+[INFO] [checkpoint_recorder-17]: sending signal 'SIGINT' to process[checkpoint_recorder-17]
+[INFO] [lifecycle_guard-16]: sending signal 'SIGINT' to process[lifecycle_guard-16]
+[INFO] [landmarks-15]: sending signal 'SIGINT' to process[landmarks-15]
+[ERROR] [checkpoint_recorder-17]: process has died [pid 6469, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/checkpoint_recorder --ros-args -r __node:=checkpoint_recorder --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml --params-file /tmp/launch_params_71ef_51e'].
+[ERROR] [lifecycle_guard-16]: process has died [pid 6467, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/lifecycle_guard --ros-args -r __node:=lifecycle_guard'].
+[INFO] [xbox_teleop-14]: sending signal 'SIGINT' to process[xbox_teleop-14]
+[ERROR] [landmarks-15]: process has died [pid 6461, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/landmarks --ros-args -r __node:=landmarks --params-file /tmp/launch_params_a21dkbrv'].
+[INFO] [astra_bridge-12]: sending signal 'SIGINT' to process[astra_bridge-12]
+[ERROR] [init_pose-9]: process has died [pid 6424, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmp313sj6on'].
+[ERROR] [xbox_teleop-14]: process has died [pid 6451, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml'].
+[INFO] [astra_bridge-12]: process has finished cleanly [pid 6446]
+[ERROR] [servo_controller-8]: process has died [pid 6421, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params_yoc9hcu9'].
+[INFO] [joint_state_publisher-2]: process has finished cleanly [pid 6409]
+[INFO] [ros_robot_controller-3]: sending signal 'SIGINT' to process[ros_robot_controller-3]
+[servo_controller-8]     sys.exit(load_entry_point('servo-controller', 'console_scripts', 'servo_controller')())
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 100, in main
+[servo_controller-8]     rclpy.spin(node)  # 循环等待ROS2退出
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[servo_controller-8] Exception in thread Thread-1 (publish_joint_states):
+[servo_controller-8] Traceback (most recent call last):
+[servo_controller-8]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[ekf_node-7] [INFO] [1794602256.581682622] [rclcpp]: signal_handler(signum=2)
+[odom_publisher-4] [INFO] [1794602256.553876805] [odom_publisher]: shutdown
+[init_pose-9]     rclpy.spin(node)  # 循环等待ROS2退出
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[init_pose-9]     executor.spin_once()
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[sllidar_node-10] [INFO] [1794602256.412904006] [sllidar_node]: Stop motor
+[init_pose-9]     self._spin_once_impl(timeout_sec)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[init_pose-9]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[init_pose-9]     return next(self._cb_iter)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[init_pose-9]     wait_set.wait(timeout_nsec)
+[init_pose-9] KeyboardInterrupt
+[servo_controller-8]     executor.spin_once()
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[servo_controller-8]     self._spin_once_impl(timeout_sec)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[servo_controller-8]     self.run()
+[servo_controller-8]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[servo_controller-8]     self._target(*self._args, **self._kwargs)
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 94, in publish_joint_states
+[servo_controller-8]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[servo_controller-8]     return next(self._cb_iter)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[servo_controller-8]     wait_set.wait(timeout_nsec)
+[servo_controller-8] KeyboardInterrupt
+[complementary_filter_node-6] [INFO] [1794602256.716935127] [imu_filter]: Destroying ComplementaryFilterROS
+[odom_publisher-4] Exception in thread Thread-1 (cal_odom_fun):
+[odom_publisher-4] Traceback (most recent call last):
+[odom_publisher-4]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[INFO] [component_container_isolated-18]: sending signal 'SIGINT' to process[component_container_isolated-18]
+[component_container_isolated-18] [INFO] [1794602259.099496145] [rclcpp]: signal_handler(signum=2)

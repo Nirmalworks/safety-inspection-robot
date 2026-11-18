@@ -21,3 +21,7 @@ log/
 
 # SSD data link (maps, bags, checkpoints live on /home/ubuntu/share/tmp/ame505_data)
 data/
+
+# YOLO weights (downloaded by ml/yolo_coco.py)
+ml/weights/
+*.pt

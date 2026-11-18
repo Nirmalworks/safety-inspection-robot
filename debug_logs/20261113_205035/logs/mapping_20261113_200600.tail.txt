@@ -1,0 +1,169 @@
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2026-11-13-20-06-02-180131-jetauto-25824
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: [ame505] 2D MAPPING (slam_toolbox, lidar) -> map "lab_new_maps"
+[INFO] [robot_state_publisher-1]: process started with pid [25886]
+[INFO] [joint_state_publisher-2]: process started with pid [25888]
+[INFO] [ros_robot_controller-3]: process started with pid [25890]
+[INFO] [odom_publisher-4]: process started with pid [25892]
+[INFO] [apply_calib-5]: process started with pid [25894]
+[INFO] [complementary_filter_node-6]: process started with pid [25898]
+[INFO] [ekf_node-7]: process started with pid [25907]
+[INFO] [servo_controller-8]: process started with pid [25909]
+[INFO] [init_pose-9]: process started with pid [25913]
+[INFO] [sllidar_node-10]: process started with pid [25915]
+[INFO] [scan_to_scan_filter_chain-11]: process started with pid [25920]
+[INFO] [game_controller_node-12]: process started with pid [25927]
+[INFO] [xbox_teleop-13]: process started with pid [25933]
+[robot_state_publisher-1] [INFO] [1794600368.034267953] [robot_state_publisher]: got segment back_shell_link
+[robot_state_publisher-1] [INFO] [1794600368.034555880] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-1] [INFO] [1794600368.034610674] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-1] [INFO] [1794600368.034643696] [robot_state_publisher]: got segment depth_cam_frame
+[robot_state_publisher-1] [INFO] [1794600368.034674999] [robot_state_publisher]: got segment depth_cam_link
+[robot_state_publisher-1] [INFO] [1794600368.034705782] [robot_state_publisher]: got segment imu_link
+[robot_state_publisher-1] [INFO] [1794600368.034737606] [robot_state_publisher]: got segment lidar_frame
+[robot_state_publisher-1] [INFO] [1794600368.034765055] [robot_state_publisher]: got segment lidar_link
+[robot_state_publisher-1] [INFO] [1794600368.034794639] [robot_state_publisher]: got segment lidar_sim_frame
+[robot_state_publisher-1] [INFO] [1794600368.034823390] [robot_state_publisher]: got segment mic_link
+[robot_state_publisher-1] [INFO] [1794600368.034851412] [robot_state_publisher]: got segment screen_link
+[robot_state_publisher-1] [INFO] [1794600368.034879486] [robot_state_publisher]: got segment speaker_link
+[robot_state_publisher-1] [INFO] [1794600368.034908341] [robot_state_publisher]: got segment wheel_left_back_link
+[robot_state_publisher-1] [INFO] [1794600368.034938447] [robot_state_publisher]: got segment wheel_left_front_link
+[robot_state_publisher-1] [INFO] [1794600368.051113795] [robot_state_publisher]: got segment wheel_right_back_link
+[robot_state_publisher-1] [INFO] [1794600368.051205933] [robot_state_publisher]: got segment wheel_right_front_link
+[complementary_filter_node-6] [INFO] [1794600368.384571703] [imu_filter]: Starting ComplementaryFilterROS
+[sllidar_node-10] [INFO] [1794600368.428597942] [sllidar_node]: SLLidar running on ROS2 package SLLidar.ROS2 SDK Version:1.0.1, SLLIDAR SDK Version:2.1.0
+[sllidar_node-10] [INFO] [1794600368.535559778] [sllidar_node]: SLLidar S/N: 9AFDECF0C3E09ED2A0EA98F309254110
+[sllidar_node-10] [INFO] [1794600368.535666865] [sllidar_node]: Firmware Ver: 1.29
+[sllidar_node-10] [INFO] [1794600368.535716555] [sllidar_node]: Hardware Rev: 7
+[sllidar_node-10] [INFO] [1794600368.543408042] [sllidar_node]: SLLidar health status : 0
+[sllidar_node-10] [INFO] [1794600368.543521848] [sllidar_node]: SLLidar health status : OK.
+[sllidar_node-10] [INFO] [1794600368.827866294] [sllidar_node]: current scan mode: Sensitivity, sample rate: 8 Khz, max_distance: 12.0 m, scan frequency:10.0 Hz, 
+[game_controller_node-12] [INFO] [1794600368.970380040] [joy_node]: Controller Found: device_id=0, device_name=Xbox Series X Controller
+[game_controller_node-12] [INFO] [1794600368.970850266] [joy_node]: Opened game controller: Xbox Series X Controller,  deadzone: 0.080000, rumble: No
+[apply_calib-5] [INFO] [1794600372.618844261] [imu_calib]: Calibrating gyros; do not move the IMU
+[ros_robot_controller-3] [INFO] [1794600372.934333107] [ros_robot_controller]: start
+[xbox_teleop-13] [INFO] [1794600372.943603352] [xbox_teleop]: Xbox teleop ready -> controller/cmd_vel. Hold LB to drive, RB for turbo, B = E-STOP, START = clear E-STOP.
+[INFO] [async_slam_toolbox_node-14]: process started with pid [26106]
+[joint_state_publisher-2] [INFO] [1794600374.458082925] [joint_state_publisher]: Waiting for robot_description to be published on the robot_description topic...
+[apply_calib-5] [INFO] [1794600374.552123181] [imu_calib]: Gyro calibration complete! (bias = [-0.010, 0.018, -0.002])
+[servo_controller-8] [INFO] [1794600374.618048577] [servo_manager]: start
+[odom_publisher-4] [INFO] [1794600374.958453465] [odom_publisher]: 1.000000 1.040000
+[odom_publisher-4] [INFO] [1794600375.061565157] [odom_publisher]: start
+[async_slam_toolbox_node-14] [INFO] [1794600375.417930697] [slam_toolbox]: Node using stack size 40000000
+[async_slam_toolbox_node-14] [INFO] [1794600376.076996061] [slam_toolbox]: Using solver plugin solver_plugins::CeresSolver
+[async_slam_toolbox_node-14] [INFO] [1794600376.077918752] [slam_toolbox]: CeresSolver: Using SCHUR_JACOBI preconditioner.
+[servo_controller-8] [INFO] [1794600376.162585687] [controller_manager]: start
+[async_slam_toolbox_node-14] Registering sensor: [Custom Described Lidar]
+[init_pose-9] [INFO] [1794600377.927799119] [init_pose]: start
+[xbox_teleop-13] [WARN] [1794600508.241738570] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600509.776125038] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600596.985672290] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600710.929183398] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600719.824648323] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600827.626803902] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600833.577086751] [xbox_teleop]: Joystick timed out -> stopping
+[xbox_teleop-13] [WARN] [1794600840.772681261] [xbox_teleop]: Joystick timed out -> stopping
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[apply_calib-5] [INFO] [1794600869.063709134] [rclcpp]: signal_handler(signum=2)
+[async_slam_toolbox_node-14] [INFO] [1794600869.064344262] [rclcpp]: signal_handler(signum=2)
+[game_controller_node-12] [INFO] [1794600869.067047543] [rclcpp]: signal_handler(signum=2)
+[INFO] [apply_calib-5]: process has finished cleanly [pid 25894]
+[robot_state_publisher-1] [INFO] [1794600869.067216664] [rclcpp]: signal_handler(signum=2)
+[ekf_node-7] [INFO] [1794600869.070816646] [rclcpp]: signal_handler(signum=2)
+[INFO] [async_slam_toolbox_node-14]: sending signal 'SIGINT' to process[async_slam_toolbox_node-14]
+[INFO] [xbox_teleop-13]: sending signal 'SIGINT' to process[xbox_teleop-13]
+[INFO] [robot_state_publisher-1]: process has finished cleanly [pid 25886]
+[INFO] [sllidar_node-10]: process has finished cleanly [pid 25915]
+[INFO] [game_controller_node-12]: sending signal 'SIGINT' to process[game_controller_node-12]
+[INFO] [scan_to_scan_filter_chain-11]: process has finished cleanly [pid 25920]
+[INFO] [game_controller_node-12]: process has finished cleanly [pid 25927]
+[INFO] [complementary_filter_node-6]: process has finished cleanly [pid 25898]
+[ERROR] [async_slam_toolbox_node-14]: process has died [pid 26106, exit code -2, cmd '/opt/ros/humble/lib/slam_toolbox/async_slam_toolbox_node --ros-args -r __node:=slam_toolbox --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/slam_toolbox_mapping.yaml'].
+[INFO] [init_pose-9]: sending signal 'SIGINT' to process[init_pose-9]
+[INFO] [servo_controller-8]: sending signal 'SIGINT' to process[servo_controller-8]
+[ERROR] [xbox_teleop-13]: process has died [pid 25933, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml'].
+[INFO] [ekf_node-7]: process has finished cleanly [pid 25907]
+[ERROR] [init_pose-9]: process has died [pid 25913, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmpepo9ij8b'].
+[INFO] [odom_publisher-4]: sending signal 'SIGINT' to process[odom_publisher-4]
+[ERROR] [servo_controller-8]: process has died [pid 25909, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params_6aaxn2ft'].
+[INFO] [ros_robot_controller-3]: sending signal 'SIGINT' to process[ros_robot_controller-3]
+[INFO] [joint_state_publisher-2]: sending signal 'SIGINT' to process[joint_state_publisher-2]
+[ERROR] [odom_publisher-4]: process has died [pid 25892, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher --ros-args -r __node:=odom_publisher --params-file /home/ubuntu/ros2_ws/src/driver/controller/config/calibrate_params.yaml --params-file /tmp/launch_params_gqb0wd9_'].
+[servo_controller-8] Traceback (most recent call last):
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller", line 33, in <module>
+[servo_controller-8]     sys.exit(load_entry_point('servo-controller', 'console_scripts', 'servo_controller')())
+[servo_controller-8]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 100, in main
+[servo_controller-8]     rclpy.spin(node)  # 循环等待ROS2退出
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[servo_controller-8]     executor.spin_once()
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[servo_controller-8]     self._spin_once_impl(timeout_sec)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[servo_controller-8]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[servo_controller-8]     return next(self._cb_iter)
+[servo_controller-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[servo_controller-8]     wait_set.wait(timeout_nsec)
+[servo_controller-8] KeyboardInterrupt
+[odom_publisher-4] [INFO] [1794600869.076059243] [odom_publisher]: shutdown
+[init_pose-9] Traceback (most recent call last):
+[init_pose-9]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose", line 33, in <module>
+[init_pose-9]     sys.exit(load_entry_point('controller', 'console_scripts', 'init_pose')())
+[init_pose-9]   File "/home/ubuntu/ros2_ws/build/controller/controller/init_pose.py", line 53, in main
+[init_pose-9]     rclpy.spin(node)  # 循环等待ROS2退出
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[init_pose-9]     executor.spin_once()
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[init_pose-9]     self._spin_once_impl(timeout_sec)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[init_pose-9]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[init_pose-9]     return next(self._cb_iter)
+[init_pose-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[init_pose-9]     wait_set.wait(timeout_nsec)
+[init_pose-9] KeyboardInterrupt
+[ERROR] [joint_state_publisher-2]: process has died [pid 25888, exit code -2, cmd '/opt/ros/humble/lib/joint_state_publisher/joint_state_publisher --ros-args -r __node:=joint_state_publisher --params-file /tmp/launch_params_xrdb_rew'].
+[scan_to_scan_filter_chain-11] [INFO] [1794600869.083145713] [rclcpp]: signal_handler(signum=2)
+[complementary_filter_node-6] [INFO] [1794600869.084736035] [rclcpp]: signal_handler(signum=2)
+[complementary_filter_node-6] [INFO] [1794600869.117470052] [imu_filter]: Destroying ComplementaryFilterROS
+[sllidar_node-10] [INFO] [1794600869.171025805] [sllidar_node]: Stop motor
+[ERROR] [ros_robot_controller-3]: process[ros_robot_controller-3] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [ros_robot_controller-3]: sending signal 'SIGTERM' to process[ros_robot_controller-3]
+[ros_robot_controller-3] [INFO] [1794600874.483389791] [ros_robot_controller]: shutdown
+[ros_robot_controller-3] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller", line 33, in <module>
+[ros_robot_controller-3]     sys.exit(load_entry_point('ros-robot-controller', 'console_scripts', 'ros_robot_controller')())
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 265, in main
+[ros_robot_controller-3]     rclpy.spin(node)                                 # 循环等待ROS2退出
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[ros_robot_controller-3]     executor.spin_once()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[ros_robot_controller-3]     self._spin_once_impl(timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[ros_robot_controller-3]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[ros_robot_controller-3] Exception in thread Thread-2 (pub_callback):
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[ros_robot_controller-3]     self.run()
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[ros_robot_controller-3]     self._target(*self._args, **self._kwargs)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 68, in pub_callback
+[ros_robot_controller-3]     self.pub_imu_data(self.imu_pub)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 261, in pub_imu_data
+[ros_robot_controller-3]     return next(self._cb_iter)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[ros_robot_controller-3]     wait_set.wait(timeout_nsec)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 58, in shutdown
+[ros_robot_controller-3]     rclpy.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[ros_robot_controller-3]     _shutdown(context=context)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[ros_robot_controller-3]     return context.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[ros_robot_controller-3]     self.__context.shutdown()
+[ros_robot_controller-3] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ERROR] [ros_robot_controller-3]: process has died [pid 25890, exit code 1, cmd '/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller --ros-args --params-file /tmp/launch_params_v2fogo7f'].

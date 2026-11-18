@@ -1,0 +1,300 @@
+[checkpoint_recorder-15]     self._handler.send(None)
+[checkpoint_recorder-15]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 430, in handler
+[checkpoint_recorder-15]     arg = take_from_wait_list(entity)
+[checkpoint_recorder-15]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 355, in _take_subscription
+[checkpoint_recorder-15]     msg_info = sub.handle.take_message(sub.msg_type, sub.raw)
+[checkpoint_recorder-15] RuntimeError: Unable to convert call argument to Python object (compile in debug mode for details)
+[component_container_isolated-16] [INFO] [1794602195.753573598] [global_costmap.global_costmap]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.172 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [INFO] [1794602195.762773069] [local_costmap.local_costmap]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.172 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [INFO] [1794602195.774170426] [global_costmap.global_costmap]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.227 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [INFO] [1794602195.774662682] [local_costmap.local_costmap]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.227 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [ERROR] [1794602195.794159683] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation into the past.  Requested time 1794601863.131727 but the earliest data is at time 1794602175.680200, when looking up transform from frame [base_footprint] to frame [map]
+[component_container_isolated-16] 
+[component_container_isolated-16] [INFO] [1794602195.830163585] [amcl]: Message Filter dropping message: frame 'lidar_frame' at time 1794602188.595 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [INFO] [1794602195.839111746] [rclcpp]: signal_handler(signum=2)
+[component_container_isolated-16] [INFO] [1794602196.153059289] [amcl]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.071 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [INFO] [1794602196.264504078] [amcl]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.172 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-16] [INFO] [1794602196.272734611] [amcl]: Message Filter dropping message: frame 'lidar_frame' at time 1794602189.227 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[ros_robot_controller-3] [INFO] [1794602196.666287137] [ros_robot_controller]: shutdown
+[ros_robot_controller-3] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller", line 33, in <module>
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3] 校验失败
+[ros_robot_controller-3]     sys.exit(load_entry_point('ros-robot-controller', 'console_scripts', 'ros_robot_controller')())
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 265, in main
+[ros_robot_controller-3]     rclpy.spin(node)                                 # 循环等待ROS2退出
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[ros_robot_controller-3]     executor.spin_once()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[ros_robot_controller-3]     self._spin_once_impl(timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 736, in _spin_once_impl
+[ros_robot_controller-3]     raise handler.exception()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/task.py", line 239, in __call__
+[ros_robot_controller-3]     self._handler.send(None)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 437, in handler
+[ros_robot_controller-3]     await call_coroutine(entity, arg)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 362, in _execute_subscription
+[ros_robot_controller-3]     await await_or_execute(sub.callback, msg)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 107, in await_or_execute
+[ros_robot_controller-3]     return callback(*args)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 83, in set_motor_state
+[ros_robot_controller-3]     self.board.set_motor_speed(data)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_sdk.py", line 335, in set_motor_speed
+[ros_robot_controller-3]     self.buf_write(PacketFunction.PACKET_FUNC_MOTOR, data)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_sdk.py", line 319, in buf_write
+[ros_robot_controller-3]     self.port.write(buf)
+[ros_robot_controller-3]   File "/home/ubuntu/.local/lib/python3.10/site-packages/serial/serialposix.py", line 640, in write
+[component_container_isolated-16] [ERROR] [1794602196.813345346] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation into the past.  Requested time 1794601863.131727 but the earliest data is at time 1794602176.012882, when looking up transform from frame [base_footprint] to frame [map]
+[component_container_isolated-16] 
+[ros_robot_controller-3]     abort, ready, _ = select.select([self.pipe_abort_write_r], [self.fd], [], None)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 58, in shutdown
+[ros_robot_controller-3]     rclpy.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[ros_robot_controller-3]     _shutdown(context=context)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[ros_robot_controller-3]     return context.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 103, in shutdown
+[ros_robot_controller-3]     self._call_on_shutdown_callbacks()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 92, in _call_on_shutdown_callbacks
+[ros_robot_controller-3]     callback = weak_method()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 107, in reset_executor
+[ros_robot_controller-3]     __executor.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 223, in shutdown
+[ros_robot_controller-3]     if not self._work_tracker.wait(timeout_sec):
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 94, in wait
+[ros_robot_controller-3]     if not self._work_condition.wait_for(
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 355, in wait_for
+[ros_robot_controller-3]     self.wait(waittime)
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 320, in wait
+[ros_robot_controller-3]     waiter.acquire()
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 58, in shutdown
+[ros_robot_controller-3]     rclpy.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[ros_robot_controller-3]     _shutdown(context=context)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[ros_robot_controller-3]     return context.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 100, in shutdown
+[ros_robot_controller-3]     raise RuntimeError('Context must be initialized before it can be shutdown')
+[ros_robot_controller-3] RuntimeError: Context must be initialized before it can be shutdown
+[ros_robot_controller-3] 校验失败
+[ERROR] [ros_robot_controller-3]: process has died [pid 30628, exit code 1, cmd '/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller --ros-args --params-file /tmp/launch_params_iys4cniz'].
+[component_container_isolated-16] [ERROR] [1794602197.825649270] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation into the past.  Requested time 1794601863.131727 but the earliest data is at time 1794602176.012882, when looking up transform from frame [base_footprint] to frame [map]
+[component_container_isolated-16] 
+[component_container_isolated-16] [INFO] [1794602197.991503883] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[component_container_isolated-16] [INFO] [1794602197.998462864] [map_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794602198.000845860] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602198.008213396] [lifecycle_manager_localization]: Have not received a heartbeat from map_server.
+[component_container_isolated-16] [ERROR] [1794602198.008411423] [lifecycle_manager_localization]: CRITICAL FAILURE: SERVER map_server IS DOWN after not receiving a heartbeat for 30000 ms. Shutting down related nodes.
+[component_container_isolated-16] [INFO] [1794602198.008522625] [lifecycle_manager_localization]: Terminating bond timer...
+[component_container_isolated-16] [INFO] [1794602198.008566637] [lifecycle_manager_localization]: Resetting managed nodes...
+[component_container_isolated-16] [INFO] [1794602198.008598825] [lifecycle_manager_localization]: Deactivating amcl
+[component_container_isolated-16] [INFO] [1794602198.013509873] [map_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602198.015904953] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602198.016003185] [local_costmap.local_costmap]: Running Nav2 LifecycleNode rcl preshutdown (local_costmap)
+[component_container_isolated-16] [INFO] [1794602198.020978402] [local_costmap.local_costmap]: Deactivating
+[component_container_isolated-16] [INFO] [1794602198.031161813] [amcl]: Deactivating
+[component_container_isolated-16] [INFO] [1794602198.040957971] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602198.164498264] [lifecycle_manager_localization]: Deactivating map_server
+[component_container_isolated-16] [WARN] [1794602198.165120785] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794602198.165185631] [map_server]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [ERROR] [1794602198.166606876] [lifecycle_manager_localization]: Failed to change state for node: map_server
+[component_container_isolated-16] [INFO] [1794602198.166695994] [lifecycle_manager_localization]: Cleaning up amcl
+[component_container_isolated-16] [INFO] [1794602198.167344817] [amcl]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602198.232655732] [local_costmap.local_costmap]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602198.329422013] [local_costmap.local_costmap]: Destroying bond (local_costmap) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602198.329566028] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[component_container_isolated-16] [INFO] [1794602198.342231396] [lifecycle_manager_localization]: Cleaning up map_server
+[component_container_isolated-16] [WARN] [1794602198.350435210] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
+[component_container_isolated-16] [ERROR] [1794602198.350491097] [map_server]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+[component_container_isolated-16] [INFO] [1794602198.352857061] [lifecycle_manager_localization]: Managed nodes have been reset
+[component_container_isolated-16] [INFO] [1794602198.450477641] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[component_container_isolated-16] [INFO] [1794602198.453100176] [planner_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794602198.459394447] [global_costmap.global_costmap]: Deactivating
+[component_container_isolated-16] [ERROR] [1794602198.839995034] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation into the past.  Requested time 1794601863.131727 but the earliest data is at time 1794602176.012882, when looking up transform from frame [base_footprint] to frame [map]
+[component_container_isolated-16] 
+[component_container_isolated-16] [INFO] [1794602198.843610935] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[component_container_isolated-16] [INFO] [1794602198.843806254] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602198.844009333] [planner_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602198.939062276] [global_costmap.global_costmap]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602198.992315396] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[component_container_isolated-16] [INFO] [1794602198.992696294] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[component_container_isolated-16] [INFO] [1794602199.096236028] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.096337803] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[component_container_isolated-16] [INFO] [1794602199.098371255] [smoother_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.102080181] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.103230583] [smoother_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.181164625] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.181331141] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[component_container_isolated-16] [INFO] [1794602199.183974614] [waypoint_follower]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.185472945] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.185675191] [waypoint_follower]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.228761099] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.228865634] [global_costmap.global_costmap]: Running Nav2 LifecycleNode rcl preshutdown (global_costmap)
+[component_container_isolated-16] [INFO] [1794602199.228916938] [global_costmap.global_costmap]: Destroying bond (global_costmap) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.229089287] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[component_container_isolated-16] [INFO] [1794602199.231748021] [behavior_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.238296936] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.238730752] [behavior_server]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.273708370] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.273818218] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[component_container_isolated-16] [INFO] [1794602199.275885943] [bt_navigator]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.280699435] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.280984757] [bt_navigator]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.854334651] [bt_navigator]: Completed Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.854478457] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.854526792] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[component_container_isolated-16] [INFO] [1794602199.854575023] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.854607576] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[component_container_isolated-16] [INFO] [1794602199.856496910] [controller_server]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.870927649] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.871206824] [controller_server]: Cleaning up
+[component_container_isolated-16] [WARN] [1794602199.891306189] [collision_monitor]: [scan]: Latest source and current collision monitor node timestamps differ on 10.657790 seconds. Ignoring the source.
+[component_container_isolated-16] [INFO] [1794602199.898411633] [collision_monitor]: Robot to continue normal operation
+[component_container_isolated-16] [INFO] [1794602199.935533436] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.935659899] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[component_container_isolated-16] [INFO] [1794602199.935893084] [velocity_smoother]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.938324727] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.938508118] [velocity_smoother]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.938625362] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.938668540] [collision_monitor]: Running Nav2 LifecycleNode rcl preshutdown (collision_monitor)
+[component_container_isolated-16] [INFO] [1794602199.938819378] [collision_monitor]: Deactivating
+[component_container_isolated-16] [INFO] [1794602199.938916309] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[component_container_isolated-16] [INFO] [1794602199.939110534] [collision_monitor]: Cleaning up
+[component_container_isolated-16] [INFO] [1794602199.939222465] [collision_monitor]: [PolygonStop]: Destroying Polygon
+[component_container_isolated-16] [INFO] [1794602199.939269237] [collision_monitor]: [FootprintApproach]: Destroying Polygon
+[component_container_isolated-16] [INFO] [1794602199.939314239] [collision_monitor]: [scan]: Destroying Scan
+[component_container_isolated-16] [INFO] [1794602199.939452316] [collision_monitor]: [depth]: Destroying PointCloud
+[component_container_isolated-16] [INFO] [1794602199.966944842] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [component_container_isolated-16]: sending signal 'SIGTERM' to process[component_container_isolated-16]
+[component_container_isolated-16] [INFO] [1794602200.705343019] [rclcpp]: signal_handler(signum=15)
+[ERROR] [odom_publisher-4]: process[odom_publisher-4] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [odom_publisher-4]: sending signal 'SIGTERM' to process[odom_publisher-4]
+[odom_publisher-4] Exception in thread Thread-1 (cal_odom_fun):
+[odom_publisher-4] Traceback (most recent call last):
+[odom_publisher-4]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[odom_publisher-4]     self.run()
+[odom_publisher-4]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[odom_publisher-4]     self._target(*self._args, **self._kwargs)
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 240, in cal_odom_fun
+[odom_publisher-4]     self.odom_pub.publish(self.odom)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[odom_publisher-4]     self.__publisher.publish(msg)
+[odom_publisher-4] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[odom_publisher-4] [INFO] [1794602200.816864633] [odom_publisher]: shutdown
+[odom_publisher-4] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[odom_publisher-4] Traceback (most recent call last):
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher", line 33, in <module>
+[odom_publisher-4]     sys.exit(load_entry_point('controller', 'console_scripts', 'odom_publisher')())
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 246, in main
+[odom_publisher-4]     rclpy.spin(node)  # 循环等待ROS2退出
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[odom_publisher-4]     executor.spin_once()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[odom_publisher-4]     self._spin_once_impl(timeout_sec)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[odom_publisher-4]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[odom_publisher-4]     return next(self._cb_iter)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[odom_publisher-4]     wait_set.wait(timeout_nsec)
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 141, in shutdown
+[odom_publisher-4]     rclpy.shutdown()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[odom_publisher-4]     _shutdown(context=context)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[odom_publisher-4]     return context.shutdown()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[odom_publisher-4]     self.__context.shutdown()
+[odom_publisher-4] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ERROR] [odom_publisher-4]: process has died [pid 30630, exit code 1, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher --ros-args -r __node:=odom_publisher --params-file /home/ubuntu/ros2_ws/src/driver/controller/config/calibrate_params.yaml --params-file /tmp/launch_params_wdv20zef'].
+[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[INFO] [component_container_isolated-16]: sending signal 'SIGKILL' to process[component_container_isolated-16]
+[ERROR] [component_container_isolated-16]: process has died [pid 30926, exit code -9, cmd '/opt/ros/humble/lib/rclcpp_components/component_container_isolated --ros-args -r __node:=nav2_container -r __ns:=/ --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/nav2_params.yaml --params-file /tmp/launch_params_aahfkz40'].

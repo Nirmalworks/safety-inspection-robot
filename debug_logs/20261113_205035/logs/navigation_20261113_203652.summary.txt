@@ -1,0 +1,15 @@
+navigation_20261113_203652: 145 lines, 13 distinct warning/error messages
+
+     7 x  [ekf_node-7] Failed to meet update rate! Took 0.056820998999999997037seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+     2 x  [servo_controller-8] Traceback (most recent call last):
+     1 x  [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+     1 x  [init_pose-9] Traceback (most recent call last):
+     1 x  [ERROR] [checkpoint_recorder-17]: process has died [pid 6469, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/checkpoint_recorder --ros-args -r __node:=checkpoint_recorder --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame50
+     1 x  [ERROR] [lifecycle_guard-16]: process has died [pid 6467, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/lifecycle_guard --ros-args -r __node:=lifecycle_guard'].
+     1 x  [ERROR] [landmarks-15]: process has died [pid 6461, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/landmarks --ros-args -r __node:=landmarks --params-file /tmp/launch_params_a21dkbrv'].
+     1 x  [ERROR] [init_pose-9]: process has died [pid 6424, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmp313sj6on'].
+     1 x  [ERROR] [xbox_teleop-14]: process has died [pid 6451, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_b
+     1 x  [ERROR] [servo_controller-8]: process has died [pid 6421, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params_yoc
+     1 x  [servo_controller-8] Exception in thread Thread-1 (publish_joint_states):
+     1 x  [odom_publisher-4] Exception in thread Thread-1 (cal_odom_fun):
+     1 x  [odom_publisher-4] Traceback (most recent call last):

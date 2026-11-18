@@ -1,0 +1,62 @@
+navigation_20261113_201450: 11655 lines, 60 distinct warning/error messages
+
+  2564 x  [component_container_isolated-16] [WARN] [1794600942.118795692] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+   806 x  [ekf_node-7] Failed to meet update rate! Took 0.065114114000000000715seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+   437 x  [component_container_isolated-16] [ERROR] [1794601406.500740793] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation into the past.  Requested time 1794601372.671754 but the earliest data is at time 1794601374.515474, when looking up transfor
+    40 x  [component_container_isolated-16] [WARN] [1794601059.227630699] [DWBLocalPlanner]: A scoring function failed to prepare
+    21 x  [component_container_isolated-16] [WARN] [1794600915.771265812] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1794600915.771118 but the latest data is at time 1794600915.729508, when looking up transform from frame [base_footpri
+    20 x  [component_container_isolated-16] [ERROR] [1794601059.227575228] [GoalDistCritic]: None of the points of the global plan were in the local costmap.
+    20 x  [component_container_isolated-16] [ERROR] [1794601059.227796382] [PathDistCritic]: None of the 91 first of 91 (91) points of the global plan were in the local costmap and free
+    16 x  [component_container_isolated-16] [WARN] [1794600975.636951153] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+    11 x  [component_container_isolated-16] [ERROR] [1794600975.636648746] [controller_server]: Failed to make progress
+    10 x  [component_container_isolated-16] [WARN] [1794601059.257547993] [controller_server]: No valid trajectories out of 307! 
+     6 x  [component_container_isolated-16] [WARN] [1794601324.359024215] [planner_server]: GridBased: failed to create plan with tolerance 0.30.
+     6 x  [component_container_isolated-16] [WARN] [1794601324.359184065] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.00, 0.00)
+     5 x  [component_container_isolated-16] [WARN] [1794601040.386526375] [controller_server]: Control loop missed its desired rate of 8.0000Hz
+     3 x  [component_container_isolated-16] [WARN] [1794601324.359247869] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+     3 x  [component_container_isolated-16] [ERROR] [1794601324.390139524] [controller_server]: Invalid path, Path is empty.
+     3 x  [component_container_isolated-16] [WARN] [1794601324.549740338] [planner_server]: [compute_path_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+     3 x  [component_container_isolated-16] [ERROR] [1794601561.342082784] [transformPoseInTargetFrame]: Extrapolation Error looking up target frame: Lookup would require extrapolation at time 1794601558.458140, but only time 1794601559.356121 is in the buffer, when looking up transform from frame [base_footp
+     2 x  [component_container_isolated-16] [ERROR] [1794601059.760414016] [controller_server]: Controller patience exceeded
+     2 x  [servo_controller-8] Traceback (most recent call last):
+     2 x  [ros_robot_controller-3] Traceback (most recent call last):
+     2 x  [component_container_isolated-16] [WARN] [1794602198.165120785] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
+     2 x  [component_container_isolated-16] [ERROR] [1794602198.165185631] [map_server]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
+     2 x  [odom_publisher-4] Traceback (most recent call last):
+     1 x  [component_container_isolated-16] [WARN] [1794600942.130871312] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded general_goal_checker . This warning will appear once.
+     1 x  [component_container_isolated-16] [WARN] [1794601331.553516182] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+     1 x  [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+     1 x  [ERROR] [checkpoint_recorder-15]: process has died [pid 30682, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/checkpoint_recorder --ros-args -r __node:=checkpoint_recorder --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame5
+     1 x  [ERROR] [lifecycle_guard-14]: process has died [pid 30678, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/lifecycle_guard --ros-args -r __node:=lifecycle_guard'].
+     1 x  [ERROR] [xbox_teleop-13]: process has died [pid 30676, exit code -2, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_
+     1 x  [ERROR] [init_pose-9]: process has died [pid 30650, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmp38an4m3y'].
+     1 x  [ERROR] [servo_controller-8]: process has died [pid 30647, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params__b
+     1 x  [servo_controller-8] Exception in thread Thread-1 (publish_joint_states):
+     1 x  [ERROR] [joint_state_publisher-2]: process has died [pid 30626, exit code -2, cmd '/opt/ros/humble/lib/joint_state_publisher/joint_state_publisher --ros-args -r __node:=joint_state_publisher --params-file /tmp/launch_params_d7k6fprj'].
+     1 x  [xbox_teleop-13] Traceback (most recent call last):
+     1 x  [xbox_teleop-13] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+     1 x  [init_pose-9] Traceback (most recent call last):
+     1 x  [servo_controller-8] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+     1 x  [ros_robot_controller-3] Exception in thread Thread-2 (pub_callback):
+     1 x  [ros_robot_controller-3] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+     1 x  [checkpoint_recorder-15] Traceback (most recent call last):
+     1 x  [checkpoint_recorder-15]     raise handler.exception()
+     1 x  [checkpoint_recorder-15] RuntimeError: Unable to convert call argument to Python object (compile in debug mode for details)
+     1 x  [ros_robot_controller-3] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+     1 x  [ros_robot_controller-3]     raise handler.exception()
+     1 x  [ros_robot_controller-3]     abort, ready, _ = select.select([self.pipe_abort_write_r], [self.fd], [], None)
+     1 x  [ros_robot_controller-3]     raise RuntimeError('Context must be initialized before it can be shutdown')
+     1 x  [ros_robot_controller-3] RuntimeError: Context must be initialized before it can be shutdown
+     1 x  [ERROR] [ros_robot_controller-3]: process has died [pid 30628, exit code 1, cmd '/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller --ros-args --params-file /tmp/launch_params_iys4cniz'].
+     1 x  [component_container_isolated-16] [ERROR] [1794602198.008411423] [lifecycle_manager_localization]: CRITICAL FAILURE: SERVER map_server IS DOWN after not receiving a heartbeat for 30000 ms. Shutting down related nodes.
+     1 x  [component_container_isolated-16] [ERROR] [1794602198.166606876] [lifecycle_manager_localization]: Failed to change state for node: map_server
+     1 x  [component_container_isolated-16] [WARN] [1794602199.891306189] [collision_monitor]: [scan]: Latest source and current collision monitor node timestamps differ on 10.657790 seconds. Ignoring the source.
+     1 x  [ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+     1 x  [ERROR] [odom_publisher-4]: process[odom_publisher-4] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+     1 x  [odom_publisher-4] Exception in thread Thread-1 (cal_odom_fun):
+     1 x  [odom_publisher-4] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+     1 x  [odom_publisher-4] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+     1 x  [odom_publisher-4] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+     1 x  [ERROR] [odom_publisher-4]: process has died [pid 30630, exit code 1, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher --ros-args -r __node:=odom_publisher --params-file /home/ubuntu/ros2_ws/src/driver/controller/config/calibrate_params.yaml --params-file /tmp/launch_params
+     1 x  [ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+     1 x  [ERROR] [component_container_isolated-16]: process has died [pid 30926, exit code -9, cmd '/opt/ros/humble/lib/rclcpp_components/component_container_isolated --ros-args -r __node:=nav2_container -r __ns:=/ --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_
