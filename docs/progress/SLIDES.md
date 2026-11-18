@@ -47,6 +47,10 @@ Same numbers and status words as `PROGRESS_REPORT.md`. Figures are in `docs/prog
 - Finding: a **−2.5° camera tilt error turns 82 % of clear frames into false alarms** (−3°: 100 %)
   → before the real evaluation, add per-frame floor-plane fitting (or calibrate the pitch)
 - Robot: AMCL + Nav2 on the real map; TF-timing failure diagnosed from logs and fixed
+- **Map repeatability** (`map_repeatability.png`): two independent lidar maps of the lab (Nov 13, Nov 18),
+  aligned by ICP: **median wall distance 7 cm, 84 % of walls within 20 cm** (moved furniture included)
+- Nov 18 map (`map_lab_1118_dark.png`, 24.6 × 9.8 m) with the first 3 patrol checkpoints at the doorways
+- Dashboard: live YOLO26 (COCO) at ~1.5 fps on the Nano CPU, URDF robot view, keyboard drive, E-STOP + command watchdog
 - Limitation: no real-image results yet
 
 ## Slide 5: Next steps and questions (45 s)
