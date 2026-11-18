@@ -76,9 +76,14 @@ class CheckpointRecorder(Node):
         return now and not was
 
     def on_joy(self, msg):
-        if self.pressed(msg, self.btn_save):
+        save, undo = self.pressed(msg, self.btn_save), self.pressed(msg, self.btn_undo)
+        if save or undo:
+            # the dashboard's "+ Checkpoint here" writes the same file: re-read it so neither
+            # side overwrites the other's checkpoints
+            self.checkpoints = self.load()
+        if save:
             self.record()
-        if self.pressed(msg, self.btn_undo) and self.checkpoints:
+        if undo and self.checkpoints:
             removed = self.checkpoints.pop()
             self.save()
             self.beep(2)
