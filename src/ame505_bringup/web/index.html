@@ -95,6 +95,8 @@
   <span class="chip">LOC <b id="hLoc">–</b></span>
   <span class="chip">YOLO <b id="hYolo">off</b></span>
   <span class="spacer"></span>
+  <input type="text" id="snapNote" placeholder="snapshot note (e.g. cp_02 blocked exit)" style="width:230px">
+  <button class="tbtn" id="bSnap" onclick="snapshot()" title="save camera, depth, YOLO, map and 3D view for the presentation">📸 Snapshot</button>
   <button class="estop" onclick="act('estop')">E-STOP</button>
 </header>
 
@@ -268,6 +270,12 @@ let st = {}, files = {clouds: [], maps: []};
 async function act(a, body) {
   const r = await fetch('/api/' + a, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
   const j = await r.json(); $('job').textContent = j.msg; poll();
+}
+async function snapshot() {
+  const grab = el => { try { return el ? el.toDataURL('image/png') : ''; } catch (e) { return ''; } };
+  $('bSnap').disabled = true;
+  await act('snapshot', {note: $('snapNote').value, map: grab($('mapcanvas')), robot3d: grab(document.querySelector('#view3d canvas'))});
+  $('bSnap').disabled = false;
 }
 function startMapping() { act('start_mapping', {map: $('mapname').value.trim(), new: $('newmap').checked, rviz: false,
   map3d: $('map3d').checked, camera: $('mapcam').checked || $('map3d').checked}); }
@@ -585,7 +593,7 @@ const nm = (() => {
 (() => {
   const box = $('view3d');
   if (!window.THREE || !THREE.STLLoader) { $('v3dNo').textContent = '3D view needs internet for three.js (CDN)'; return; }
-  const R = new THREE.WebGLRenderer({antialias: true, alpha: true});
+  const R = new THREE.WebGLRenderer({antialias: true, alpha: true, preserveDrawingBuffer: true});   // so Snapshot can read it
   R.setPixelRatio(Math.min(devicePixelRatio, 2)); box.appendChild(R.domElement);
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, 4 / 3, 0.01, 100);
   THREE.Object3D.DefaultUp.set(0, 0, 1); cam.up.set(0, 0, 1); cam.position.set(-0.75, -0.6, 0.55);

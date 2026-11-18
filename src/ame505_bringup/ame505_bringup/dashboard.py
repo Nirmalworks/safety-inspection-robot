@@ -9,6 +9,7 @@ command. Default pipeline is 2D: slam_toolbox mapping (maps_2d/<map>.pgm/.yaml) 
 map_server + AMCL lidar localization for Nav2. Legacy RTAB-Map 3D maps (maps/<map>.db)
 still work when no 2D map of that name exists. It listens to topics read-only, except E-STOP (zero velocity) and saving maps.
 """
+import base64
 import collections
 import csv
 import glob
@@ -945,6 +946,36 @@ def list_files():
             'data_dir': data_dir()}
 
 
+def save_snapshot(node, mgr, body):
+    """Presentation pictures: camera, depth, YOLO (as streamed) + the map and 3D views the browser
+    sends as PNG data URLs + a small JSON with the robot state. -> $AME505_DATA/presentation/<time>/"""
+    out = data_dir(os.path.join('presentation', time.strftime('%Y%m%d_%H%M%S')))
+    saved = []
+    with node.lock:
+        jpgs = {k: v for k, v in node.jpeg.items() if v is not None}
+    for k, jpg in jpgs.items():
+        with open(os.path.join(out, f'{k}.jpg'), 'wb') as f:
+            f.write(jpg)
+        saved.append(k)
+    for k in ('map', 'robot3d'):
+        url = body.get(k) or ''
+        if url.startswith('data:image/png;base64,'):
+            with open(os.path.join(out, f'{k}.png'), 'wb') as f:
+                f.write(base64.b64decode(url.split(',', 1)[1]))
+            saved.append(k)
+    v, _ = node.snapshot()
+    rp = node.robot_pose()
+    with open(os.path.join(out, 'state.json'), 'w') as f:
+        json.dump({'time': time.strftime('%Y-%m-%d %H:%M:%S'), 'mode': mgr.mode, 'map': mgr.map,
+                   'note': str(body.get('note', ''))[:200],
+                   'robot_map_pose': [round(x, 3) for x in rp] if rp else None,
+                   'localization': node.localization(), 'yolo': v.get('yolo'), 'battery': v.get('battery')},
+                  f, indent=1)
+    if not saved:
+        return False, 'Nothing to save yet (no camera / map on screen).'
+    return True, f'Snapshot saved: {", ".join(saved)} -> {out}'
+
+
 def create_app(node, mgr):
     app = Flask(__name__, static_folder=None)
 
@@ -1110,6 +1141,8 @@ def create_app(node, mgr):
         elif action == 'teleop':
             ok, msg = mgr.teleop(float(body.get('x', 0)), float(body.get('y', 0)), float(body.get('z', 0)))
             return jsonify({'ok': ok, 'msg': msg}), (200 if ok else 400)
+        elif action == 'snapshot':
+            ok, msg = save_snapshot(node, mgr, body)
         elif action == 'start_yolo':
             ok, msg = mgr.start_yolo()
         elif action == 'stop_yolo':
@@ -1151,6 +1184,10 @@ def create_app(node, mgr):
     @app.get('/files/inspections/<path:name>')
     def inspection_file(name):
         return send_from_directory(data_dir('inspections'), name)
+
+    @app.get('/files/presentation/<path:name>')
+    def presentation_file(name):
+        return send_from_directory(data_dir('presentation'), name)
 
     @app.get('/files/gtsam/<path:name>')
     def gtsam_file(name):
