@@ -76,6 +76,7 @@ ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_01 --scene 
 | [docs/ROBOT.md](docs/ROBOT.md) | Hardware, software layout on the robot, working from a laptop |
 | [docs/MAPPING_NAVIGATION.md](docs/MAPPING_NAVIGATION.md) | Step-by-step mapping, localization, navigation, patrol |
 | [docs/LOCALIZATION.md](docs/LOCALIZATION.md) | Localization failure analysis and the AMCL configuration |
+| [docs/JETSON_MEMORY.md](docs/JETSON_MEMORY.md) | Freeing RAM on the Jetson Nano: per-session cleanup script and one-time host settings |
 | [docs/LAB_SESSION.md](docs/LAB_SESSION.md) | **Next robot session runbook:** re-map, checkpoints, camera calibration, first patrol, dataset S1 |
 | [docs/DATA_COLLECTION.md](docs/DATA_COLLECTION.md) | RGB-D dataset protocol: checkpoints, scenes, sessions, splits |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Build / run, TF tree, Jetson Nano constraints, code map |

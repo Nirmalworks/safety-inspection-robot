@@ -54,6 +54,8 @@ New clone instead (if the old one is broken):
 `git clone -b dev https://github.com/Nirmalworks/safety-inspection-robot.git ~/safety-inspection-robot`
 (`env.sh` finds either folder name).
 
+Free memory before anything else: `./scripts/free_memory.sh --editor` (details: [JETSON_MEMORY.md](JETSON_MEMORY.md)).
+
 ✔ check: `git log --oneline -1` shows the latest `dev` commit; the dashboard page loads; battery ____ V.
 
 Quick facts (one line each, paste the output here):
