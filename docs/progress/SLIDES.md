@@ -18,10 +18,10 @@ Same numbers and status words as `PROGRESS_REPORT.md`. Figures are in `docs/prog
 
 ## Slide 2: Approach and data (60 s)
 
-*Visual:* Figure 1 pipeline from the report, with each box coloured **operational / implemented / designed**
+*Visual:* `figures/map_lab_dark.png` (or `map_lab_3d.png`) next to the Figure 1 pipeline from the report, with each box coloured **operational / implemented / designed**
 
 - Platform: JetAuto, Jetson Nano 4 GB, RPLidar A1, Astra RGB-D (320 × 240, 1–7 s latency → inspect only while stopped)
-- Data obtained: **lidar map of the lab, 20.7 × 10.0 m** (Fig. 2). **No RGB-D images yet.**
+- Data obtained: **lidar map of the lab, 19.7 × 9.0 m** (`map_lab_dark.png`). **No RGB-D images yet.**
 - Preparation completed: capture tool with a labelled `index.csv` (staging log), split by session + location (70/15/15, held-out checkpoint), collection protocol (~48 frames per checkpoint per session)
 
 ## Slide 3: Models and implementation (90 s)

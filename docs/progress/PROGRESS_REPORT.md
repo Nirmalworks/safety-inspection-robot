@@ -16,7 +16,7 @@ are building a robot that patrols 8–10 checkpoints in a campus lab and flags t
 blocked exit, obstructed walkway and open door. It runs on a Hiwonder JetAuto (Jetson Nano 4 GB,
 RPLidar A1, Astra RGB-D). A YOLO detector fine-tuned on our own RGB-D images, combined with a
 depth-based keep-clear check and a checkpoint classifier, will make the per-checkpoint decision.
-To date the navigation stack works on the robot: a 20.7 × 10.0 m lidar map, AMCL localization,
+To date the navigation stack works on the robot: a 19.7 × 9.0 m lidar map, AMCL localization,
 Nav2, a patrol node and a web dashboard. The non-ML depth-rule baseline, the dataset capture tool,
 the location/session split and the evaluation scripts are implemented and verified end to end on
 synthetic frames. No real images have been collected yet. That is the main risk, and the first
@@ -141,7 +141,7 @@ rule describes. The team prefers (b), with (a) as the fallback.
 starts once the checkpoints are saved (§7). The completed artifacts are:
 
 1. **Robot navigation on a real map (Fig. 2).** The 2D lidar map of the lab is 413 × 199 cells
-   at 5 cm, i.e. 20.7 × 10.0 m. AMCL localization and Nav2 goals were run on it on Nov 13. One
+   at 5 cm (a 20.7 × 10.0 m image); the mapped obstacles span 19.7 × 9.0 m. AMCL localization and Nav2 goals were run on it on Nov 13. One
    live failure was diagnosed from logs: AMCL fell behind under CPU load (Jetson load average
    18–19), so map→odom was 0.32 s old against a 0.3 s tolerance and the controller aborted. The
    TF tolerances were fixed. This shows that the robot can localize and receive goals on the map.
@@ -215,7 +215,7 @@ inspection-result format (checkpoint, time, result, area, file paths) and the sa
   Lin et al., COCO (ECCV 2014); Ultralytics YOLO and Jetson guide; NVIDIA TensorRT; CVAT;
   scikit-learn metrics (as in the proposal)
 - ROS 2 Humble, slam_toolbox, Nav2, AMCL; Hiwonder JetAuto drivers (vendor, not in the repo)
-- Figures: `docs/progress/figures/map_lab.png` (Fig. 2), `keep_clear_example.png` (Fig. 3),
+- Figures: `docs/progress/figures/map_lab_light.png` (Fig. 2; slide version `map_lab_dark.png`, 3D `map_lab_3d.png`), `keep_clear_example.png` (Fig. 3),
   `pitch_sensitivity.png` (Fig. 4)
 
 ### Reproducing the numbers
