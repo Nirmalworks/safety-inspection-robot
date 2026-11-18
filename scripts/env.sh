@@ -1,7 +1,12 @@
-# Source this in every terminal:  source ~/ame505-safety-inspection-robot/scripts/env.sh
+# Source this in every terminal:  source ~/safety-inspection-robot/scripts/env.sh
 # (zsh or bash). Loads ROS 2 + Hiwonder env + this workspace, and fixes device nodes
 # that Docker loses: /dev/lidar and the Xbox controller (USB or Bluetooth).
-export AME505_ROOT="${AME505_ROOT:-$HOME/ame505-safety-inspection-robot}"
+# Repo root. The repository was renamed from ame505-safety-inspection-robot; accept both clone names.
+if [ -z "$AME505_ROOT" ]; then
+  for d in "$HOME/safety-inspection-robot" "$HOME/ame505-safety-inspection-robot"; do
+    [ -d "$d" ] && { export AME505_ROOT="$d"; break; }
+  done
+fi
 # Large data on the SSD bind-mount (survives container rebuilds)
 export AME505_DATA="${AME505_DATA:-/home/ubuntu/share/tmp/ame505_data}"
 # Depth camera lives in Hiwonder's ROS 1 container; this bridge republishes it in ROS 2
@@ -45,12 +50,12 @@ if [ "$(cat /proc/sys/fs/inotify/max_user_watches 2>/dev/null || echo 0)" -lt 52
   sudo -n sysctl -qw fs.inotify.max_user_watches=524288 fs.inotify.max_user_instances=512 2>/dev/null || true
 fi
 
-# VS Code (+ Pylance + Claude) on the robot takes ~1.3 GB RAM and ~50% CPU and runs at normal
+# VS Code (+ Pylance + extensions) on the robot takes ~1.3 GB RAM and ~50% CPU and runs at normal
 # priority, so Nav2/AMCL lose CPU to the editor (load average ~20 seen). Lower the editor's
 # priority so the robot software wins. Harmless: the editor just gets a bit slower.
 ame505_deprioritize_editor() {
   local p
-  for p in $(pgrep -f '/usr/share/code/|claude-code.*/claude|vscode-pylance' 2>/dev/null); do
+  for p in $(pgrep -f '/usr/share/code/|\.vscode-server/|vscode-pylance' 2>/dev/null); do
     renice -n 10 -p "$p" >/dev/null 2>&1
   done
 }

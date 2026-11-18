@@ -36,9 +36,9 @@ Battery: charge above ~10.5 V; low battery = weak motors and odometry errors.
 ```
 ~/ros2_ws                       Hiwonder drivers (robot_controller, odom_publisher, peripherals: lidar/IMU)
 ~/jetauto_toolkit               camera bridge, Hiwonder tools (not in this repo)
-~/ame505-safety-inspection-robot   THIS repo (ROS 2 workspace)
+~/safety-inspection-robot          THIS repo (ROS 2 workspace)
   src/ame505_description        URDF + meshes
-  src/ame505_bringup            launch files, configs, dashboard, tools (see CLAUDE.md "Code map")
+  src/ame505_bringup            launch files, configs, dashboard, tools (see docs/DEVELOPMENT.md "Code map")
   scripts/                      env.sh, dashboard.sh, stop_all.sh, save_2d_map.sh, save_debug_bundle.sh, ...
   docs/                         this folder
   debug_logs/                   trimmed logs committed for offline analysis
@@ -48,11 +48,11 @@ Battery: charge above ~10.5 V; low battery = weak motors and odometry errors.
 ## Working offline on a laptop
 
 ```bash
-git clone https://github.com/Nirmalworks/ame505-safety-inspection-robot.git
-# read CLAUDE.md + docs/, analyse debug_logs/<time>/, edit code, then:
+git clone https://github.com/Nirmalworks/safety-inspection-robot.git
+# read docs/DEVELOPMENT.md + docs/, analyse debug_logs/<time>/, edit code, then:
 git commit -am "..." && git push
 # on the robot:
-cd ~/ame505-safety-inspection-robot && git pull && source scripts/env.sh && colcon build --symlink-install
+cd ~/safety-inspection-robot && git pull && source scripts/env.sh && colcon build --symlink-install
 ./scripts/dashboard.sh restart
 ```
 A laptop without ROS can still edit Python/launch/YAML/HTML and read logs. To view the robot live

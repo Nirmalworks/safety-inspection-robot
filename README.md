@@ -1,57 +1,91 @@
-# AME 505 – Autonomous Safety Inspection Robot
+# Safety Inspection Robot
 
-Course project for AME 505 (Group 5): a Hiwonder JetAuto (Jetson Nano, mecanum base,
-lidar, Astra depth camera) that makes a 2D lidar map (slam_toolbox), localizes on it with
-AMCL (lidar + wheel odometry + IMU), patrols inspection checkpoints with Nav2, and checks
-them for safety hazards (blocked exit, obstructed walkway, open door).
+An autonomous mobile robot that patrols a fixed route in a building, stops at inspection
+checkpoints, and checks each one for three safety hazards: **blocked exit**, **obstructed
+walkway**, and **open door**. Each checkpoint result is logged with an annotated RGB-D image and
+shown on a web dashboard so that facilities staff can review flagged locations.
 
-Platform: Ubuntu 22.04 · ROS 2 Humble · slam_toolbox · AMCL · Nav2 (RTAB-Map 3D optional)
+Course project for AME 505 *Machine Learning for Engineering Applications* (USC, Fall 2026), Group 5.
 
-**New here / working offline? Read [CLAUDE.md](CLAUDE.md) and [docs/ROBOT.md](docs/ROBOT.md) first.**
-
-## Folder structure
+## System overview
 
 ```
-ame505-safety-inspection-robot/
+ lidar map ──► AMCL localization ──► Nav2 waypoint patrol ──► stop at checkpoint
+                                                                     │
+                                                                     ▼
+ dashboard ◄── log + annotated image ◄── checkpoint decision ◄── RGB-D capture
+                                              ▲
+                          ┌───────────────────┴──────────────────┐
+                 depth keep-clear rule (baseline)     YOLO detector + classifier (ML)
+```
+
+| Component | Method | Package / file |
+|---|---|---|
+| Mapping | slam_toolbox (2D lidar) | `launch/mapping_2d.launch.py` |
+| Localization | AMCL, omnidirectional motion model; EKF over wheel odometry and IMU | `launch/navigation_2d.launch.py` |
+| Navigation | Nav2 (DWB controller, no-spin behaviour tree) | `config/nav2_params.yaml` |
+| Patrol | Nav2 simple commander, checkpoint list per map | `ame505_bringup/patrol.py` |
+| Hazard baseline | Depth points projected to the robot frame; area inside the keep-clear zone | `ame505_bringup/keep_clear.py` |
+| Hazard model | YOLO fine-tuned from COCO, TensorRT on the Jetson; checkpoint classifier | in progress (`ml/`) |
+| Operator UI | Flask + rclpy web dashboard (map, patrol, E-STOP, results) | `ame505_bringup/dashboard.py` |
+
+## Hardware and software
+
+* **Robot:** Hiwonder JetAuto: Jetson Nano 4 GB, mecanum base, RPLidar A1, Orbbec Astra RGB-D camera, IMU
+* **Software:** Ubuntu 22.04, ROS 2 Humble, slam_toolbox, Nav2, OpenCV, Ultralytics YOLO, scikit-learn
+* **Offline tools** (`ml/`): Python 3, NumPy, OpenCV, PyYAML. No ROS needed.
+
+## Repository layout
+
+```
+safety-inspection-robot/
 ├── src/
-│   ├── ame505_description/   robot URDF/xacro + meshes, RViz model view
-│   └── ame505_bringup/       drivers, Xbox teleop, RTAB-Map 3D mapping, Nav2, patrol, dashboard
-│       └── web/              dashboard + 3D map viewer pages
-├── scripts/                  dashboard, env, SSD setup, map export, stop
-├── CLAUDE.md                    project context for Claude Code / new teammates
-├── docs/ROBOT.md                hardware, software layout, working offline
-├── docs/MAPPING_NAVIGATION.md   step-by-step guide
-├── docs/LOCALIZATION.md         why localization failed, how it works now, mapping good practice
-├── docs/DATA_COLLECTION.md      ML dataset plan (1,000-2,000 RGB-D images, 8-10 checkpoints)
-├── debug_logs/                  trimmed logs from robot runs (scripts/save_debug_bundle.sh)
-├── docs/GTSAM_SLAM.md           GTSAM lidar/gyro SLAM + safe navigation (lidar + depth + collision monitor)
-└── data/ssd -> /home/ubuntu/share/tmp/ame505_data   (SSD, git-ignored)
+│   ├── ame505_description/   URDF / xacro and meshes of the JetAuto
+│   └── ame505_bringup/       launch files, Nav2 / SLAM configs, patrol, dataset capture, dashboard
+├── ml/                       dataset split, depth-rule baseline, evaluation metrics (feature branches)
+├── scripts/                  environment, dashboard, map export, debug bundle, stop-all
+├── docs/                     setup, navigation, localization, data collection, developer guide
+└── debug_logs/               trimmed logs and maps from robot sessions
 ```
 
-## Quick start
-
-**Easiest:** `~/ame505-safety-inspection-robot/scripts/dashboard.sh` and open http://localhost:8505
-(or http://<robot-ip>:8505 from a laptop). Start mapping → drive with Xbox LB (map grows live) →
-Stop & Save → pick the map → Start navigation → 🎯 Go to goal.
+## Quick start (on the robot)
 
 ```bash
-source ~/ros2_ws/.robotrc && colcon build --symlink-install && ./scripts/setup_ssd_data.sh  # once
-source scripts/env.sh                                                                        # every terminal
-
-ros2 launch ame505_description view_robot.launch.py                       # robot model
-ros2 launch ame505_bringup robot.launch.py use_rviz:=true                # drive + see lidar/camera
-ros2 launch ame505_bringup mapping_2d.launch.py map:=lab2d              # 2D map (Xbox: hold LB)
-./scripts/save_2d_map.sh lab2d                                           # save it (while mapping runs)
-ros2 launch ame505_bringup navigation_2d.launch.py map:=lab2d           # AMCL + Nav2 (Y = save checkpoint)
-ros2 run ame505_bringup patrol --map lab2d                               # autonomous patrol
-ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_01 --scene normal --n 6   # ML data
-./scripts/save_debug_bundle.sh 6 "note"                                  # logs for offline analysis
-ros2 launch ame505_bringup mapping.launch.py map:=lab_map new:=true      # (legacy) 3D RTAB-Map
-ros2 launch ame505_bringup navigation.launch.py map:=lab_map             # (legacy) RTAB-Map localization
-ros2 launch ame505_bringup rviz.launch.py mode:=robot|mapping|navigation # RViz from a laptop
-ros2 launch ame505_bringup gtsam_slam.launch.py                          # GTSAM SLAM (robot still ~5 s)
-ros2 run ame505_bringup gtsam_map_check --map lab_map_new                # GTSAM on a saved map
+source ~/ros2_ws/.robotrc && colcon build --symlink-install && ./scripts/setup_ssd_data.sh   # once
+source scripts/env.sh                                                                         # every terminal
+./scripts/dashboard.sh            # web UI at http://<robot-ip>:8505
 ```
 
-Full instructions: [docs/MAPPING_NAVIGATION.md](docs/MAPPING_NAVIGATION.md) · GTSAM: [docs/GTSAM_SLAM.md](docs/GTSAM_SLAM.md)
-(once: `./scripts/setup_gtsam.sh`)
+From the dashboard: start mapping, then stop and save the map, start navigation, save checkpoints,
+and run the patrol. Equivalent command-line steps:
+
+```bash
+ros2 launch ame505_bringup mapping_2d.launch.py map:=lab2d        # build a 2D map (Xbox: hold LB to drive)
+./scripts/save_2d_map.sh lab2d                                    # save it while mapping runs
+ros2 launch ame505_bringup navigation_2d.launch.py map:=lab2d     # AMCL + Nav2 (Xbox Y saves a checkpoint)
+ros2 run ame505_bringup patrol --map lab2d                        # visit every checkpoint
+ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_01 --scene normal --n 6
+./scripts/stop_all.sh                                             # stop all nodes and zero the motors
+```
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [docs/ROBOT.md](docs/ROBOT.md) | Hardware, software layout on the robot, working from a laptop |
+| [docs/MAPPING_NAVIGATION.md](docs/MAPPING_NAVIGATION.md) | Step-by-step mapping, localization, navigation, patrol |
+| [docs/LOCALIZATION.md](docs/LOCALIZATION.md) | Localization failure analysis and the AMCL configuration |
+| [docs/DATA_COLLECTION.md](docs/DATA_COLLECTION.md) | RGB-D dataset protocol: checkpoints, scenes, sessions, splits |
+| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Build / run, TF tree, Jetson Nano constraints, code map |
+| [docs/GTSAM_SLAM.md](docs/GTSAM_SLAM.md) | Experimental GTSAM lidar / gyro SLAM |
+
+## Branches
+
+* `main`: reviewed, working code.
+* `dev`: integration branch where all feature work is merged and tested together. Open pull requests from `dev` into `main`.
+* `feature/*`, `fix/*`, `nav/*`, `sim/*`: one topic per branch, merged into `dev` first.
+
+## Team
+
+Leo Crampe (evaluation) · Nirmal Kumar Jagannathan (system integration) ·
+Ryan O'Gorman (data preparation) · Soowhan Yi (model development)

@@ -1,15 +1,15 @@
-# CLAUDE.md: context for Claude Code (and humans) working on this repo
+# Developer guide
 
 AME 505 (USC, Fall 2026) Group 5: **Autonomous Safety Inspection Robot**. A Hiwonder JetAuto
 patrols 8–10 checkpoints, stops at each one, captures RGB-D images, and flags staged hazards
 (blocked exit, obstructed walkway, open door) with a fine-tuned YOLO + depth keep-clear-zone check.
-The navigation side (this repo, so far) gets the robot to the checkpoints. Details: [docs/ROBOT.md](docs/ROBOT.md).
+The navigation side (this repo, so far) gets the robot to the checkpoints. Details: [ROBOT.md](ROBOT.md).
 
 ## Where code runs
 
 * **Robot**: Jetson Nano 4 GB, Ubuntu 22.04 Docker container, ROS 2 Humble. Repo at
-  `~/ame505-safety-inspection-robot`, Hiwonder drivers in `~/ros2_ws` (not in this repo).
-  RAM is the bottleneck: VS Code + Claude on the robot use ~1–2 GB and push Nav2 into swap
+  `~/safety-inspection-robot`, Hiwonder drivers in `~/ros2_ws` (not in this repo).
+  RAM is the bottleneck: VS Code and its extensions on the robot use ~1–2 GB and push Nav2 into swap
   (load average 19 seen). **Edit on a laptop, `git push`, then `git pull` + build on the robot.**
 * **Laptop (offline)**: you can edit and read logs/maps here, but you can't run the robot stack.
   Use `debug_logs/<time>/` (made by `scripts/save_debug_bundle.sh` on the robot) to analyse runs.
@@ -68,12 +68,12 @@ TF: `map -(AMCL or slam_toolbox)-> odom -(EKF)-> base_footprint -(URDF)-> lidar_
 * `src/ame505_bringup/web/index.html`: the dashboard page (vanilla JS, canvas map).
 * `config/nav2_params.yaml`: Nav2 + AMCL + collision monitor. `config/slam_toolbox_mapping.yaml`.
 * `depth_obstacles.py`: depth image → `/depth_cam/points` for costmaps (only with camera on).
-* `gtsam_*`: Shreyash's GTSAM lidar/gyro SLAM experiment ([docs/GTSAM_SLAM.md](docs/GTSAM_SLAM.md)).
+* `gtsam_*`: GTSAM lidar/gyro SLAM experiment ([GTSAM_SLAM.md](GTSAM_SLAM.md)).
 * `src/ame505_description`: URDF/meshes (footprint 0.33 × 0.28 m).
 
-Docs: [docs/MAPPING_NAVIGATION.md](docs/MAPPING_NAVIGATION.md) (how to use) ·
-[docs/LOCALIZATION.md](docs/LOCALIZATION.md) (why it failed, how it works now, mapping good practice) ·
-[docs/DATA_COLLECTION.md](docs/DATA_COLLECTION.md) (ML dataset plan for the proposal).
+Docs: [MAPPING_NAVIGATION.md](MAPPING_NAVIGATION.md) (how to use) ·
+[LOCALIZATION.md](LOCALIZATION.md) (why it failed, how it works now, mapping good practice) ·
+[DATA_COLLECTION.md](DATA_COLLECTION.md) (ML dataset plan for the proposal).
 
 Conventions: keep changes small, explain Nano-specific numbers in comments, never commit `data/`,
 build/, install/, log/. Commit trimmed `debug_logs/` only when useful.

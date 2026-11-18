@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ONE command: dashboard + navigation on a saved map + GTSAM SLAM.
 #
-#   ~/ame505-safety-inspection-robot/scripts/start_slam.sh              # map lab_map_new
-#   ~/ame505-safety-inspection-robot/scripts/start_slam.sh lab_map      # another map
+#   ~/safety-inspection-robot/scripts/start_slam.sh              # map lab_map_new
+#   ~/safety-inspection-robot/scripts/start_slam.sh lab_map      # another map
 #
 # Put the robot where mapping started and DON'T touch it until "GTSAM started" is printed
 # (gyro calibration). Then open the printed URL (laptop/phone on the same Wi-Fi).
@@ -58,7 +58,7 @@ cat <<EOF
   * Orange path = GTSAM SLAM on your map, blue arrow = RTAB-Map.
   * Navigation needs ~1-2 min on the Nano. Then: 🎯 Go to goal -> click on the map.
   * If the orange path is offset: GTSAM card -> "Re-align to map".
-  * Stop everything:  ~/ame505-safety-inspection-robot/scripts/stop_all.sh
+  * Stop everything:  ~/safety-inspection-robot/scripts/stop_all.sh
 EOF
 # open the dashboard in a browser on the robot's screen (if there is one)
 if [ -n "${DISPLAY:-}" ] && command -v xdg-open >/dev/null; then

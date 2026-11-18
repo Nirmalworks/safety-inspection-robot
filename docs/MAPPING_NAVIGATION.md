@@ -11,7 +11,7 @@ odometry, IMU). Why, and how to map well: [LOCALIZATION.md](LOCALIZATION.md). Th
 ## The easy way: the dashboard
 
 ```bash
-~/ame505-safety-inspection-robot/scripts/dashboard.sh
+~/safety-inspection-robot/scripts/dashboard.sh
 ```
 Open **http://localhost:8505** on the robot, or **http://\<robot-ip\>:8505** from a laptop on the same Wi-Fi
 (the script prints the IP).
@@ -82,7 +82,7 @@ The dashboard's *Xbox controller* card lights up the buttons you press, so you c
 
 ## Command-line equivalents
 
-Every terminal: `source ~/ame505-safety-inspection-robot/scripts/env.sh`
+Every terminal: `source ~/safety-inspection-robot/scripts/env.sh`
 
 ```bash
 # robot model only (no hardware)
