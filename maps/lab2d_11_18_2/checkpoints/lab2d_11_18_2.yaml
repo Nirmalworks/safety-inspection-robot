@@ -1,0 +1,14 @@
+frame_id: map
+checkpoints:
+- id: cp_01
+  x: 8.738
+  y: -2.273
+  yaw: -0.013
+- id: cp_02
+  x: 2.914
+  y: -4.999
+  yaw: -1.763
+- id: cp_03
+  x: -5.429
+  y: -5.335
+  yaw: 3.126
