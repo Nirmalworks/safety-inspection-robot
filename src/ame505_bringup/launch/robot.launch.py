@@ -126,6 +126,9 @@ def generate_launch_description():
              # project EKF config: 15 Hz (30 Hz overran on the Nano), no unused rf2o input
              parameters=[os.path.join(get_package_share_directory('ame505_bringup'), 'config', 'ekf.yaml')],
              remappings=[('odometry/filtered', 'odom'), ('cmd_vel', 'controller/cmd_vel')]),
+        # the motor driver holds the last command forever: stop the wheels when commands stop
+        Node(package='ame505_bringup', executable='cmd_vel_watchdog', name='cmd_vel_watchdog',
+             output='screen', respawn=True),
         include(servo, 'launch/servo_controller.launch.py', {'base_frame': 'base_footprint'}),
         include(controller, 'launch/init_pose.launch.py',
                 {'namespace': '', 'use_namespace': 'false', 'action_name': 'horizontal'}),

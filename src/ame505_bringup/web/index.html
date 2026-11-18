@@ -75,6 +75,13 @@
   .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:8px;font-family:var(--mono)}
   .legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
   .det{font-family:var(--mono);font-size:11.5px} .det td{padding:3px 4px} .det .rel{color:#fdba74;font-weight:600}
+  .kb{display:flex;flex-direction:column;align-items:center;gap:5px;margin:8px 0}
+  .kbrow{display:flex;gap:5px}
+  .key{width:46px;height:42px;border:1px solid var(--line2);border-bottom-width:3px;border-radius:7px;background:var(--bg2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:13px;color:#9fb0c3;user-select:none}
+  .key small{font-size:9.5px;color:var(--mut);font-weight:500}
+  .key.wide{width:96px} .key.on{background:#0c4a6e;border-color:var(--acc);color:#fff;transform:translateY(1px)}
+  #kbcard.armed{border-color:#155e85;box-shadow:0 0 0 1px #155e8555 inset}
+  .kbstat{font-family:var(--mono);font-size:12px;text-align:center;color:var(--mut)}
   footer{color:#4b5868;font-size:11px;text-align:center;padding:4px 0 18px;font-family:var(--mono)}
 </style>
 </head>
@@ -100,6 +107,20 @@
       <button class="big go" id="bDrive" onclick="act('start_drive')">Start driving</button>
       <button class="big stop" id="bStop2" onclick="act('stop')">Stop</button>
     </div>
+  </div>
+
+  <div class="card" id="kbcard">
+    <h2>Keyboard drive</h2>
+    <label class="chk" style="margin-top:0"><input type="checkbox" id="kbOn"> enable laptop keyboard control</label>
+    <div class="kb">
+      <div class="kbrow"><span class="key" data-k="q">Q<small>⟲</small></span><span class="key" data-k="w">W<small>▲</small></span><span class="key" data-k="e">E<small>⟳</small></span></div>
+      <div class="kbrow"><span class="key" data-k="a">A<small>◀</small></span><span class="key" data-k="s">S<small>▼</small></span><span class="key" data-k="d">D<small>▶</small></span></div>
+      <div class="kbrow"><span class="key wide" data-k="shift">Shift<small>fast</small></span><span class="key wide" data-k=" ">Space<small>stop</small></span></div>
+    </div>
+    <div class="kbstat" id="kbStat">off</div>
+    <p style="color:var(--mut);font-size:11.5px;margin:6px 0 0">W/S or ↑/↓ forward/back · A/D strafe · Q/E or ←/→ turn · hold <b>Shift</b> for 2× speed.
+      The robot moves only while a key is held, and stops when you let go, switch tabs, or the connection drops.
+      A key press cancels the current Nav2 goal. Like the Xbox pad, this bypasses the Nav2 collision monitor: watch the robot.</p>
   </div>
 
   <div class="card">
@@ -623,6 +644,50 @@ const nm = (() => {
     ctl.update(); R.render(scene, cam); requestAnimationFrame(frame);
   }
   frame(); setInterval(update, 300);
+})();
+</script>
+<script>
+// ---------- Keyboard drive: held keys -> /api/teleop at 10 Hz; release / blur -> zero ----------
+(() => {
+  const held = new Set(), MAP = {arrowup: 'w', arrowdown: 's', arrowleft: 'q', arrowright: 'e'};
+  const SLOW = [0.15, 0.15, 0.5], FAST = [0.30, 0.30, 1.0];          // m/s, m/s, rad/s (Xbox LB / RB)
+  let wasMoving = false, busy = false, zeros = 0;
+  const typing = e => /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName) && e.target.type !== 'checkbox';
+  const keyOf = e => { const k = e.key.toLowerCase(); return MAP[k] || (k === 'shift' ? 'shift' : k); };
+  function show() {
+    document.querySelectorAll('.key').forEach(el => el.classList.toggle('on', held.has(el.dataset.k)));
+    $('kbcard').classList.toggle('armed', $('kbOn').checked);
+  }
+  function stopNow() { held.clear(); show(); send(0, 0, 0); wasMoving = false; }
+  async function send(x, y, z) {
+    if (busy && (x || y || z)) return;                                // never queue up moves
+    busy = true;
+    try {
+      const r = await fetch('/api/teleop', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({x, y, z})});
+      const j = await r.json(); $('kbStat').textContent = j.ok ? (x || y || z ? `→ x ${x.toFixed(2)}  y ${y.toFixed(2)}  ω ${z.toFixed(2)}` : 'stopped') : j.msg;
+    } catch (e) { $('kbStat').textContent = 'dashboard not reachable'; }
+    busy = false;
+  }
+  addEventListener('keydown', e => {
+    if (!$('kbOn').checked || typing(e)) return;
+    const k = keyOf(e);
+    if (k === ' ') { e.preventDefault(); stopNow(); return; }
+    if ('wasdqe'.includes(k) || k === 'shift') { e.preventDefault(); held.add(k); show(); }
+  });
+  addEventListener('keyup', e => { const k = keyOf(e); if (held.delete(k)) show(); if (k === 'shift') held.delete('shift'); });
+  addEventListener('blur', () => { if (held.size || wasMoving) stopNow(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && (held.size || wasMoving)) stopNow(); });
+  $('kbOn').addEventListener('change', () => { $('kbOn').blur(); if (!$('kbOn').checked) stopNow(); show(); $('kbStat').textContent = $('kbOn').checked ? 'ready: hold W A S D Q E' : 'off'; });
+  setInterval(() => {
+    if (!$('kbOn').checked) return;
+    const v = held.has('shift') ? FAST : SLOW, h = k => held.has(k) ? 1 : 0;
+    const x = (h('w') - h('s')) * v[0], y = (h('a') - h('d')) * v[1], z = (h('q') - h('e')) * v[2];
+    const moving = !!(x || y || z);
+    if (moving) { send(x, y, z); zeros = 2; }
+    else if (zeros > 0) { zeros--; send(0, 0, 0); }           // twice: a late move request can't win
+    wasMoving = moving;
+  }, 100);
+  show();
 })();
 </script>
 </body>

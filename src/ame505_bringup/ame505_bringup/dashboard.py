@@ -60,13 +60,16 @@ BUTTONS = ['A', 'B', 'X', 'Y', 'Back', 'Xbox', 'Start', 'LS', 'RS', 'LB', 'RB',
 class Rate:
     def __init__(self):
         self.t = collections.deque(maxlen=60)
+        self.lock = threading.Lock()   # ROS callbacks tick while Flask reads ("deque mutated" errors)
 
     def tick(self):
-        self.t.append(time.time())
+        with self.lock:
+            self.t.append(time.time())
 
     def hz(self):
         now = time.time()
-        recent = [x for x in self.t if now - x < 3.0]
+        with self.lock:
+            recent = [x for x in self.t if now - x < 3.0]
         if len(recent) < 2:
             return 0.0
         return round((len(recent) - 1) / max(recent[-1] - recent[0], 1e-3), 1)
@@ -444,7 +447,7 @@ LEFTOVER_PROG = re.compile(
     r'imu_complementary_filter|laser_filters|sllidar_ros2|rtabmap_\w+|nav2_\w+|rclcpp_components|joy|slam_toolbox)/'
     r'|^/home/ubuntu/third_party_ros2/'          # sllidar_node (lidar driver) lives here
     r'|astra_bridge\.py$'
-    r'|/lib/ame505_bringup/(xbox_teleop|checkpoint_recorder|patrol|frame_recorder|depth_obstacles|gtsam_slam|lifecycle_guard|sim_robot|yolo_live)$)')
+    r'|/lib/ame505_bringup/(xbox_teleop|checkpoint_recorder|patrol|frame_recorder|depth_obstacles|gtsam_slam|lifecycle_guard|sim_robot|yolo_live|cmd_vel_watchdog)$)')
 
 
 def _leftover_pids():
@@ -496,6 +499,8 @@ class Manager:
         self.gtsam = None
         self.gtsam_check = {}
         self.yolo = None
+        self.key_t, self.key_moving = 0.0, False
+        threading.Thread(target=self.key_deadman, daemon=True).start()
         self.mode = 'idle'
         self.stopping = False      # True while _stop_job runs: no second Stop, no Start
         self.kind = '2d'
@@ -752,6 +757,32 @@ class Manager:
             self.node.v.pop('yolo', None)
             self.node.jpeg['yolo'] = None
         return True, 'YOLO stopped (memory released).'
+
+    # ---------- keyboard drive (dashboard): same topic as the Xbox teleop ----------
+    KEY_MAX = (0.30, 0.30, 1.0)          # m/s, m/s, rad/s (Xbox turbo limits)
+
+    def teleop(self, x, y, z):
+        if not self.running() or self.mode not in ('drive', 'mapping', 'navigation'):
+            return False, 'Start driving, mapping or navigation first.'
+        if self.node.nav_state.get('state') in ('driving', 'sending'):
+            self.node.cancel_goal()        # manual control overrides the current Nav2 goal
+        lx, ly, lz = self.KEY_MAX
+        t = Twist()
+        t.linear.x = float(max(-lx, min(lx, x)))
+        t.linear.y = float(max(-ly, min(ly, y)))
+        t.angular.z = float(max(-lz, min(lz, z)))
+        self.node.estop_pub.publish(t)
+        self.key_t = time.time()
+        self.key_moving = bool(t.linear.x or t.linear.y or t.angular.z)
+        return True, ''
+
+    def key_deadman(self):
+        """Browser sends keys at 10 Hz while held: no update for 0.4 s (tab closed, Wi-Fi drop) -> stop."""
+        while True:
+            time.sleep(0.1)
+            if self.key_moving and time.time() - self.key_t > 0.4:
+                self.key_moving = False
+                self.estop_twist()
 
     def estop_twist(self):
         for _ in range(5):
@@ -1076,6 +1107,9 @@ def create_app(node, mgr):
             ok, msg = mgr.stop_gtsam()
         elif action == 'gtsam_reanchor':
             ok, msg = node.reanchor_gtsam()
+        elif action == 'teleop':
+            ok, msg = mgr.teleop(float(body.get('x', 0)), float(body.get('y', 0)), float(body.get('z', 0)))
+            return jsonify({'ok': ok, 'msg': msg}), (200 if ok else 400)
         elif action == 'start_yolo':
             ok, msg = mgr.start_yolo()
         elif action == 'stop_yolo':
