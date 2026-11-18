@@ -96,6 +96,7 @@
   <span class="chip">YOLO <b id="hYolo">off</b></span>
   <span class="spacer"></span>
   <input type="text" id="snapNote" placeholder="snapshot note (e.g. cp_02 blocked exit)" style="width:230px">
+  <button class="tbtn" id="bRec" onclick="toggleRec()" title="record this dashboard tab to a video file">⏺ Record screen</button>
   <button class="tbtn" id="bSnap" onclick="snapshot()" title="save camera, depth, YOLO, map and 3D view for the presentation">📸 Snapshot</button>
   <button class="estop" onclick="act('estop')">E-STOP</button>
 </header>
@@ -123,6 +124,21 @@
     <p style="color:var(--mut);font-size:11.5px;margin:6px 0 0">W/S or ↑/↓ forward/back · A/D strafe · Q/E or ←/→ turn · hold <b>Shift</b> for 2× speed.
       The robot moves only while a key is held, and stops when you let go, switch tabs, or the connection drops.
       A key press cancels the current Nav2 goal. Like the Xbox pad, this bypasses the Nav2 collision monitor: watch the robot.</p>
+  </div>
+
+  <div class="card">
+    <h2>Demo at checkpoint</h2>
+    <p style="color:var(--mut);margin:0 0 8px;font-size:12px">Navigation running with <b>camera</b>. Drives to the checkpoint,
+      turns YOLO on, holds still, captures photos (dataset, session below) and saves a 📸 snapshot.</p>
+    <div class="row"><select id="demoCp" title="checkpoint"></select>
+      <input type="number" id="demoN" value="6" min="1" max="30" title="photos"></div>
+    <div class="row" style="margin-top:6px">
+      <select id="demoScene" title="scene"><option>normal</option><option>hazard</option></select>
+      <select id="demoHaz" title="hazard type"><option>none</option><option>blocked_exit</option><option>obstructed_walkway</option><option>open_door</option><option>multiple</option></select></div>
+    <div class="row" style="margin-top:6px"><input type="text" id="demoSess" value="demo" title="session">
+      <input type="text" id="demoObj" placeholder="objects, e.g. box" title="staged objects"></div>
+    <button class="big view" id="bDemo" style="margin-top:8px" onclick="runDemo()">▶ Run demo</button>
+    <div class="kbstat" id="demoStat" style="margin-top:6px;text-align:left">–</div>
   </div>
 
   <div class="card">
@@ -277,6 +293,50 @@ async function snapshot() {
   await act('snapshot', {note: $('snapNote').value, map: grab($('mapcanvas')), robot3d: grab(document.querySelector('#view3d canvas'))});
   $('bSnap').disabled = false;
 }
+function runDemo() {
+  act('demo_checkpoint', {id: $('demoCp').value, n: +$('demoN').value, scene: $('demoScene').value,
+    hazard: $('demoScene').value === 'hazard' ? $('demoHaz').value : 'none', session: $('demoSess').value.trim(),
+    objects: $('demoObj').value.trim(), note: $('snapNote').value.trim()});
+}
+let lastDemoId = null;
+function renderDemo() {
+  const d = st.demo || {}, busy = !['idle', 'done', 'failed', undefined].includes(d.state);
+  $('bDemo').disabled = busy || !(st.running && st.mode === 'navigation');
+  $('demoStat').textContent = d.state && d.state !== 'idle' ? `${d.cp || ''} · ${d.state}: ${d.msg || ''}` : '–';
+  $('demoStat').style.color = d.state === 'failed' ? 'var(--bad)' : d.state === 'done' ? 'var(--ok)' : '';
+  if (d.state === 'done' && lastDemoId !== null && d.id !== lastDemoId) snapshot();   // + map / 3D canvases
+  if (d.state === 'done' || d.state === 'failed' || lastDemoId === null) lastDemoId = d.id;
+  const cps = (window.navSt && window.navSt.checkpoints || []).map(c => c.id), sel = $('demoCp');
+  if (sel.dataset.list !== cps.join('|')) { const cur = sel.value; sel.dataset.list = cps.join('|');
+    sel.innerHTML = cps.map(c => `<option>${c}</option>`).join('') || '<option value="">no checkpoints</option>';
+    if (cps.includes(cur)) sel.value = cur; }
+}
+// ⏺ Record screen: the browser asks which tab/window to record; the video downloads when stopped.
+// Needs a secure page: open the dashboard as http://localhost:8505 (on the robot, or through
+// ssh -L 8505:localhost:8505). Over http://<robot-ip> browsers block screen capture.
+let rec = null;
+async function toggleRec() {
+  if (rec) { rec.stop(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+    $('job').textContent = 'Screen recording needs http://localhost:8505 (ssh -L 8505:localhost:8505 ubuntu@<robot-ip>), or use the OS recorder (Win+Alt+R / Cmd+Shift+5).';
+    return;
+  }
+  let stream;
+  try { stream = await navigator.mediaDevices.getDisplayMedia({video: {frameRate: 15}, audio: false, preferCurrentTab: true}); }
+  catch (e) { $('job').textContent = 'Screen recording cancelled.'; return; }
+  const chunks = [], type = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+  rec = new MediaRecorder(stream, {mimeType: type, videoBitsPerSecond: 3e6});
+  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  rec.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    const a = document.createElement('a'), ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    a.href = URL.createObjectURL(new Blob(chunks, {type: 'video/webm'})); a.download = `safety-robot-dashboard-${ts}.webm`; a.click();
+    rec = null; $('bRec').textContent = '⏺ Record screen'; $('bRec').classList.remove('red');
+    $('job').textContent = 'Recording saved to your Downloads folder.';
+  };
+  stream.getVideoTracks()[0].onended = () => rec && rec.state !== 'inactive' && rec.stop();
+  rec.start(1000); $('bRec').textContent = '■ Stop recording'; $('bRec').classList.add('red');
+}
 function startMapping() { act('start_mapping', {map: $('mapname').value.trim(), new: $('newmap').checked, rviz: false,
   map3d: $('map3d').checked, camera: $('mapcam').checked || $('map3d').checked}); }
 function startNav() { act('start_navigation', {map: $('mapsel').value, rviz: false, camera: $('navcam').checked}); }
@@ -375,7 +435,7 @@ function renderMode() {
 }
 
 async function poll() {
-  try { st = await (await fetch('/api/status')).json(); renderSensors(); renderMode(); renderHeader(); } catch (e) { $('job').textContent = 'Dashboard server not reachable'; }
+  try { st = await (await fetch('/api/status')).json(); renderSensors(); renderMode(); renderHeader(); renderDemo(); } catch (e) { $('job').textContent = 'Dashboard server not reachable'; }
 }
 async function pollFiles() {
   files = await (await fetch('/api/files')).json();

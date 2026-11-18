@@ -501,6 +501,7 @@ class Manager:
         self.gtsam_check = {}
         self.yolo = None
         self.key_t, self.key_moving = 0.0, False
+        self.demo = {'state': 'idle', 'id': 0}
         threading.Thread(target=self.key_deadman, daemon=True).start()
         self.mode = 'idle'
         self.stopping = False      # True while _stop_job runs: no second Stop, no Start
@@ -759,6 +760,78 @@ class Manager:
             self.node.jpeg['yolo'] = None
         return True, 'YOLO stopped (memory released).'
 
+    # ---------- demo at a checkpoint: drive there, YOLO on, photos, snapshot ----------
+    def demo_running(self):
+        return self.demo.get('state') not in ('idle', 'done', 'failed')
+
+    def start_demo(self, cp_id, n=6, session='demo', scene='normal', hazard='none', objects='', note=''):
+        if self.mode != 'navigation' or not self.running():
+            return False, 'Start navigation first (tick "camera").'
+        if self.demo_running():
+            return False, 'A demo is already running.'
+        cps = {c['id']: c for c in load_checkpoints(self.map)}
+        if cp_id not in cps:
+            return False, f'Unknown checkpoint {cp_id} (map {self.map} has: {", ".join(cps) or "none"}).'
+        if scene not in ('normal', 'hazard') or hazard not in ('none', 'blocked_exit', 'obstructed_walkway',
+                                                              'open_door', 'multiple'):
+            return False, 'Unknown scene / hazard type.'
+        if scene == 'hazard' and hazard == 'none':
+            return False, 'A hazard scene needs a hazard type.'
+        for v in (session, objects, note):
+            if not re.match(r'^[A-Za-z0-9_ ,.-]{0,60}$', v):
+                return False, 'Use letters, digits, space , . _ - in session / objects / note.'
+        args = dict(cp=cps[cp_id], n=max(1, min(int(n), 30)), session=session or 'demo', scene=scene,
+                    hazard=hazard if scene == 'hazard' else 'none', objects=objects, note=note)
+        self.demo = {'state': 'starting', 'id': self.demo.get('id', 0) + 1, 'cp': cp_id, 'msg': 'starting'}
+        threading.Thread(target=self._demo_job, kwargs=args, daemon=True).start()
+        return True, f'Demo at {cp_id}: driving there, then YOLO + {args["n"]} photos + snapshot.'
+
+    def _demo_step(self, state, msg):
+        self.demo.update(state=state, msg=msg)
+        self.job = f'Demo {self.demo.get("cp")}: {msg}'
+
+    def _demo_job(self, cp, n, session, scene, hazard, objects, note):
+        node = self.node
+        try:
+            if not self.yolo_running():
+                self.start_yolo()
+            ok, msg = node.send_goal(cp['x'], cp['y'], cp['yaw'], cp['id'])
+            if not ok:
+                return self._demo_step('failed', msg)
+            self._demo_step('driving', f'driving to {cp["id"]}')
+            t0 = time.time()
+            while time.time() - t0 < 180:
+                st = node.nav_state.get('state')
+                if st == 'arrived':
+                    break
+                if st in ('failed', 'canceled', 'rejected') or self.mode != 'navigation':
+                    return self._demo_step('failed', f'navigation {st}: drive there by hand and press Demo again')
+                time.sleep(0.5)
+            else:
+                return self._demo_step('failed', 'did not arrive within 3 min')
+            self._demo_step('settling', 'arrived - holding still 4 s (camera is 1-7 s late)')
+            time.sleep(4)
+            t0 = time.time()
+            while node.rate['/yolo/detections'].hz() < 0.2 and time.time() - t0 < 60:
+                self._demo_step('yolo', f'waiting for YOLO ({int(time.time() - t0)} s)')
+                time.sleep(1)
+            self._demo_step('capturing', f'capturing {n} photos')
+            cmd = ['ros2', 'run', 'ame505_bringup', 'capture_dataset', '--session', session,
+                   '--checkpoint', cp['id'], '--scene', scene, '--hazard', hazard, '--n', str(n)]
+            if objects:
+                cmd += ['--objects', objects]
+            if note:
+                cmd += ['--note', note]
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+            lines = (r.stdout + r.stderr).strip().splitlines()
+            if r.returncode != 0:
+                return self._demo_step('failed', f'capture failed: {lines[-1] if lines else r.returncode}')
+            ok, msg = save_snapshot(node, self, {'note': f'demo {cp["id"]} {scene} {hazard} {note}'.strip()})
+            self.demo['snapshot'] = msg
+            self._demo_step('done', f'done: {lines[-1] if lines else "photos saved"} | {msg}')
+        except Exception as e:  # noqa: BLE001  (a demo must never take the dashboard down)
+            self._demo_step('failed', f'error: {e}')
+
     # ---------- keyboard drive (dashboard): same topic as the Xbox teleop ----------
     KEY_MAX = (0.30, 0.30, 1.0)          # m/s, m/s, rad/s (Xbox turbo limits)
 
@@ -996,7 +1069,7 @@ def create_app(node, mgr):
             'patrol': mgr.patrol is not None and mgr.patrol.poll() is None,
             'job': mgr.job, 'last_saved': mgr.last_saved, 'sensors': v, 'rates': rates,
             'log': mgr.log_tail(), 'gtsam_running': mgr.gtsam_running(), 'gtsam_check': mgr.gtsam_check,
-            'yolo_running': mgr.yolo_running(),
+            'yolo_running': mgr.yolo_running(), 'demo': mgr.demo,
         })
 
     @app.get('/api/scan')
@@ -1141,6 +1214,10 @@ def create_app(node, mgr):
         elif action == 'teleop':
             ok, msg = mgr.teleop(float(body.get('x', 0)), float(body.get('y', 0)), float(body.get('z', 0)))
             return jsonify({'ok': ok, 'msg': msg}), (200 if ok else 400)
+        elif action == 'demo_checkpoint':
+            ok, msg = mgr.start_demo(str(body.get('id', 'cp_01')), body.get('n', 6), str(body.get('session', 'demo')),
+                                     str(body.get('scene', 'normal')), str(body.get('hazard', 'none')),
+                                     str(body.get('objects', '')), str(body.get('note', '')))
         elif action == 'snapshot':
             ok, msg = save_snapshot(node, mgr, body)
         elif action == 'start_yolo':

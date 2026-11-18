@@ -65,6 +65,11 @@ Dashboard header: type a note (e.g. `cp_02 blocked exit, box`) and press **📸 
 the camera, depth, YOLO view, map (robot, plan, checkpoints) and 3D robot view as they are on screen,
 plus `state.json` (pose, localization, detections), to `$AME505_DATA/presentation/<time>/`.
 Take one at each checkpoint for normal and for hazard, one during a patrol drive, and one with YOLO on.
+**Demo at checkpoint** (dashboard card, or `scripts/demo_checkpoint.sh cp_01 hazard blocked_exit box`):
+drives to the checkpoint, turns YOLO on, holds still 4 s, captures the photos into the dataset
+(session `demo` unless set) and saves a snapshot. **⏺ Record screen** records the dashboard tab to a
+`.webm` in your Downloads. It needs the page opened as `http://localhost:8505` (SSH tunnel), because
+browsers block screen capture on plain `http://<robot-ip>`.
 Also take **phone photos / short videos of the robot itself** next to the staged hazard. The dashboard
 cannot show the robot from the outside.
 
