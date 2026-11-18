@@ -29,14 +29,8 @@ done
 # ROS 2 CLI daemon: ~60-100 MB, restarts by itself the next time a ros2 command needs it
 command -v ros2 >/dev/null 2>&1 && ros2 daemon stop >/dev/null 2>&1 && echo "-- stopped ros2 daemon"
 
-# Leftover ros2 launch / node processes from crashed runs (only when no launch is running)
-if ! pgrep -f "ros2 launch" >/dev/null; then
-  n=$(pgrep -fc '/opt/ros/humble/lib/|/install/ame505_bringup/lib/' 2>/dev/null || echo 0)
-  if [ "${n:-0}" -gt 0 ]; then
-    echo "-- $n leftover ROS node processes with no launch running: stopping them"
-    pkill -f '/opt/ros/humble/lib/|/install/ame505_bringup/lib/' 2>/dev/null || true
-  fi
-fi
+# Leftover nodes from crashed runs are cleaned by --robot (scripts/stop_all.sh), not here:
+# a pattern kill would also hit the dashboard, or other containers' processes when run on the host.
 
 # Page cache: frees "buff/cache" (needs host root; harmless, the kernel refills it as needed)
 if sudo -n true 2>/dev/null; then
