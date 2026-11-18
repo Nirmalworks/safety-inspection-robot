@@ -38,6 +38,7 @@ setup(
             'capture_dataset = ame505_bringup.capture_dataset:main',
             'lifecycle_guard = ame505_bringup.lifecycle_guard:main',
             'sim_robot = ame505_bringup.sim_robot:main',
+            'inspection = ame505_bringup.inspection:main',
         ],
     },
 )
