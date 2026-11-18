@@ -42,7 +42,8 @@ safety-inspection-robot/
 ├── src/
 │   ├── ame505_description/   URDF / xacro and meshes of the JetAuto
 │   └── ame505_bringup/       launch files, Nav2 / SLAM configs, patrol, dataset capture, dashboard
-├── ml/                       dataset split, depth-rule baseline, evaluation metrics (feature branches)
+├── ml/                       dataset split, depth-rule baseline, evaluation metrics, tests
+├── gtsam_experiments/        stand-alone GTSAM pose-graph experiments
 ├── scripts/                  environment, dashboard, map export, debug bundle, stop-all
 ├── docs/                     setup, navigation, localization, data collection, developer guide
 └── debug_logs/               trimmed logs and maps from robot sessions
@@ -77,7 +78,11 @@ ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_01 --scene 
 | [docs/LOCALIZATION.md](docs/LOCALIZATION.md) | Localization failure analysis and the AMCL configuration |
 | [docs/DATA_COLLECTION.md](docs/DATA_COLLECTION.md) | RGB-D dataset protocol: checkpoints, scenes, sessions, splits |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Build / run, TF tree, Jetson Nano constraints, code map |
+| [docs/SIMULATION.md](docs/SIMULATION.md) | Run mapping, navigation and patrol on a laptop against a simulated base and lidar |
+| [docs/ROBOT_SESSION_CHECKLIST.md](docs/ROBOT_SESSION_CHECKLIST.md) | Checklist for a robot test session: data to record, map, checkpoints |
+| [ml/README.md](ml/README.md) | Dataset split, depth-rule baseline, evaluation metrics |
 | [docs/GTSAM_SLAM.md](docs/GTSAM_SLAM.md) | Experimental GTSAM lidar / gyro SLAM |
+| [gtsam_experiments/README.md](gtsam_experiments/README.md) | Stand-alone GTSAM pose-graph experiments and hardware guide |
 
 ## Branches
 

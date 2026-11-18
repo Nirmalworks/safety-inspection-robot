@@ -13,7 +13,7 @@ The navigation side (this repo, so far) gets the robot to the checkpoints. Detai
   (load average 19 seen). **Edit on a laptop, `git push`, then `git pull` + build on the robot.**
 * **Laptop (offline)**: you can edit and read logs/maps here, but you can't run the robot stack
   on hardware. `source scripts/sim_env.sh` runs it against a simulated base + lidar
-  ([docs/SIMULATION.md](docs/SIMULATION.md)); no camera, no Nano timing problems.
+  ([SIMULATION.md](SIMULATION.md)); no camera, no Nano timing problems.
   Use `debug_logs/<time>/` (made by `scripts/save_debug_bundle.sh` on the robot) to analyse runs.
 
 ## Build / run (on the robot)
@@ -73,7 +73,7 @@ TF: `map -(AMCL or slam_toolbox)-> odom -(EKF)-> base_footprint -(URDF)-> lidar_
 * `gtsam_*`: GTSAM lidar/gyro SLAM experiment ([GTSAM_SLAM.md](GTSAM_SLAM.md)).
 * `src/ame505_description`: URDF/meshes (footprint 0.33 × 0.28 m).
 * `keep_clear.py` + `inspection.py` + `config/inspection.yaml`: depth-rule hazard check at each patrol
-  checkpoint. `ml/`: dataset split, evaluation, baseline, tests ([ml/README.md](ml/README.md)).
+  checkpoint. `ml/`: dataset split, evaluation, baseline, tests ([ml/README.md](../ml/README.md)).
 
 Docs: [MAPPING_NAVIGATION.md](MAPPING_NAVIGATION.md) (how to use) ·
 [LOCALIZATION.md](LOCALIZATION.md) (why it failed, how it works now, mapping good practice) ·
