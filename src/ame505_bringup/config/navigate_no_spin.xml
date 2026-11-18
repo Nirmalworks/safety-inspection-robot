@@ -1,13 +1,18 @@
 <!--
-  AME 505 navigate-to-pose tree: Nav2's default replanning tree WITHOUT the Spin and BackUp
-  recoveries. Those made the robot turn on the spot / reverse blindly (the A1 lidar only sees
+  AME 505 navigate-to-pose tree: Nav2's default replanning tree WITHOUT the Spin recovery and with
+  only a short, slow BackUp. Spin and long BackUps made the robot turn on the spot / reverse blindly (the A1 lidar only sees
   the front half) whenever a plan failed. Replans at 1 Hz so new obstacles are avoided.
 
   When the robot gets stuck (people, boxes, a tight doorway):
     1. the normal controller "FollowPath" gives up after 10 s without progress,
     2. the SAME path is retried with the fallback controller "FollowPathRPP" (pure pursuit), which
        keeps going for the rest of this goal; the next goal starts with "FollowPath" again,
-    3. only if that fails too: clear both costmaps (fresh live lidar + depth data), wait, replan.
+    3. only if that fails too: clear both costmaps (fresh live lidar + depth data), reverse 15 cm
+       slowly (5 cm/s; gets the robot out of a corner / away from the obstacle it stopped at, so
+       the planner finds a way around), wait 2 s, replan. Up to 4 times per goal.
+  Obstacles: collision_monitor stops the robot (front band) whatever the planner says; the
+  planner replans every 1 s with the live lidar in both costmaps, so the new path goes around.
+  The reverse is short because the A1 lidar does not see behind the robot. Spin stays out.
 -->
 <root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
@@ -32,6 +37,7 @@
         <Sequence name="ClearAndWait">
           <ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/>
           <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/>
+          <BackUp backup_dist="0.15" backup_speed="0.05"/>
           <Wait wait_duration="2"/>
         </Sequence>
       </ReactiveFallback>

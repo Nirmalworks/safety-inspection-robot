@@ -3,62 +3,90 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AME 505 Robot</title>
+<title>Safety Inspection Robot</title>
 <style>
-  :root{--bg:#0f1216;--card:#181c22;--line:#2a3039;--txt:#e6e9ee;--mut:#8a94a3;--ok:#2ecc71;--warn:#f1c40f;--bad:#e74c3c;--acc:#3d8bfd}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-  header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;flex-wrap:wrap}
-  h1{font-size:18px;margin:0} h2{font-size:13px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
-  .badge{padding:3px 10px;border-radius:99px;font-weight:600;font-size:12px;background:#333}
-  .badge.idle{background:#394150}.badge.mapping{background:#8e44ad}.badge.navigation{background:#2471a3}.badge.drive{background:#1e8449}
+  :root{--bg:#0b0f14;--bg2:#0f141b;--card:#121821;--line:#1f2833;--line2:#2a3542;--txt:#dbe3ec;--mut:#7d8a99;
+        --ok:#22c55e;--warn:#eab308;--bad:#ef4444;--acc:#38bdf8;--acc2:#0ea5e9;--vio:#a78bfa;
+        --mono:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,Consolas,monospace}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:13.5px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  header{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;
+         background:linear-gradient(180deg,#0e141c,#0b0f14);z-index:5;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--acc2),#6366f1);display:grid;place-items:center;font-weight:800;color:#fff;font-size:13px;letter-spacing:.02em}
+  h1{font-size:15.5px;margin:0;font-weight:650;letter-spacing:.01em} .sub{font-size:11px;color:var(--mut);font-family:var(--mono)}
+  h2{font-size:11px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.12em;font-weight:600;display:flex;align-items:center;gap:8px}
+  h2::before{content:"";width:3px;height:11px;background:var(--acc);border-radius:2px}
+  .badge{padding:3px 10px;border-radius:6px;font-weight:600;font-size:11.5px;background:#1e2733;font-family:var(--mono);letter-spacing:.04em;border:1px solid var(--line2)}
+  .badge.idle{color:var(--mut)}.badge.mapping{background:#2e1f47;border-color:#5b3f8c;color:#d8c7ff}
+  .badge.navigation{background:#0c2a3d;border-color:#155e85;color:#9fdcff}.badge.drive{background:#0f2e1d;border-color:#1f6b40;color:#a5f0c3}
+  .chip{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;color:var(--mut);padding:3px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg2)}
+  .chip b{color:var(--txt);font-weight:600}
   .spacer{flex:1}
-  .estop{background:var(--bad);color:#fff;border:0;border-radius:10px;padding:10px 22px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.05em}
-  main{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:14px;padding:14px 16px;max-width:1500px;margin:auto}
-  @media(max-width:900px){main{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  .estop{background:var(--bad);color:#fff;border:0;border-radius:8px;padding:9px 22px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.12em;box-shadow:0 0 0 3px #ef444433}
+  .estop:hover{background:#dc2626}
+  main{display:grid;grid-template-columns:minmax(300px,370px) 1fr;gap:14px;padding:14px 18px;max-width:1600px;margin:auto}
+  @media(max-width:900px){main{grid-template-columns:1fr;padding:12px 16px}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media(max-width:1100px){.two{grid-template-columns:1fr}}
+  .two>.card{margin-bottom:14px}
   .step{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line)} .step:first-of-type{border-top:0}
-  .num{flex:0 0 26px;height:26px;border-radius:50%;background:#2a3039;display:grid;place-items:center;font-weight:700}
-  .step.active .num{background:var(--acc)} .step.done .num{background:var(--ok)}
+  .num{flex:0 0 24px;height:24px;border-radius:6px;background:#1e2733;display:grid;place-items:center;font-weight:700;font-family:var(--mono);font-size:12px}
+  .step.active .num{background:var(--acc2);color:#fff} .step.done .num{background:var(--ok);color:#06210f}
   .step p{margin:2px 0 8px;color:var(--mut)}
-  button.big{width:100%;padding:12px;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;color:#fff}
-  button.go{background:#27ae60} button.save{background:#d35400} button.view{background:var(--acc)} button.stop{background:#555}
+  button.big{width:100%;padding:10px;border:1px solid transparent;border-radius:8px;font-size:13.5px;font-weight:650;cursor:pointer;color:#fff;letter-spacing:.01em}
+  button.go{background:#15803d;border-color:#16a34a} button.go:hover{background:#16a34a}
+  button.save{background:#b45309;border-color:#d97706} button.view{background:#0369a1;border-color:#0284c7} button.view:hover{background:#0284c7}
+  button.stop{background:#27303b;border-color:var(--line2)} button.stop:hover{background:#323d4a}
   button:disabled{opacity:.35;cursor:not-allowed}
-  input[type=text],select,input[type=number]{background:#0f1216;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px;width:100%}
+  input[type=text],select,input[type=number]{background:var(--bg2);color:var(--txt);border:1px solid var(--line2);border-radius:7px;padding:7px 8px;width:100%;font-family:var(--mono);font-size:12.5px}
   label.chk{display:flex;gap:8px;align-items:center;color:var(--mut);margin:6px 0}
   .row{display:flex;gap:8px} .row>*{flex:1}
-  .job{background:#0f1216;border:1px dashed var(--line);border-radius:8px;padding:8px;color:var(--warn);min-height:20px;font-size:13px}
+  .job{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:6px;padding:7px 9px;color:#facc15;min-height:20px;font-size:12px;font-family:var(--mono)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-  .s{background:#0f1216;border:1px solid var(--line);border-radius:10px;padding:10px}
-  .s .k{color:var(--mut);font-size:12px;display:flex;justify-content:space-between}
-  .s .v{font-size:20px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
-  .s .d{color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums}
-  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--bad)} .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)}
-  .feeds{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
-  .feed{background:#000;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:4/3;display:grid;place-items:center}
+  .s{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+  .s .k{color:var(--mut);font-size:11px;display:flex;justify-content:space-between;text-transform:uppercase;letter-spacing:.08em}
+  .s .v{font-size:19px;font-weight:650;margin-top:2px;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  .s .d{color:var(--mut);font-size:11.5px;font-variant-numeric:tabular-nums}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--bad);box-shadow:0 0 6px currentColor;color:var(--bad)}
+  .dot.ok{background:var(--ok);color:var(--ok)} .dot.warn{background:var(--warn);color:var(--warn)} .dot.off{background:#4b5563;color:transparent}
+  .feeds{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+  .feed{background:#000;border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;aspect-ratio:4/3;display:grid;place-items:center}
   .feed img,.feed canvas{width:100%;height:100%;object-fit:contain}
-  .feed .cap{position:absolute;left:8px;top:6px;font-size:12px;background:#000a;padding:2px 8px;border-radius:6px}
-  .nosig{position:absolute;color:var(--mut)}
-  pre{background:#0b0d10;border-radius:8px;padding:10px;max-height:220px;overflow:auto;font-size:11px;color:#b9c2cf;margin:0;white-space:pre-wrap}
-  table{width:100%;border-collapse:collapse;font-size:13px} td{padding:5px 4px;border-top:1px solid var(--line)} td.r{text-align:right;color:var(--mut)}
-  a{color:#7fb2ff} .keys{color:var(--mut);font-size:12px;margin:0;padding-left:18px}
-  .pill{display:inline-block;padding:1px 7px;border-radius:6px;background:#2a3039;margin:1px;font-size:12px}
+  .feed .cap{position:absolute;left:8px;top:6px;font-size:11px;background:#000b;padding:2px 8px;border-radius:5px;font-family:var(--mono);color:#cbd5e1}
+  .nosig{position:absolute;color:var(--mut);font-family:var(--mono);font-size:12px}
+  pre{background:#070a0e;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto;font-size:11px;color:#9fb0c3;margin:0;white-space:pre-wrap;font-family:var(--mono)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px} td{padding:5px 4px;border-top:1px solid var(--line)} td.r{text-align:right;color:var(--mut);font-family:var(--mono);font-size:11.5px}
+  a{color:var(--acc)} .keys{color:var(--mut);font-size:12px;margin:0;padding-left:18px}
+  .pill{display:inline-block;padding:1px 7px;border-radius:5px;background:#1e2733;margin:1px;font-size:11px;font-family:var(--mono)}
   .pill.on{background:var(--ok);color:#000;font-weight:700}
   .tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;align-items:center}
-  .tool,.tbtn{background:#2a3039;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer;font-size:13px}
-  .tool.on{background:var(--acc);border-color:var(--acc)} .tbtn.red{background:#922b21} .tbtn.green{background:#1e8449}
-  .mapwrap{position:relative;background:#111;border-radius:10px;overflow:hidden;height:min(62vh,520px)}
+  .tool,.tbtn{background:#1a222c;color:var(--txt);border:1px solid var(--line2);border-radius:7px;padding:6px 10px;cursor:pointer;font-size:12.5px}
+  .tool:hover,.tbtn:hover{border-color:#3b4b5e}
+  .tool.on{background:#0c4a6e;border-color:var(--acc2)} .tbtn.red{background:#3f1515;border-color:#7f1d1d} .tbtn.green{background:#0f2e1d;border-color:#166534}
+  .mapwrap{position:relative;background:#0a0d11;border:1px solid var(--line);border-radius:8px;overflow:hidden;height:min(62vh,540px)}
   #mapcanvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
-  .maphint{position:absolute;inset:0;display:grid;place-items:center;color:var(--mut);pointer-events:none}
-  .mapbanner{position:absolute;left:10px;right:10px;top:10px;background:#000c;border:1px solid var(--warn);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px;pointer-events:none}
-  .navbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:13px}
-  .navbar .cp{display:inline-block;background:#3a3218;color:#f7dc6f;border-radius:6px;padding:2px 7px;margin:2px;cursor:pointer}
+  .maphint{position:absolute;inset:0;display:grid;place-items:center;color:var(--mut)}
+  .maphint{pointer-events:none}
+  .mapbanner{position:absolute;left:10px;right:10px;top:10px;background:#000d;border:1px solid var(--warn);color:var(--warn);border-radius:7px;padding:8px 10px;font-size:12.5px;pointer-events:none}
+  .navbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:12px;font-family:var(--mono);color:#b6c2cf}
+  .navbar .cp{display:inline-block;background:#3a3218;color:#f7dc6f;border-radius:5px;padding:2px 7px;margin:2px;cursor:pointer}
+  .view3d{position:relative;background:radial-gradient(ellipse at 50% 40%,#16202b,#080b0f);border:1px solid var(--line);border-radius:8px;overflow:hidden;aspect-ratio:4/3}
+  .view3d canvas{width:100%!important;height:100%!important;display:block}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:8px;font-family:var(--mono)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+  .det{font-family:var(--mono);font-size:11.5px} .det td{padding:3px 4px} .det .rel{color:#fdba74;font-weight:600}
+  footer{color:#4b5868;font-size:11px;text-align:center;padding:4px 0 18px;font-family:var(--mono)}
 </style>
 </head>
 <body>
 <header>
-  <h1>AME 505 Robot</h1>
+  <div class="brand"><div class="logo">SI</div><div><h1>Safety Inspection Robot</h1>
+    <div class="sub">JetAuto · ROS 2 Humble · AMCL + EKF · Nav2 · YOLO26</div></div></div>
   <span id="mode" class="badge idle">IDLE</span>
-  <span id="uptime" style="color:var(--mut)"></span>
+  <span class="chip">⏱ <b id="uptime">–</b></span>
+  <span class="chip">BAT <b id="hBatt">–</b></span>
+  <span class="chip">LOC <b id="hLoc">–</b></span>
+  <span class="chip">YOLO <b id="hYolo">off</b></span>
   <span class="spacer"></span>
   <button class="estop" onclick="act('estop')">E-STOP</button>
 </header>
@@ -165,6 +193,25 @@
     <div class="navbar"><span id="navstat">–</span><span id="cplist"></span></div>
   </div>
 
+  <div class="two">
+    <div class="card">
+      <h2>Robot model · URDF</h2>
+      <div class="view3d" id="view3d"><span class="nosig" id="v3dNo" style="inset:0;display:grid;place-items:center">loading robot model…</span></div>
+      <div class="legend"><span><i style="background:#ff3b3b"></i>lidar (live)</span><span><i style="background:#38bdf8"></i>velocity cmd</span>
+        <span><i style="background:#22c55e"></i>EKF heading</span><span id="v3dPose"></span></div>
+    </div>
+    <div class="card">
+      <h2>YOLO live · COCO</h2>
+      <div class="feed" style="margin-bottom:8px"><img id="yoloImg" alt=""><span class="nosig" id="yoloNo">detector off</span><span class="cap" id="yoloCap">YOLO26n</span></div>
+      <div class="row" style="margin-bottom:8px">
+        <button class="big go" id="bYolo" onclick="act('start_yolo')">Start YOLO</button>
+        <button class="big stop" id="bYoloStop" onclick="act('stop_yolo')">Stop</button>
+      </div>
+      <table class="det" id="yoloDets"></table>
+      <p style="color:var(--mut);font-size:11.5px;margin:6px 0 0">Needs the camera (tick <b>camera</b> before starting). Detection only: stopping for obstacles is done by the lidar collision monitor. ~450 MB RAM, ~0.5 s/frame on the Nano: stop it when not needed.</p>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Inspection results</h2>
     <p style="color:var(--mut);margin:0 0 6px">Start navigation with <b>camera</b> ticked. At each patrol checkpoint the robot checks the keep-clear zone with the depth camera (newest first).</p>
@@ -191,6 +238,7 @@
   </div>
 </section>
 </main>
+<footer>Safety Inspection Robot · AME 505 Group 5 · USC Fall 2026</footer>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -259,6 +307,24 @@ function gtsamCard(g, isLive) {
               `${hint}<br>${q}${q ? ' · ' : ''}${g.use_imu === false ? 'lidar only' : 'lidar+gyro'} · ${a}`);
 }
 
+function renderHeader() {
+  const s = st.sensors || {}, b = s.battery || {}, y = s.yolo, r = st.rates || {};
+  $('hBatt').textContent = b.v ? b.v + ' V' : '–';
+  $('hBatt').style.color = b.v ? (b.v > 11 ? 'var(--ok)' : b.v > 10.5 ? 'var(--warn)' : 'var(--bad)') : '';
+  const yLive = (r['/yolo/detections'] || 0) > 0.2;
+  $('hYolo').textContent = st.yolo_running ? (yLive && y ? `${y.fps} fps` : 'loading') : 'off';
+  $('bYolo').disabled = !!st.yolo_running; $('bYoloStop').disabled = !st.yolo_running;
+  $('yoloNo').style.display = st.yolo_running && yLive ? 'none' : '';
+  $('yoloNo').textContent = st.yolo_running ? 'loading model / waiting for camera…' : 'detector off';
+  const dets = (st.yolo_running && y && y.dets) || [];
+  $('yoloCap').textContent = y && st.yolo_running ? `YOLO26n · ${dets.length} objects · ${Math.round(y.infer_s * 1000)} ms` : 'YOLO26n';
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  $('yoloDets').innerHTML = dets.length ? dets.slice().sort((a, b) => b.conf - a.conf).slice(0, 8).map(d =>
+    `<tr><td class="${d.relevant ? 'rel' : ''}">${esc(d.cls)}</td><td class="r">${(d.conf * 100).toFixed(0)}%</td>` +
+    `<td class="r">${d.dist_m != null ? d.dist_m.toFixed(2) + ' m' : '–'}</td></tr>`).join('')
+    : `<tr><td style="color:var(--mut)">${st.yolo_running ? 'no objects' : '–'}</td></tr>`;
+}
+
 function renderMode() {
   const m = st.mode || 'idle', run = st.running;
   $('mode').className = 'badge ' + m;
@@ -280,7 +346,7 @@ function renderMode() {
 }
 
 async function poll() {
-  try { st = await (await fetch('/api/status')).json(); renderSensors(); renderMode(); } catch (e) { $('job').textContent = 'Dashboard server not reachable'; }
+  try { st = await (await fetch('/api/status')).json(); renderSensors(); renderMode(); renderHeader(); } catch (e) { $('job').textContent = 'Dashboard server not reachable'; }
 }
 async function pollFiles() {
   files = await (await fetch('/api/files')).json();
@@ -325,7 +391,7 @@ async function drawLidar() {
   g.fillStyle = '#3d8bfd'; g.beginPath(); g.moveTo(W / 2, H / 2 - 12); g.lineTo(W / 2 - 8, H / 2 + 8); g.lineTo(W / 2 + 8, H / 2 + 8); g.fill();
 }
 
-$('rgb').src = '/stream/rgb'; $('depth').src = '/stream/depth';
+$('rgb').src = '/stream/rgb'; $('depth').src = '/stream/depth'; $('yoloImg').src = '/stream/yolo';
 poll(); pollFiles(); drawLidar(); pollInspections();
 setInterval(poll, 700); setInterval(pollFiles, 4000); setInterval(drawLidar, 250); setInterval(pollInspections, 3000);
 </script>
@@ -467,6 +533,9 @@ const nm = (() => {
                    lost: `⚠️ Not sure where the robot is (blue dots spread out). Use 📍 Set pose: click where it really is, drag the way it faces.`,
                    ready: '✅ Ready: choose 🎯 Go to goal, then click the destination on the map and drag to set the direction'}[st.phase] || ''
                    : st.live ? `Live map (${st.mode})` : st.map ? `Saved map "${st.map_name}" (preview). Press ▶ Start navigation to drive in it.` : '');
+    $('hLoc').textContent = st.loc ? `${st.loc.quality} ±${st.loc.pos_std_m} m` : '–';
+    $('hLoc').style.color = st.loc ? ({good: 'var(--ok)', fair: 'var(--warn)'}[st.loc.quality] || 'var(--bad)') : '';
+    window.navSt = st;
     const L = st.loc, locTxt = L ? `  ·  Localization ${L.quality.toUpperCase()} (±${L.pos_std_m} m, ±${L.yaw_std_deg}°)` : '';
     $('navstat').textContent = (st.robot ? `Robot (${st.robot.x.toFixed(2)}, ${st.robot.y.toFixed(2)}, ${(st.robot.yaw * 57.3).toFixed(0)}°)` : '') + locTxt + '  ·  ' + txt;
     if (st.live && st.mode === 'navigation' && st.phase === 'ready' && !autoGoalDone) { autoGoalDone = true; setTool('goal'); }
@@ -485,6 +554,75 @@ const nm = (() => {
   $('mapsel').addEventListener('change', () => { fitted = false; imgVer = null; poll(); });
   resize(); poll(); setInterval(poll, 400);
   return {fit};
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script>
+// ---------- Robot model: the real URDF (ame505_description) + live lidar, EKF heading, velocity ----------
+(() => {
+  const box = $('view3d');
+  if (!window.THREE || !THREE.STLLoader) { $('v3dNo').textContent = '3D view needs internet for three.js (CDN)'; return; }
+  const R = new THREE.WebGLRenderer({antialias: true, alpha: true});
+  R.setPixelRatio(Math.min(devicePixelRatio, 2)); box.appendChild(R.domElement);
+  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, 4 / 3, 0.01, 100);
+  THREE.Object3D.DefaultUp.set(0, 0, 1); cam.up.set(0, 0, 1); cam.position.set(-0.75, -0.6, 0.55);
+  const ctl = new THREE.OrbitControls(cam, R.domElement); ctl.target.set(0, 0, 0.08); ctl.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xdbeafe, 0x0b0f14, 0.9));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.8); sun.position.set(1, -1.5, 2); scene.add(sun);
+  const grid = new THREE.GridHelper(4, 16, 0x1f6f99, 0x1a2430); grid.rotation.x = Math.PI / 2; scene.add(grid);
+  const robot = new THREE.Group(); scene.add(robot);               // base_footprint, rotated by the EKF yaw
+  const color = n => /wheel/.test(n) ? 0x1f2937 : /lidar/.test(n) ? 0x374151 : /screen/.test(n) ? 0x0f172a
+    : /cam/.test(n) ? 0x111827 : /shell/.test(n) ? 0x9ca3af : 0xd1d5db;
+  const num = (t, d = '0 0 0') => (t || d).trim().split(/\s+/).map(Number);
+  const place = (o, el) => { if (!el) return; const [x, y, z] = num(el.getAttribute('xyz')), [r, p, w] = num(el.getAttribute('rpy'));
+    o.position.set(x, y, z); o.rotation.set(r, p, w, 'ZYX'); };     // URDF rpy = Rz*Ry*Rx
+  fetch('/api/urdf').then(r => r.text()).then(txt => {
+    const doc = new DOMParser().parseFromString(txt, 'application/xml'), groups = {}, loader = new THREE.STLLoader();
+    for (const l of doc.querySelectorAll('robot > link')) {
+      const name = l.getAttribute('name'), g = groups[name] = new THREE.Group();
+      for (const v of l.querySelectorAll('visual')) {
+        const m = v.querySelector('geometry > mesh'); if (!m) continue;
+        const file = m.getAttribute('filename').split('/meshes/').pop(), holder = new THREE.Group();
+        place(holder, v.querySelector('origin')); g.add(holder);
+        loader.load('/meshes/' + file, geo => { geo.computeVertexNormals();
+          holder.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color: color(name), metalness: 0.35, roughness: 0.55}))); });
+      }
+    }
+    const child = new Set();
+    for (const j of doc.querySelectorAll('robot > joint')) {
+      const p = groups[j.querySelector('parent').getAttribute('link')], c = groups[j.querySelector('child').getAttribute('link')];
+      if (!p || !c) continue; place(c, j.querySelector('origin')); p.add(c); child.add(c);
+    }
+    (groups.base_footprint ? [groups.base_footprint] : Object.values(groups).filter(g => !child.has(g))).forEach(g => robot.add(g));
+    $('v3dNo').style.display = 'none';
+  }).catch(() => { $('v3dNo').textContent = 'robot model not available'; });
+  // live overlays in the robot frame
+  const MAXP = 1200, pos = new Float32Array(MAXP * 3), pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(pg, new THREE.PointsMaterial({color: 0xff3b3b, size: 0.025})); robot.add(pts);
+  const head = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0.17), 0.38, 0x22c55e, 0.06, 0.04); robot.add(head);
+  const vel = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0.02), 0.01, 0x38bdf8, 0.05, 0.035); robot.add(vel);
+  async function update() {
+    let sc = []; try { sc = await (await fetch('/api/scan')).json(); } catch (e) {}
+    const n = Math.min(MAXP, sc.length);
+    for (let i = 0; i < n; i++) { const [a, r] = sc[i]; pos[3 * i] = Math.cos(a) * r; pos[3 * i + 1] = Math.sin(a) * r; pos[3 * i + 2] = 0.13; }
+    pg.setDrawRange(0, n); pg.attributes.position.needsUpdate = true;
+    const o = (st.sensors || {}).odom || {}, nav = window.navSt || {};
+    const yaw = nav.robot ? nav.robot.yaw : (o.yaw_deg || 0) * Math.PI / 180;
+    robot.rotation.z = yaw; pts.rotation.z = 0;
+    const v = Math.hypot(o.vx || 0, o.vy || 0);
+    vel.visible = v > 0.01; if (vel.visible) { vel.setDirection(new THREE.Vector3(o.vx, o.vy, 0).normalize()); vel.setLength(0.15 + v * 2, 0.05, 0.035); }
+    $('v3dPose').textContent = nav.robot ? `map (${nav.robot.x.toFixed(2)}, ${nav.robot.y.toFixed(2)}) · ${(yaw * 57.3).toFixed(0)}°`
+      : o.x !== undefined ? `odom (${o.x}, ${o.y}) · ${o.yaw_deg}°` : '';
+  }
+  function frame() {
+    const w = box.clientWidth, h = box.clientHeight;
+    if (R.domElement.width !== Math.round(w * R.getPixelRatio())) { R.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+    ctl.update(); R.render(scene, cam); requestAnimationFrame(frame);
+  }
+  frame(); setInterval(update, 300);
 })();
 </script>
 </body>

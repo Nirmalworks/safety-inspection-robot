@@ -13,4 +13,4 @@ for m in torch torchvision cv2 matplotlib scipy psutil yaml requests; do
   python3 -c "import $m" 2>/dev/null || echo "WARNING: python module '$m' missing (pip install --user it)"
 done
 PYTHONPATH="$LIB" python3 -c "import ultralytics; print('ultralytics', ultralytics.__version__, 'ready in $LIB')"
-echo "Run: python3 ml/yolo_coco.py \$AME505_DATA/dataset --limit 10   (weights download once to ml/weights/)"
+echo "Run: python3 ml/yolo_coco.py \$AME505_DATA/dataset --limit 10   (weights download once to $AME505_DATA/models/)"

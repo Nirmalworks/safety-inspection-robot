@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""AME 505 robot dashboard: live sensors + camera, one-click mapping / save / 3D viewer.
+"""Safety Inspection Robot dashboard: live sensors + camera, one-click mapping / save / 3D viewer.
 
     ros2 run ame505_bringup dashboard            # then open http://localhost:8505
     (from a laptop on the same Wi-Fi: http://<robot-ip>:8505)
@@ -50,6 +50,7 @@ from ame505_bringup.save_3d_map import write_ply
 
 PORT = int(os.environ.get('AME505_DASHBOARD_PORT', '8505'))
 WEB = os.path.join(get_package_share_directory('ame505_bringup'), 'web')
+DESC = get_package_share_directory('ame505_description')
 LIDAR_YAW = math.pi   # lidar_frame_joint rpy="0 0 pi" in ame505_description/urdf/lidar_a1.urdf.xacro
 NAME_RE = re.compile(r'^[A-Za-z0-9_-]{1,40}$')
 BUTTONS = ['A', 'B', 'X', 'Y', 'Back', 'Xbox', 'Start', 'LS', 'RS', 'LB', 'RB',
@@ -78,8 +79,8 @@ class Sensors(Node):
         self.rate = collections.defaultdict(Rate)
         self.v = {}
         self.scan_pts = []
-        self.jpeg = {'rgb': None, 'depth': None}
-        self.frame_id = {'rgb': 0, 'depth': 0}
+        self.jpeg = {'rgb': None, 'depth': None, 'yolo': None}
+        self.frame_id = {'rgb': 0, 'depth': 0, 'yolo': 0}
         sd = qos_profile_sensor_data
         self.create_subscription(LaserScan, '/scan', self.on_scan, sd)
         self.create_subscription(Image, '/depth_cam/rgb/image_raw', self.on_rgb, sd)
@@ -102,6 +103,9 @@ class Sensors(Node):
         # GTSAM lidar/gyro odometry (gtsam_slam node)
         self.create_subscription(String, '/gtsam/status', self.on_gtsam_status, 10)
         self.create_subscription(Path, '/gtsam/path', self.on_gtsam_path, 1)
+        # live COCO detection (yolo_live node, started from the dashboard)
+        self.create_subscription(Image, '/yolo/image', self.on_yolo_image, 1)
+        self.create_subscription(String, '/yolo/detections', self.on_yolo_dets, 1)
         self.gtsam_reanchor = self.create_client(Trigger, '/gtsam/reanchor')
         self.gtsam_path, self.gtsam_frame = [], 'gtsam_odom'
         self.estop_pub = self.create_publisher(Twist, '/controller/cmd_vel', 1)
@@ -152,6 +156,22 @@ class Sensors(Node):
                     self.jpeg['rgb'] = j.tobytes()
                     self.frame_id['rgb'] += 1
         self.set('rgb', {'w': m.width, 'h': m.height, 'enc': m.encoding}, '/depth_cam/rgb/image_raw')
+
+    def on_yolo_image(self, m):
+        img = self._img(m)
+        if img is not None:
+            ok, j = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            if ok:
+                with self.lock:
+                    self.jpeg['yolo'] = j.tobytes()
+                    self.frame_id['yolo'] += 1
+
+    def on_yolo_dets(self, m):
+        try:
+            d = json.loads(m.data)
+        except ValueError:
+            return
+        self.set('yolo', d, '/yolo/detections')
 
     def on_depth(self, m):
         d = self._img(m)
@@ -424,7 +444,7 @@ LEFTOVER_PROG = re.compile(
     r'imu_complementary_filter|laser_filters|sllidar_ros2|rtabmap_\w+|nav2_\w+|rclcpp_components|joy|slam_toolbox)/'
     r'|^/home/ubuntu/third_party_ros2/'          # sllidar_node (lidar driver) lives here
     r'|astra_bridge\.py$'
-    r'|/lib/ame505_bringup/(xbox_teleop|checkpoint_recorder|patrol|frame_recorder|depth_obstacles|gtsam_slam|lifecycle_guard|sim_robot)$)')
+    r'|/lib/ame505_bringup/(xbox_teleop|checkpoint_recorder|patrol|frame_recorder|depth_obstacles|gtsam_slam|lifecycle_guard|sim_robot|yolo_live)$)')
 
 
 def _leftover_pids():
@@ -475,6 +495,7 @@ class Manager:
         self.patrol = None
         self.gtsam = None
         self.gtsam_check = {}
+        self.yolo = None
         self.mode = 'idle'
         self.stopping = False      # True while _stop_job runs: no second Stop, no Start
         self.kind = '2d'
@@ -707,6 +728,31 @@ class Manager:
         threading.Thread(target=job, daemon=True).start()
         return True, f'Checking GTSAM on saved map {name}...'
 
+    # ---------- live YOLO (COCO detection on the camera; never drives) ----------
+    def yolo_running(self):
+        return self.yolo is not None and self.yolo.poll() is None
+
+    def start_yolo(self):
+        if self.yolo_running():
+            return False, 'YOLO is already running.'
+        with self.node.lock:
+            self.node.v.pop('yolo', None)
+            self.node.jpeg['yolo'] = None
+        logf = open(os.path.join(data_dir('logs'), f'yolo_{time.strftime("%Y%m%d_%H%M%S")}.log'), 'w')
+        self.yolo = subprocess.Popen(['ros2', 'run', 'ame505_bringup', 'yolo_live'], stdout=logf,
+                                     stderr=subprocess.STDOUT, start_new_session=True)
+        return True, ('YOLO starting (~20 s to load on the Nano, ~0.5 s per frame, ~450 MB RAM). '
+                      'Needs the camera: start with "camera" ticked.')
+
+    def stop_yolo(self):
+        if not self.yolo_running():
+            return False, 'YOLO is not running.'
+        self._stop_proc(self.yolo, 5)
+        with self.node.lock:
+            self.node.v.pop('yolo', None)
+            self.node.jpeg['yolo'] = None
+        return True, 'YOLO stopped (memory released).'
+
     def estop_twist(self):
         for _ in range(5):
             self.node.estop_pub.publish(Twist())
@@ -888,6 +934,7 @@ def create_app(node, mgr):
             'patrol': mgr.patrol is not None and mgr.patrol.poll() is None,
             'job': mgr.job, 'last_saved': mgr.last_saved, 'sensors': v, 'rates': rates,
             'log': mgr.log_tail(), 'gtsam_running': mgr.gtsam_running(), 'gtsam_check': mgr.gtsam_check,
+            'yolo_running': mgr.yolo_running(),
         })
 
     @app.get('/api/scan')
@@ -1029,6 +1076,10 @@ def create_app(node, mgr):
             ok, msg = mgr.stop_gtsam()
         elif action == 'gtsam_reanchor':
             ok, msg = node.reanchor_gtsam()
+        elif action == 'start_yolo':
+            ok, msg = mgr.start_yolo()
+        elif action == 'stop_yolo':
+            ok, msg = mgr.stop_yolo()
         elif action == 'gtsam_check':
             ok, msg = mgr.gtsam_check_async(body.get('map', ''))
         else:
@@ -1040,6 +1091,24 @@ def create_app(node, mgr):
     @app.get('/files/maps_3d/<path:name>')
     def ply(name):
         return send_from_directory(data_dir('maps_3d'), name)
+
+    urdf_cache = {}
+
+    @app.get('/api/urdf')
+    def urdf():
+        """The robot model (xacro expanded once) for the 3D view."""
+        if 'xml' not in urdf_cache:
+            try:
+                urdf_cache['xml'] = subprocess.run(
+                    ['xacro', os.path.join(DESC, 'urdf', 'jetauto.xacro')],
+                    capture_output=True, text=True, timeout=60, check=True).stdout
+            except (OSError, subprocess.SubprocessError) as e:
+                return Response(f'xacro failed: {e}', status=500)
+        return Response(urdf_cache['xml'], mimetype='application/xml')
+
+    @app.get('/meshes/<path:name>')
+    def mesh(name):
+        return send_from_directory(os.path.join(DESC, 'meshes'), name)
 
     @app.get('/api/inspections')
     def inspections():
@@ -1081,7 +1150,7 @@ def create_app(node, mgr):
 
     @app.get('/stream/<kind>')
     def stream(kind):
-        if kind not in ('rgb', 'depth'):
+        if kind not in ('rgb', 'depth', 'yolo'):
             abort(404)
         return mjpeg(kind)
 
@@ -1099,10 +1168,11 @@ def main():
     # `dashboard.sh restart` escalates to SIGTERM: exit through the `finally` below so the
     # running launch is stopped instead of being left behind as an orphan.
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
-    print(f'\n  AME 505 dashboard:  http://localhost:{PORT}   (laptop: http://<robot-ip>:{PORT})\n', flush=True)
+    print(f'\n  Safety Inspection Robot dashboard:  http://localhost:{PORT}   (laptop: http://<robot-ip>:{PORT})\n', flush=True)
     try:
         app.run(host='0.0.0.0', port=PORT, threaded=True, use_reloader=False)
     finally:
+        mgr._stop_proc(mgr.yolo, 3)
         if mgr.running():
             print('Stopping running launch (Ctrl+C)...', flush=True)
             mgr._stop_proc(mgr.patrol, 3)
