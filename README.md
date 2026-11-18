@@ -22,12 +22,13 @@ Course project for AME 505 *Machine Learning for Engineering Applications* (USC,
 | Component | Method | Package / file |
 |---|---|---|
 | Mapping | slam_toolbox (2D lidar) | `launch/mapping_2d.launch.py` |
-| Localization | AMCL, omnidirectional motion model; EKF over wheel odometry and IMU | `launch/navigation_2d.launch.py` |
-| Navigation | Nav2 (DWB controller, no-spin behaviour tree) | `config/nav2_params.yaml` |
+| Localization | AMCL, omnidirectional motion model; EKF (15 Hz) over wheel odometry and IMU | `launch/navigation_2d.launch.py`, `config/ekf.yaml` |
+| Navigation | Nav2 (DWB controller, collision monitor, no-spin behaviour tree with a short reverse recovery) | `config/nav2_params.yaml`, `config/navigate_no_spin.xml` |
 | Patrol | Nav2 simple commander, checkpoint list per map | `ame505_bringup/patrol.py` |
 | Hazard baseline | Depth points projected to the robot frame; area inside the keep-clear zone | `ame505_bringup/keep_clear.py` |
+| Object detection | Pretrained COCO YOLO26n (Ultralytics): live on the dashboard, offline over the dataset with CVAT pre-labels | `ame505_bringup/yolo_live.py`, `ml/yolo_coco.py` |
 | Hazard model | YOLO fine-tuned from COCO, TensorRT on the Jetson; checkpoint classifier | in progress (`ml/`) |
-| Operator UI | Flask + rclpy web dashboard (map, patrol, E-STOP, results) | `ame505_bringup/dashboard.py` |
+| Operator UI | Flask + rclpy web dashboard (map, patrol, E-STOP, results, 3D URDF view, live YOLO) | `ame505_bringup/dashboard.py`, `web/index.html` |
 
 ## Hardware and software
 
@@ -42,7 +43,8 @@ safety-inspection-robot/
 ├── src/
 │   ├── ame505_description/   URDF / xacro and meshes of the JetAuto
 │   └── ame505_bringup/       launch files, Nav2 / SLAM configs, patrol, dataset capture, dashboard
-├── ml/                       dataset split, depth-rule baseline, evaluation metrics, tests
+├── maps/                     committed maps with their checkpoints / home (scripts/backup_map.sh)
+├── ml/                       dataset split, depth-rule baseline, evaluation metrics, YOLO COCO tool, tests
 ├── gtsam_experiments/        stand-alone GTSAM pose-graph experiments
 ├── scripts/                  environment, dashboard, map export, debug bundle, stop-all
 ├── docs/                     setup, navigation, localization, data collection, developer guide

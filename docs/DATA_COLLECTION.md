@@ -59,6 +59,15 @@ It runs YOLO26n (the newest Ultralytics COCO model) on every frame and writes:
 
 It takes about 0.6 s per frame on the Nano CPU.
 
+## Presentation pictures
+
+Dashboard header: type a note (e.g. `cp_02 blocked exit, box`) and press **📸 Snapshot**. It saves
+the camera, depth, YOLO view, map (robot, plan, checkpoints) and 3D robot view as they are on screen,
+plus `state.json` (pose, localization, detections), to `$AME505_DATA/presentation/<time>/`.
+Take one at each checkpoint for normal and for hazard, one during a patrol drive, and one with YOLO on.
+Also take **phone photos / short videos of the robot itself** next to the staged hazard. The dashboard
+cannot show the robot from the outside.
+
 ## Target: ~1,500 images in 3 sessions (by Wednesday 2026-11-18)
 
 Per checkpoint, per session (≈ 50 images, ~10 min per checkpoint):

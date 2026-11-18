@@ -15,7 +15,7 @@ Outputs in <dataset>/yolo_coco/ (or --out): detections.csv (one row per box), fr
 (one row per frame), annotated/ (with --save-images), cvat_prelabels/ (with --prelabels).
 
 Install: laptop `pip install ultralytics`; robot `scripts/setup_yolo.sh` (installs into the SSD,
-without touching the ROS Python packages). Weights download once to ml/weights/ (git-ignored).
+without touching the ROS Python packages). Weights download once to $AME505_DATA/models/.
 On the Jetson Nano CPU YOLO26n takes ~0.55 s per 320x240 frame: stop the robot software first
 (`scripts/free_memory.sh --robot`) or run it on a laptop.
 """
@@ -30,39 +30,9 @@ from collections import Counter, defaultdict
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-WEIGHTS_DIR = os.path.join(HERE, 'weights')
-DEFAULT_MODEL = 'yolo26n.pt'        # newest Ultralytics COCO model (8.4.x); n = nano, fits the Nano
-# robot-side install location (scripts/setup_yolo.sh): keeps ultralytics out of the ROS site-packages
-ROBOT_PYLIB = os.path.join(os.environ.get('AME505_DATA', '/home/ubuntu/share/tmp/ame505_data'), 'pylib')
-
-# COCO classes that can plausibly be (part of) a staged hazard or block a walkway / exit.
-# Everything else is still written to detections.csv, with relevant=0.
-RELEVANT = {'person', 'bicycle', 'bench', 'backpack', 'umbrella', 'handbag', 'suitcase',
-            'sports ball', 'bottle', 'chair', 'couch', 'potted plant', 'bed', 'dining table',
-            'toilet', 'tv', 'laptop', 'microwave', 'oven', 'refrigerator', 'book', 'clock',
-            'vase', 'teddy bear'}
-
-
-def box_distance_m(depth_mm, box, inner=0.5):
-    """Median valid depth (m) in the central `inner` fraction of box (x1, y1, x2, y2), NaN if none.
-    The centre avoids background pixels at the box edges."""
-    if depth_mm is None:
-        return float('nan')
-    h, w = depth_mm.shape[:2]
-    x1, y1, x2, y2 = box
-    cx, cy, hw, hh = (x1 + x2) / 2, (y1 + y2) / 2, (x2 - x1) * inner / 2, (y2 - y1) * inner / 2
-    xa, xb = int(max(0, cx - hw)), int(min(w, max(cx + hw, cx - hw + 1)))
-    ya, yb = int(max(0, cy - hh)), int(min(h, max(cy + hh, cy - hh + 1)))
-    patch = depth_mm[ya:yb, xa:xb]
-    valid = patch[patch > 0]
-    return float(np.median(valid)) / 1000.0 if valid.size else float('nan')
-
-
-def yolo_line(cls_id, box, w, h):
-    """One YOLO-format label line: class cx cy bw bh, normalized to the image size."""
-    x1, y1, x2, y2 = box
-    return (f'{cls_id} {(x1 + x2) / 2 / w:.6f} {(y1 + y2) / 2 / h:.6f} '
-            f'{(x2 - x1) / w:.6f} {(y2 - y1) / h:.6f}')
+sys.path.insert(0, os.path.join(HERE, '..', 'src', 'ame505_bringup'))
+from ame505_bringup.detection import (DEFAULT_MODEL, RELEVANT, box_distance_m,  # noqa: E402,F401
+                                      import_yolo, weights_path, yolo_line)
 
 
 def load_frames(root, session=None, checkpoint=None):
@@ -77,14 +47,6 @@ def load_frames(root, session=None, checkpoint=None):
     files = sorted(glob.glob(os.path.join(root, '**', '*_rgb.png'), recursive=True)) or \
         sorted(glob.glob(os.path.join(root, '**', '*.png'), recursive=True))
     return [{'file_rgb': os.path.relpath(p, root)} for p in files]
-
-
-def resolve_model(name):
-    """Bare model names download once into ml/weights/ instead of the current directory."""
-    if os.path.sep in name or os.path.exists(name):
-        return name
-    os.makedirs(WEIGHTS_DIR, exist_ok=True)
-    return os.path.join(WEIGHTS_DIR, name)
 
 
 def main():
@@ -102,10 +64,8 @@ def main():
     ap.add_argument('--limit', type=int, default=0, help='first N frames only (quick test)')
     a = ap.parse_args()
 
-    if os.path.isdir(ROBOT_PYLIB) and ROBOT_PYLIB not in sys.path:
-        sys.path.append(ROBOT_PYLIB)                 # after the system packages: never shadows them
     try:
-        from ultralytics import YOLO
+        YOLO = import_yolo()
     except ImportError:
         print('ultralytics is not installed. Laptop: pip install ultralytics   Robot: scripts/setup_yolo.sh')
         return 1
@@ -120,7 +80,7 @@ def main():
     out = a.out or os.path.join(a.dataset, 'yolo_coco')
     os.makedirs(out, exist_ok=True)
 
-    model = YOLO(resolve_model(a.model))
+    model = YOLO(weights_path(a.model))
     names = model.names
     rel_ids = sorted(i for i, n in names.items() if n in RELEVANT)
     rel_map = {cid: k for k, cid in enumerate(rel_ids)}          # COCO id -> pre-label class index

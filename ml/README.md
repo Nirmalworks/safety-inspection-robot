@@ -7,7 +7,8 @@ Runs on a laptop with Python 3, NumPy, OpenCV and PyYAML. No ROS, no robot.
 | Split | `python3 ml/split.py <dataset> --holdout cp_10` | writes `splits.csv`: whole (session, checkpoint) groups go to train / val / test (~70/15/15); the hold-out checkpoint is only ever in test |
 | Baseline | `python3 ml/depth_baseline.py <dataset>` | runs the keep-clear depth rule on every frame, writes `pred_depth_rule.csv`, prints recall / precision / F1 / false alarms per split |
 | Score a model | `python3 ml/evaluate.py <dataset> <predictions.csv> --split test` | same metrics for any predictions file with columns `file_rgb`, `pred` (1 = hazard) |
-| Tests | `python3 -m pytest ml/test_ml.py` | geometry of the rule, split rules, metrics |
+| COCO detector | `python3 ml/yolo_coco.py <dataset> --save-images --prelabels` | pretrained YOLO26n on every frame: `frames.csv` / `detections.csv` (class, confidence, depth distance), annotated images, CVAT YOLO 1.1 pre-labels. Install: `pip install ultralytics` (robot: `scripts/setup_yolo.sh`) |
+| Tests | `python3 -m pytest ml/` | geometry of the rule, split rules, metrics |
 | Placeholder data | `python3 ml/fake_dataset.py /tmp/fake` | rendered floor / wall / box scenes in the real file layout, to try the commands above |
 
 `<dataset>` is the folder with `index.csv` that `capture_dataset` writes (`$AME505_DATA/dataset`).

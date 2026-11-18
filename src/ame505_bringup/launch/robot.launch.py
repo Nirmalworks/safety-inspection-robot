@@ -19,7 +19,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-from nav2_common.launch import ReplaceString
 
 from ame505_bringup.paths import hiwonder_pkg
 
@@ -124,9 +123,12 @@ def generate_launch_description():
         include(peripherals, 'launch/imu_filter.launch.py'),
         Node(package='robot_localization', executable='ekf_node', name='ekf_filter_node',
              output='screen',
-             parameters=[ReplaceString(source_file=os.path.join(controller, 'config/ekf.yaml'),
-                                       replacements={'namespace/': ''})],
+             # project EKF config: 15 Hz (30 Hz overran on the Nano), no unused rf2o input
+             parameters=[os.path.join(get_package_share_directory('ame505_bringup'), 'config', 'ekf.yaml')],
              remappings=[('odometry/filtered', 'odom'), ('cmd_vel', 'controller/cmd_vel')]),
+        # the motor driver holds the last command forever: stop the wheels when commands stop
+        Node(package='ame505_bringup', executable='cmd_vel_watchdog', name='cmd_vel_watchdog',
+             output='screen', respawn=True),
         include(servo, 'launch/servo_controller.launch.py', {'base_frame': 'base_footprint'}),
         include(controller, 'launch/init_pose.launch.py',
                 {'namespace': '', 'use_namespace': 'false', 'action_name': 'horizontal'}),

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""AME 505 robot dashboard: live sensors + camera, one-click mapping / save / 3D viewer.
+"""Safety Inspection Robot dashboard: live sensors + camera, one-click mapping / save / 3D viewer.
 
     ros2 run ame505_bringup dashboard            # then open http://localhost:8505
     (from a laptop on the same Wi-Fi: http://<robot-ip>:8505)
@@ -9,6 +9,7 @@ command. Default pipeline is 2D: slam_toolbox mapping (maps_2d/<map>.pgm/.yaml) 
 map_server + AMCL lidar localization for Nav2. Legacy RTAB-Map 3D maps (maps/<map>.db)
 still work when no 2D map of that name exists. It listens to topics read-only, except E-STOP (zero velocity) and saving maps.
 """
+import base64
 import collections
 import csv
 import glob
@@ -50,6 +51,7 @@ from ame505_bringup.save_3d_map import write_ply
 
 PORT = int(os.environ.get('AME505_DASHBOARD_PORT', '8505'))
 WEB = os.path.join(get_package_share_directory('ame505_bringup'), 'web')
+DESC = get_package_share_directory('ame505_description')
 LIDAR_YAW = math.pi   # lidar_frame_joint rpy="0 0 pi" in ame505_description/urdf/lidar_a1.urdf.xacro
 NAME_RE = re.compile(r'^[A-Za-z0-9_-]{1,40}$')
 BUTTONS = ['A', 'B', 'X', 'Y', 'Back', 'Xbox', 'Start', 'LS', 'RS', 'LB', 'RB',
@@ -59,13 +61,16 @@ BUTTONS = ['A', 'B', 'X', 'Y', 'Back', 'Xbox', 'Start', 'LS', 'RS', 'LB', 'RB',
 class Rate:
     def __init__(self):
         self.t = collections.deque(maxlen=60)
+        self.lock = threading.Lock()   # ROS callbacks tick while Flask reads ("deque mutated" errors)
 
     def tick(self):
-        self.t.append(time.time())
+        with self.lock:
+            self.t.append(time.time())
 
     def hz(self):
         now = time.time()
-        recent = [x for x in self.t if now - x < 3.0]
+        with self.lock:
+            recent = [x for x in self.t if now - x < 3.0]
         if len(recent) < 2:
             return 0.0
         return round((len(recent) - 1) / max(recent[-1] - recent[0], 1e-3), 1)
@@ -78,8 +83,8 @@ class Sensors(Node):
         self.rate = collections.defaultdict(Rate)
         self.v = {}
         self.scan_pts = []
-        self.jpeg = {'rgb': None, 'depth': None}
-        self.frame_id = {'rgb': 0, 'depth': 0}
+        self.jpeg = {'rgb': None, 'depth': None, 'yolo': None}
+        self.frame_id = {'rgb': 0, 'depth': 0, 'yolo': 0}
         sd = qos_profile_sensor_data
         self.create_subscription(LaserScan, '/scan', self.on_scan, sd)
         self.create_subscription(Image, '/depth_cam/rgb/image_raw', self.on_rgb, sd)
@@ -102,6 +107,9 @@ class Sensors(Node):
         # GTSAM lidar/gyro odometry (gtsam_slam node)
         self.create_subscription(String, '/gtsam/status', self.on_gtsam_status, 10)
         self.create_subscription(Path, '/gtsam/path', self.on_gtsam_path, 1)
+        # live COCO detection (yolo_live node, started from the dashboard)
+        self.create_subscription(Image, '/yolo/image', self.on_yolo_image, 1)
+        self.create_subscription(String, '/yolo/detections', self.on_yolo_dets, 1)
         self.gtsam_reanchor = self.create_client(Trigger, '/gtsam/reanchor')
         self.gtsam_path, self.gtsam_frame = [], 'gtsam_odom'
         self.estop_pub = self.create_publisher(Twist, '/controller/cmd_vel', 1)
@@ -152,6 +160,22 @@ class Sensors(Node):
                     self.jpeg['rgb'] = j.tobytes()
                     self.frame_id['rgb'] += 1
         self.set('rgb', {'w': m.width, 'h': m.height, 'enc': m.encoding}, '/depth_cam/rgb/image_raw')
+
+    def on_yolo_image(self, m):
+        img = self._img(m)
+        if img is not None:
+            ok, j = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            if ok:
+                with self.lock:
+                    self.jpeg['yolo'] = j.tobytes()
+                    self.frame_id['yolo'] += 1
+
+    def on_yolo_dets(self, m):
+        try:
+            d = json.loads(m.data)
+        except ValueError:
+            return
+        self.set('yolo', d, '/yolo/detections')
 
     def on_depth(self, m):
         d = self._img(m)
@@ -424,7 +448,7 @@ LEFTOVER_PROG = re.compile(
     r'imu_complementary_filter|laser_filters|sllidar_ros2|rtabmap_\w+|nav2_\w+|rclcpp_components|joy|slam_toolbox)/'
     r'|^/home/ubuntu/third_party_ros2/'          # sllidar_node (lidar driver) lives here
     r'|astra_bridge\.py$'
-    r'|/lib/ame505_bringup/(xbox_teleop|checkpoint_recorder|patrol|frame_recorder|depth_obstacles|gtsam_slam|lifecycle_guard|sim_robot)$)')
+    r'|/lib/ame505_bringup/(xbox_teleop|checkpoint_recorder|patrol|frame_recorder|depth_obstacles|gtsam_slam|lifecycle_guard|sim_robot|yolo_live|cmd_vel_watchdog)$)')
 
 
 def _leftover_pids():
@@ -475,6 +499,9 @@ class Manager:
         self.patrol = None
         self.gtsam = None
         self.gtsam_check = {}
+        self.yolo = None
+        self.key_t, self.key_moving = 0.0, False
+        threading.Thread(target=self.key_deadman, daemon=True).start()
         self.mode = 'idle'
         self.stopping = False      # True while _stop_job runs: no second Stop, no Start
         self.kind = '2d'
@@ -707,6 +734,57 @@ class Manager:
         threading.Thread(target=job, daemon=True).start()
         return True, f'Checking GTSAM on saved map {name}...'
 
+    # ---------- live YOLO (COCO detection on the camera; never drives) ----------
+    def yolo_running(self):
+        return self.yolo is not None and self.yolo.poll() is None
+
+    def start_yolo(self):
+        if self.yolo_running():
+            return False, 'YOLO is already running.'
+        with self.node.lock:
+            self.node.v.pop('yolo', None)
+            self.node.jpeg['yolo'] = None
+        logf = open(os.path.join(data_dir('logs'), f'yolo_{time.strftime("%Y%m%d_%H%M%S")}.log'), 'w')
+        self.yolo = subprocess.Popen(['ros2', 'run', 'ame505_bringup', 'yolo_live'], stdout=logf,
+                                     stderr=subprocess.STDOUT, start_new_session=True)
+        return True, ('YOLO starting (~20 s to load on the Nano, ~0.5 s per frame, ~450 MB RAM). '
+                      'Needs the camera: start with "camera" ticked.')
+
+    def stop_yolo(self):
+        if not self.yolo_running():
+            return False, 'YOLO is not running.'
+        self._stop_proc(self.yolo, 5)
+        with self.node.lock:
+            self.node.v.pop('yolo', None)
+            self.node.jpeg['yolo'] = None
+        return True, 'YOLO stopped (memory released).'
+
+    # ---------- keyboard drive (dashboard): same topic as the Xbox teleop ----------
+    KEY_MAX = (0.30, 0.30, 1.0)          # m/s, m/s, rad/s (Xbox turbo limits)
+
+    def teleop(self, x, y, z):
+        if not self.running() or self.mode not in ('drive', 'mapping', 'navigation'):
+            return False, 'Start driving, mapping or navigation first.'
+        if self.node.nav_state.get('state') in ('driving', 'sending'):
+            self.node.cancel_goal()        # manual control overrides the current Nav2 goal
+        lx, ly, lz = self.KEY_MAX
+        t = Twist()
+        t.linear.x = float(max(-lx, min(lx, x)))
+        t.linear.y = float(max(-ly, min(ly, y)))
+        t.angular.z = float(max(-lz, min(lz, z)))
+        self.node.estop_pub.publish(t)
+        self.key_t = time.time()
+        self.key_moving = bool(t.linear.x or t.linear.y or t.angular.z)
+        return True, ''
+
+    def key_deadman(self):
+        """Browser sends keys at 10 Hz while held: no update for 0.4 s (tab closed, Wi-Fi drop) -> stop."""
+        while True:
+            time.sleep(0.1)
+            if self.key_moving and time.time() - self.key_t > 0.4:
+                self.key_moving = False
+                self.estop_twist()
+
     def estop_twist(self):
         for _ in range(5):
             self.node.estop_pub.publish(Twist())
@@ -868,6 +946,36 @@ def list_files():
             'data_dir': data_dir()}
 
 
+def save_snapshot(node, mgr, body):
+    """Presentation pictures: camera, depth, YOLO (as streamed) + the map and 3D views the browser
+    sends as PNG data URLs + a small JSON with the robot state. -> $AME505_DATA/presentation/<time>/"""
+    out = data_dir(os.path.join('presentation', time.strftime('%Y%m%d_%H%M%S')))
+    saved = []
+    with node.lock:
+        jpgs = {k: v for k, v in node.jpeg.items() if v is not None}
+    for k, jpg in jpgs.items():
+        with open(os.path.join(out, f'{k}.jpg'), 'wb') as f:
+            f.write(jpg)
+        saved.append(k)
+    for k in ('map', 'robot3d'):
+        url = body.get(k) or ''
+        if url.startswith('data:image/png;base64,'):
+            with open(os.path.join(out, f'{k}.png'), 'wb') as f:
+                f.write(base64.b64decode(url.split(',', 1)[1]))
+            saved.append(k)
+    v, _ = node.snapshot()
+    rp = node.robot_pose()
+    with open(os.path.join(out, 'state.json'), 'w') as f:
+        json.dump({'time': time.strftime('%Y-%m-%d %H:%M:%S'), 'mode': mgr.mode, 'map': mgr.map,
+                   'note': str(body.get('note', ''))[:200],
+                   'robot_map_pose': [round(x, 3) for x in rp] if rp else None,
+                   'localization': node.localization(), 'yolo': v.get('yolo'), 'battery': v.get('battery')},
+                  f, indent=1)
+    if not saved:
+        return False, 'Nothing to save yet (no camera / map on screen).'
+    return True, f'Snapshot saved: {", ".join(saved)} -> {out}'
+
+
 def create_app(node, mgr):
     app = Flask(__name__, static_folder=None)
 
@@ -888,6 +996,7 @@ def create_app(node, mgr):
             'patrol': mgr.patrol is not None and mgr.patrol.poll() is None,
             'job': mgr.job, 'last_saved': mgr.last_saved, 'sensors': v, 'rates': rates,
             'log': mgr.log_tail(), 'gtsam_running': mgr.gtsam_running(), 'gtsam_check': mgr.gtsam_check,
+            'yolo_running': mgr.yolo_running(),
         })
 
     @app.get('/api/scan')
@@ -1029,6 +1138,15 @@ def create_app(node, mgr):
             ok, msg = mgr.stop_gtsam()
         elif action == 'gtsam_reanchor':
             ok, msg = node.reanchor_gtsam()
+        elif action == 'teleop':
+            ok, msg = mgr.teleop(float(body.get('x', 0)), float(body.get('y', 0)), float(body.get('z', 0)))
+            return jsonify({'ok': ok, 'msg': msg}), (200 if ok else 400)
+        elif action == 'snapshot':
+            ok, msg = save_snapshot(node, mgr, body)
+        elif action == 'start_yolo':
+            ok, msg = mgr.start_yolo()
+        elif action == 'stop_yolo':
+            ok, msg = mgr.stop_yolo()
         elif action == 'gtsam_check':
             ok, msg = mgr.gtsam_check_async(body.get('map', ''))
         else:
@@ -1041,6 +1159,24 @@ def create_app(node, mgr):
     def ply(name):
         return send_from_directory(data_dir('maps_3d'), name)
 
+    urdf_cache = {}
+
+    @app.get('/api/urdf')
+    def urdf():
+        """The robot model (xacro expanded once) for the 3D view."""
+        if 'xml' not in urdf_cache:
+            try:
+                urdf_cache['xml'] = subprocess.run(
+                    ['xacro', os.path.join(DESC, 'urdf', 'jetauto.xacro')],
+                    capture_output=True, text=True, timeout=60, check=True).stdout
+            except (OSError, subprocess.SubprocessError) as e:
+                return Response(f'xacro failed: {e}', status=500)
+        return Response(urdf_cache['xml'], mimetype='application/xml')
+
+    @app.get('/meshes/<path:name>')
+    def mesh(name):
+        return send_from_directory(os.path.join(DESC, 'meshes'), name)
+
     @app.get('/api/inspections')
     def inspections():
         return jsonify(last_inspections())
@@ -1048,6 +1184,10 @@ def create_app(node, mgr):
     @app.get('/files/inspections/<path:name>')
     def inspection_file(name):
         return send_from_directory(data_dir('inspections'), name)
+
+    @app.get('/files/presentation/<path:name>')
+    def presentation_file(name):
+        return send_from_directory(data_dir('presentation'), name)
 
     @app.get('/files/gtsam/<path:name>')
     def gtsam_file(name):
@@ -1081,7 +1221,7 @@ def create_app(node, mgr):
 
     @app.get('/stream/<kind>')
     def stream(kind):
-        if kind not in ('rgb', 'depth'):
+        if kind not in ('rgb', 'depth', 'yolo'):
             abort(404)
         return mjpeg(kind)
 
@@ -1099,10 +1239,11 @@ def main():
     # `dashboard.sh restart` escalates to SIGTERM: exit through the `finally` below so the
     # running launch is stopped instead of being left behind as an orphan.
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
-    print(f'\n  AME 505 dashboard:  http://localhost:{PORT}   (laptop: http://<robot-ip>:{PORT})\n', flush=True)
+    print(f'\n  Safety Inspection Robot dashboard:  http://localhost:{PORT}   (laptop: http://<robot-ip>:{PORT})\n', flush=True)
     try:
         app.run(host='0.0.0.0', port=PORT, threaded=True, use_reloader=False)
     finally:
+        mgr._stop_proc(mgr.yolo, 3)
         if mgr.running():
             print('Stopping running launch (Ctrl+C)...', flush=True)
             mgr._stop_proc(mgr.patrol, 3)

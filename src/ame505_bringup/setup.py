@@ -39,6 +39,8 @@ setup(
             'lifecycle_guard = ame505_bringup.lifecycle_guard:main',
             'sim_robot = ame505_bringup.sim_robot:main',
             'inspection = ame505_bringup.inspection:main',
+            'yolo_live = ame505_bringup.yolo_live:main',
+            'cmd_vel_watchdog = ame505_bringup.cmd_vel_watchdog:main',
         ],
     },
 )

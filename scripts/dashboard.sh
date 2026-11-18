@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start the AME 505 dashboard: http://localhost:8505  (laptop: http://<robot-ip>:8505)
+# Start the Safety Inspection Robot dashboard: http://localhost:8505  (laptop: http://<robot-ip>:8505)
 #   ./dashboard.sh          start (or tell you it's already running)
 #   ./dashboard.sh restart  stop the running dashboard and start a fresh one
 source "$(dirname "$0")/env.sh"
