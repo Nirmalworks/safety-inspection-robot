@@ -204,7 +204,6 @@ Next concrete milestone: the **first full patrol with the camera on**. It is rea
 | Soowhan Yi | Keep-clear depth rule, inspection node, dataset split and evaluation scripts with tests; dashboard E-STOP and results card; laptop simulation; RPP controller option; stuck recovery (14 commits, 2026-11-13) | YOLO fine-tuning, CNN classifier |
 | Ryan O'Gorman | [fill in] | Data collection lead, CVAT, feature classifiers |
 | Leo Crampe | [fill in] | Evaluation lead, metrics, failure analysis |
-| [Shreyash, if listed as a member] | GTSAM lidar/gyro pose-graph SLAM experiments (`gtsam_experiments/`, 2026-11-12) | [ ] |
 
 Integration and review: all code goes through feature branches into `dev` (the integration
 branch), then into `main` by pull request with one reviewer. Every component uses the same
