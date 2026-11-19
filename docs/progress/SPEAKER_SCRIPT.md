@@ -127,7 +127,7 @@ dashboard in a laptop browser. Camera frames come through the vendor's ROS 1 con
 
 ## If asked how the course material applies (no slide; the tags on slide 3 point to it)
 
- the checkpoint decision is supervised classification (kNN,
+The checkpoint decision is supervised classification (kNN,
 decision tree and SVM against a CNN); the classical models use engineered features (HOG, colour
 histograms, occupied area in the zone from depth); YOLO is transfer learning from COCO; the non-learned
 depth rule is the baseline every model must beat; the train/validation/test split is by session and
