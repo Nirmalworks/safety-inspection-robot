@@ -60,8 +60,10 @@ def sim_description(desc, me):
         DeclareLaunchArgument('use_camera', default_value='false'),      # accepted, not simulated
         DeclareLaunchArgument('use_teleop', default_value='true'),
         DeclareLaunchArgument('use_rviz', default_value='false'),
+        # AME505_SIM_WORLD: lets the dashboard (which cannot pass sim_world) simulate a real map
         DeclareLaunchArgument('sim_world',
-                              default_value=os.path.join(me, 'sim', 'sim_hall_world.yaml')),
+                              default_value=os.environ.get('AME505_SIM_WORLD') or
+                              os.path.join(me, 'sim', 'sim_hall_world.yaml')),
         DeclareLaunchArgument('sim_people', default_value='',
                               description="'' = nobody, 'default' = <world>_people.yaml, or a yaml path"),
         Node(package='robot_state_publisher', executable='robot_state_publisher',
