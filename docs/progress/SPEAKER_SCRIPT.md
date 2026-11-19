@@ -1,6 +1,6 @@
 # Progress presentation: speaker script
 
-Deck: the "Safety Inspection Robot — Progress" slides (5 slides + 1 backup). Total 5:00, then Q&A.
+Deck: `AME505_Group5_Progress.pptx` (5 slides + 1 backup, no speaker notes inside). Total 5:00, then Q&A.
 Numbers and status words match `PROGRESS_REPORT.md`. Read this aloud while rehearsing; on the day,
 speak from the slides, not from this page.
 
@@ -22,7 +22,8 @@ robot's pose and the keep-clear zone for that spot. The output is normal or a ha
 confidence and an annotated image. Facilities or EHS staff review the flagged checkpoints. It is an
 extra check, not a replacement for an inspector.
 
-*(Gesture to the photo:)* This is our platform: a JetAuto with a Jetson Nano, a 2D lidar and a depth camera.
+*(Gesture to the render:)* This is our platform, drawn from our own URDF: a JetAuto with a Jetson Nano,
+a 2D lidar and a depth camera. All experiments run in the BHE 301 senior lab.
 
 ## Slide 2: Approach and Data (0:45–1:45)
 
@@ -31,7 +32,7 @@ drives it to each checkpoint. Those three blocks are operational on the robot. A
 captures RGB-D frames, which is implemented, and then decides. The decision step is partial: the
 non-learned rule is built, and the learned models are next. Results go to a log and the web dashboard.
 
-Data so far: the lidar map on the left, 24.6 by 9.8 metres, mapped on November 18 with the first
+Data so far: the lidar map of BHE 301 on the left, 24.6 by 9.8 metres, mapped on November 18 with the first
 three checkpoints. The camera streams live, but we have no labelled images yet. That is our main risk.
 
 What is prepared: a capture tool that saves every frame with its labels, and a split by session and
