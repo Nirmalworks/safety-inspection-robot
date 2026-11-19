@@ -108,7 +108,10 @@ def write_mesh_ply(path, verts, cols, faces):
 def merge_meshes(views):
     vs, cs, fs, off = [], [], [], 0
     for v, c, f in views:
-        vs.append(v); cs.append(c); fs.append(f + off); off += len(v)
+        vs.append(v)
+        cs.append(c)
+        fs.append(f + off)
+        off += len(v)
     return np.concatenate(vs), np.concatenate(cs), np.concatenate(fs).astype(np.int32)
 
 
@@ -160,8 +163,10 @@ def voxel_filter(pts, cols, voxel):
     key = np.floor(pts / voxel).astype(np.int64)
     _, inv, cnt = np.unique(key, axis=0, return_inverse=True, return_counts=True)
     inv = inv.ravel()
-    P = np.zeros((cnt.size, 3)); C = np.zeros((cnt.size, 3))
-    np.add.at(P, inv, pts); np.add.at(C, inv, cols.astype(np.float64))
+    P = np.zeros((cnt.size, 3))
+    C = np.zeros((cnt.size, 3))
+    np.add.at(P, inv, pts)
+    np.add.at(C, inv, cols.astype(np.float64))
     return (P / cnt[:, None]).astype(np.float32), np.clip(C / cnt[:, None], 0, 255).astype(np.uint8)
 
 

@@ -1,4 +1,28 @@
+<div align="center">
+
 # Safety Inspection Robot
+
+**Autonomous checkpoint patrol and RGB-D hazard detection on a ROS 2 mobile robot**
+
+[![CI](https://github.com/Nirmalworks/safety-inspection-robot/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Nirmalworks/safety-inspection-robot/actions/workflows/ci.yml)
+[![ROS 2 Humble](https://img.shields.io/badge/ROS_2-Humble-22314E?logo=ros)](https://docs.ros.org/en/humble/)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Nav2](https://img.shields.io/badge/Nav2-AMCL_%2B_DWB-4B8BBE)](https://docs.nav2.org/)
+[![Jetson Nano](https://img.shields.io/badge/NVIDIA-Jetson_Nano-76B900?logo=nvidia&logoColor=white)](https://developer.nvidia.com/embedded/jetson-nano)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
+
+[Overview](#system-overview) ·
+[Quick start](#quick-start-on-the-robot) ·
+[Documentation](#documentation) ·
+[Status](#project-status) ·
+[Contributing](CONTRIBUTING.md)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/progress/figures/map_lab_1118_dark.png">
+  <img alt="Lab map built with 2D lidar SLAM, with the home pose and three inspection checkpoints" src="docs/progress/figures/map_lab_1118_light.png" width="820">
+</picture>
+
+</div>
 
 An autonomous mobile robot that patrols a fixed route in a building, stops at inspection
 checkpoints, and checks each one for three safety hazards: **blocked exit**, **obstructed
@@ -88,13 +112,35 @@ ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_01 --scene 
 | [docs/GTSAM_SLAM.md](docs/GTSAM_SLAM.md) | Experimental GTSAM lidar / gyro SLAM |
 | [gtsam_experiments/README.md](gtsam_experiments/README.md) | Stand-alone GTSAM pose-graph experiments and hardware guide |
 
-## Branches
+## Project status
 
-* `main`: reviewed, working code.
-* `dev`: integration branch where all feature work is merged and tested together. Open pull requests from `dev` into `main`.
-* `feature/*`, `fix/*`, `nav/*`, `sim/*`: one topic per branch, merged into `dev` first.
+| Area | Status |
+|---|---|
+| 2D lidar mapping (slam_toolbox) | Working on the robot |
+| AMCL localization + EKF | Working on the robot |
+| Nav2 checkpoint patrol | Working on the robot and in simulation |
+| Operator dashboard + E-STOP | Working on the robot |
+| Pretrained COCO YOLO (live) | Running on the robot |
+| Depth keep-clear baseline | Implemented; evaluated on synthetic scenes only |
+| RGB-D hazard dataset | Collection protocol ready ([docs/DATA_COLLECTION.md](docs/DATA_COLLECTION.md)) |
+| Fine-tuned hazard detector + classifier | In progress |
+
+## Contributing
+
+Work happens on topic branches merged into `dev`; `dev` is merged into `main` after review.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the branch model, commit style, and the checks CI runs.
 
 ## Team
 
 Leo Crampe (evaluation) · Nirmal Kumar Jagannathan (system integration) ·
 Ryan O'Gorman (data preparation) · Soowhan Yi (model development)
+
+## License
+
+Released under the [Apache License 2.0](LICENSE). The JetAuto URDF and meshes in
+`src/ame505_description` are adapted from the Hiwonder JetAuto description.
+
+## Citation
+
+If this work is useful to you, cite it with the metadata in [CITATION.cff](CITATION.cff)
+(GitHub: **Cite this repository** in the sidebar).
