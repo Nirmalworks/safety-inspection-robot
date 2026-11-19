@@ -1,6 +1,6 @@
 # Progress presentation: speaker script
 
-Deck: `AME505_Group5_Progress.pptx` (5 slides + 1 backup, no speaker notes inside). Total 5:00, then Q&A.
+Deck: `AME505_Group5_Progress.pptx` (5 slides + 2 backups, no speaker notes inside). Total 5:00, then Q&A.
 Numbers and status words match `PROGRESS_REPORT.md`. Read this aloud while rehearsing; on the day,
 speak from the slides, not from this page.
 
@@ -120,3 +120,13 @@ dashboard in a laptop browser. Camera frames come through the vendor's ROS 1 con
   relocalization error; the lidar map repeats to 7 cm.
 - **Latency?** COCO YOLO26n runs at about 1.5 fps on the Nano CPU; the TensorRT export at 320 px is
   meant to reach the 200 ms target. To be measured on Nov 30.
+
+## Backup slide: Course Concepts (Q&A only)
+
+If asked how the class material shows up: the checkpoint decision is supervised classification (kNN,
+decision tree and SVM against a CNN); the classical models use engineered features (HOG, colour
+histograms, occupied area in the zone from depth); YOLO is transfer learning from COCO; the non-learned
+depth rule is the baseline every model must beat; the train/validation/test split is by session and
+location with one checkpoint held out to avoid leakage; hyperparameters are chosen on the validation
+split only; and results are reported as confusion counts, precision, recall, F1 and false alarms per
+patrol. The confusion counts and metrics are implemented and run on synthetic data so far.
