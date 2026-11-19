@@ -1,6 +1,6 @@
 # Progress presentation: speaker script
 
-Deck: `AME505_Group5_Progress.pptx` (5 slides, a demo slide and 1 backup; no speaker notes inside).
+Deck: `AME505_Group5_Progress.pptx` (6 slides, a demo slide and 1 backup; no speaker notes inside).
 Total 5:00, then Q&A. Numbers and status words match `PROGRESS_REPORT.md`. Read this aloud while
 rehearsing; on the day, speak from the slides, not from this page.
 
@@ -92,7 +92,15 @@ markers to tell them apart are in progress.
 No model has results on real images yet. The first experiment, the depth-rule baseline on real frames,
 scored by precision and recall, is on November 24.
 
-## Slide 5: Next Steps (4:15–5:00)
+## Slide 5: Operator Dashboard (about 20 s; skip if short on time)
+
+This is the dashboard the robot serves to a laptop browser. Panel 1, the status bar: run mode and map,
+battery, localization confidence, detector state and the emergency stop. Panel 2: the map with the live
+pose, lidar returns in red to check alignment, the Nav2 plan in blue, the checkpoints, and distance to
+goal. Panel 3: the live camera, depth and lidar views. Panel 4: sensor health, with a dot that turns red
+when a topic stops publishing. This is also where the inspection results will appear.
+
+## Slide 6: Next Steps (4:15–5:00)
 
 This week: the remaining checkpoints and the first patrol with the camera. November 21 to 25: data
 sessions 1 to 3, with the first real baseline result on the 24th. November 30: the CNN detector
