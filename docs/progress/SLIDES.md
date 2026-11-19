@@ -18,10 +18,10 @@ Same numbers and status words as `PROGRESS_REPORT.md`. Figures are in `docs/prog
 
 ## Slide 2: Approach and data (60 s)
 
-*Visual:* `figures/map_lab_dark.png` (or `map_lab_3d.png`) next to the Figure 1 pipeline from the report, with each box coloured **operational / implemented / designed**
+*Visual:* `figures/map_lab_1118_dark.png` (Nov 18 map, 3 checkpoints) next to the Figure 1 pipeline from the report, with each box coloured **operational / implemented / designed**
 
 - Platform: JetAuto, Jetson Nano 4 GB, RPLidar A1, Astra RGB-D (320 × 240, 1–7 s latency → inspect only while stopped)
-- Data obtained: **lidar map of the lab, 19.7 × 9.0 m** (`map_lab_dark.png`). **No RGB-D images yet.**
+- Data obtained: **lidar map of the lab, 24.6 × 9.8 m, 3 checkpoints saved** (`map_lab_1118_dark.png`). **No RGB-D images yet.**
 - Preparation completed: capture tool with a labelled `index.csv` (staging log), split by session + location (70/15/15, held-out checkpoint), collection protocol (~48 frames per checkpoint per session)
 
 ## Slide 3: Models and implementation (90 s)
@@ -29,7 +29,7 @@ Same numbers and status words as `PROGRESS_REPORT.md`. Figures are in `docs/prog
 | Component | Status |
 |---|---|
 | Depth keep-clear rule (baseline) | **Implemented**: 7 unit tests, synthetic run only |
-| COCO-only YOLO (baseline) | Designed |
+| COCO-only YOLO (baseline) | **Operational**: live on the robot, ~1.5 fps, not evaluated |
 | Fine-tuned YOLO → TensorRT, 320 px | Designed |
 | Checkpoint classifier: kNN / DT / SVM vs CNN | Designed |
 | Map → AMCL → Nav2 → dashboard | **Operational** on the robot |

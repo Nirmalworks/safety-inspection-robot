@@ -16,7 +16,7 @@ are building a robot that patrols 8–10 checkpoints in a campus lab and flags t
 blocked exit, obstructed walkway and open door. It runs on a Hiwonder JetAuto (Jetson Nano 4 GB,
 RPLidar A1, Astra RGB-D). A YOLO detector fine-tuned on our own RGB-D images, combined with a
 depth-based keep-clear check and a checkpoint classifier, will make the per-checkpoint decision.
-To date the navigation stack works on the robot: a 19.7 × 9.0 m lidar map, AMCL localization,
+To date the navigation stack works on the robot: a 24.6 × 9.8 m lidar map with 3 checkpoints saved, AMCL localization,
 Nav2, a patrol node and a web dashboard. The non-ML depth-rule baseline, the dataset capture tool,
 the location/session split and the evaluation scripts are implemented and verified end to end on
 synthetic frames. No real images have been collected yet. That is the main risk, and the first
@@ -94,7 +94,7 @@ the baseline, the data pipeline, and the plan to collect data and train the mode
   - The non-ML depth rule (`keep_clear.py`) is **implemented**. It projects every depth pixel to
     the robot frame and sums the frontal area of points above the floor inside the keep-clear zone
     (default 0.5–1.5 m ahead, 0.8 m wide, OSHA ≥ 0.71 m). It flags a hazard at ≥ 0.01 m².
-  - The COCO-only YOLO baseline is **designed**.
+  - The COCO-only YOLO baseline (YOLO26n) **runs live on the robot** (~1.5 fps on the Nano CPU, dashboard view); it has not been evaluated yet.
   - The manual walk-through is used for qualitative comparison only.
 * **Selected approach:**
   - **Detector:** YOLO (small, or nano if over 200 ms) fine-tuned from COCO, then exported to
@@ -124,10 +124,10 @@ the baseline, the data pipeline, and the plan to collect data and train the mode
 | Model or component | Design and reason for using it | Current status | Evidence of completed work | Next step |
 |---|---|---|---|---|
 | Baseline: depth keep-clear rule | Geometric check of the depth points inside the zone. Shows whether ML adds value beyond geometry. | **Implemented**. Run on 432 synthetic frames only. Not evaluated on real data. | `src/ame505_bringup/ame505_bringup/keep_clear.py`, `ml/depth_baseline.py`; 7 unit tests pass (`pytest ml/test_ml.py`); Fig. 3 and Fig. 4 | Tune `min_area_m2` and camera pitch on the real validation split (first run **[Nov 24]**) |
-| Baseline: COCO-only YOLO | Pretrained detector without fine-tuning. Shows the value of our own data. | **Designed** | Class mapping planned (chair, suitcase, …) | Run on the first real session **[Nov 25]** |
+| Baseline: COCO-only YOLO | Pretrained detector without fine-tuning. Shows the value of our own data. | **Operational, not evaluated** | Runs live on the robot camera (`yolo_live.py`, ~1.5 fps on CPU); class mapping planned (chair, suitcase, …) | Run on the first real session **[Nov 25]** |
 | Main model: fine-tuned YOLO + TensorRT | Single-stage real-time detector. COCO pretraining reduces label needs. TensorRT for the Nano. | **Designed** | Classes, input size 320, split procedure defined | CVAT labels, then training **[Nov 28–30]**; measure Jetson latency |
 | Checkpoint classifier | kNN / DT / SVM on HOG, colour and depth features vs. a CNN. The best one is used in the final system. | **Designed** | Feature list defined; depth features come from `keep_clear.check()` | Train on the real split **[Dec 2]** |
-| System integration | Map → AMCL → Nav2 patrol → capture → rule → CSV + dashboard | **Partially operational** | Lidar map (Fig. 2); AMCL + Nav2 run on the robot on Nov 13 (`debug_logs/20261113_195519`); inspection node and dashboard card implemented; laptop simulation | Save 8–10 checkpoints and run the first full patrol with the camera **[Nov 20–21]** |
+| System integration | Map → AMCL → Nav2 patrol → capture → rule → CSV + dashboard | **Partially operational** | Lidar map (Fig. 2); AMCL + Nav2 run on the robot on Nov 13 (`debug_logs/20261113_195519`); inspection node and dashboard card implemented; laptop simulation | Save the remaining checkpoints (3 of 8–10 done) and run the first full patrol with the camera **[Nov 20–21]** |
 
 **Most important open decision:** how to handle the camera pitch. The rule assumes a known
 camera tilt. Fig. 4 shows that a calibration error of −2.5° makes 82 % of clear frames false
@@ -145,9 +145,11 @@ starts once the checkpoints are saved (§7). The completed artifacts are:
    live failure was diagnosed from logs: AMCL fell behind under CPU load (Jetson load average
    18–19), so map→odom was 0.32 s old against a 0.3 s tolerance and the controller aborted. The
    TF tolerances were fixed. This shows that the robot can localize and receive goals on the map.
-   It does not yet show repeatable patrol completion: no checkpoints are saved and no full patrol
-   has been run. Note: the saved map contains walls (2,617 cells) and unknown space, and only 1 of
-   82,187 cells is marked free. It will be re-saved before checkpoints are fixed.
+   It does not yet show repeatable patrol completion: no full patrol has been run. The Nov 13 map
+   marked only 1 cell free, so the lab was re-mapped on **Nov 18** (`maps/lab2d_11_18_2`, 493 × 200
+   cells, 24.6 × 9.8 m of mapped obstacles) and the first **3 doorway checkpoints** were saved on it
+   (`map_lab_1118_light.png`). The two maps, aligned by ICP, agree to a **median wall distance of
+   7 cm** (84 % of walls within 20 cm, moved furniture included; `map_repeatability.png`).
 2. **End-to-end baseline pipeline on synthetic data (Fig. 3).** `ml/fake_dataset.py` renders
    432 depth frames in the real file layout (3 sessions × 8 checkpoints; 216 hazard, 216 normal,
    including 72 normal frames with an object *outside* the zone). `ml/split.py --holdout cp_08`
@@ -182,7 +184,7 @@ starts once the checkpoints are saved (§7). The completed artifacts are:
 
 | Task | Tangible completion evidence | Responsible member(s) | Target date | Dependency or fallback |
 |---|---|---|---|---|
-| Re-save map, fix 8–10 checkpoints, tape keep-clear zones, first patrol | `checkpoints/<map>.yaml`, patrol log, `inspections/index.csv` from one patrol | Nirmal (lead), all | [Nov 20–21] | Fallback: robot placed by hand at each checkpoint |
+| Add the remaining checkpoints (3 of 8–10 saved), tape keep-clear zones, first patrol | `checkpoints/<map>.yaml`, patrol log, `inspections/index.csv` from one patrol | Nirmal (lead), all | [Nov 20–21] | Fallback: robot placed by hand at each checkpoint |
 | Data collection S1–S3 | `dataset/index.csv` with counts per checkpoint, scene and light | Ryan (lead), all | [Nov 21–25] | Fallback: 2 sessions (§6) |
 | Real depth-rule baseline and pitch calibration | Metrics on the val/test split | [Soowhan / Leo] | [Nov 24] | Needs S1 |
 | CVAT labels, then YOLO fine-tune and COCO-only baseline | Labelled set, mAP@0.5, Jetson latency | Soowhan (lead), Ryan | [Nov 30] | Nano variant + 320 px if > 200 ms |
@@ -215,7 +217,7 @@ inspection-result format (checkpoint, time, result, area, file paths) and the sa
   Lin et al., COCO (ECCV 2014); Ultralytics YOLO and Jetson guide; NVIDIA TensorRT; CVAT;
   scikit-learn metrics (as in the proposal)
 - ROS 2 Humble, slam_toolbox, Nav2, AMCL; Hiwonder JetAuto drivers (vendor, not in the repo)
-- Figures: `docs/progress/figures/map_lab_light.png` (Fig. 2; slide version `map_lab_dark.png`, 3D `map_lab_3d.png`), `keep_clear_example.png` (Fig. 3),
+- Figures: `docs/progress/figures/map_lab_1118_light.png` (Fig. 2; slide version `map_lab_1118_dark.png`), `map_repeatability.png`, `keep_clear_example.png` (Fig. 3),
   `pitch_sensitivity.png` (Fig. 4)
 
 ### Reproducing the numbers
