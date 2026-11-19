@@ -497,6 +497,7 @@ class Manager:
         self.node = node
         self.proc = None
         self.patrol = None
+        self.tour = False                                 # the running patrol is the Tour (--follow)
         self.gtsam = None
         self.gtsam_check = {}
         self.yolo = None
@@ -681,14 +682,52 @@ class Manager:
         threading.Thread(target=job, daemon=True).start()
         return True, f'Building realistic 3D scene for {name}...'
 
-    def start_patrol(self, loops, dwell):
+    def start_patrol(self, loops, dwell, follow=False):
         if self.mode != 'navigation' or not self.running():
             return False, 'Start navigation first.'
         if self.patrol is not None and self.patrol.poll() is None:
             return False, 'Patrol already running.'
         self.patrol = self._spawn(['ros2', 'run', 'ame505_bringup', 'patrol', '--map', self.map,
-                                   '--loops', str(loops), '--dwell', str(dwell)], 'patrol')
+                                   '--loops', str(loops), '--dwell', str(dwell)] + (['--follow'] if follow else []),
+                                  'patrol')
+        self.tour = follow
         return True, 'Patrol started.'
+
+    def start_tour(self, name, camera=False, dwell=3.0):
+        """Tour button (not the "Demo at checkpoint" card): one click = navigation on the chosen map (started here if it is not running) and
+        an endless tour of its checkpoints. The patrol re-reads the checkpoint file before every leg
+        (--follow), so a checkpoint added during the tour is visited too, and it waits if there are none."""
+        if self.patrol is not None and self.patrol.poll() is None:
+            return False, 'A patrol or tour is already running. Press Stop first.'
+        if self.running() and self.mode != 'navigation':
+            return False, f'Stop {self.mode} first.'
+        started = False
+        if not self.running():
+            ok, msg = self.start('navigation', name, camera=camera)
+            if not ok:
+                return ok, msg
+            started = True
+
+        def job():
+            node, t0 = self.node, time.time()
+            # the patrol only waits for Nav2; the robot must also know where it is before it is sent off
+            while not (node.nav.server_is_ready() and node.robot_pose()):
+                if not self.running() or self.mode != 'navigation' or time.time() - t0 > 240:
+                    self.job = 'Tour: navigation did not come up.' if self.running() else self.job
+                    return
+                self.job = f'Tour: waiting for navigation ({int(time.time() - t0)} s)...'
+                time.sleep(1.0)
+            if self.auto_pose:                            # same start-pose seeding the map page does
+                self.auto_pose = False
+                h = get_home(self.map)
+                node.set_initial_pose(h['x'], h['y'], h['yaw'])
+            if started:
+                time.sleep(4.0)                           # let AMCL settle on the lidar before driving
+            if self.running() and self.mode == 'navigation':
+                ok, msg = self.start_patrol(0, dwell, follow=True)
+                self.job = 'Tour: visiting the checkpoints in a loop. Add one any time and it joins the tour.' if ok else f'Tour: {msg}'
+        threading.Thread(target=job, daemon=True).start()
+        return True, 'Tour: ' + ('starting navigation, then ' if started else '') + 'visiting the checkpoints in a loop (Stop ends it).'
 
     # ---------- GTSAM (read-only estimator next to the running robot software) ----------
     def gtsam_running(self):
@@ -1067,6 +1106,7 @@ def create_app(node, mgr):
             'mode': mgr.mode, 'map': mgr.map, 'running': mgr.running(), 'kind': mgr.kind,
             'uptime_s': int(time.time() - mgr.started) if mgr.running() and mgr.started else 0,
             'patrol': mgr.patrol is not None and mgr.patrol.poll() is None,
+            'tour': mgr.tour and mgr.patrol is not None and mgr.patrol.poll() is None,
             'job': mgr.job, 'last_saved': mgr.last_saved, 'sensors': v, 'rates': rates,
             'log': mgr.log_tail(), 'gtsam_running': mgr.gtsam_running(), 'gtsam_check': mgr.gtsam_check,
             'yolo_running': mgr.yolo_running(), 'demo': mgr.demo,
@@ -1205,6 +1245,9 @@ def create_app(node, mgr):
             ok, msg = mgr.reconstruct_async(body.get('map', ''))
         elif action == 'patrol':
             ok, msg = mgr.start_patrol(int(body.get('loops', 1)), float(body.get('dwell', 5)))
+        elif action == 'tour':
+            ok, msg = mgr.start_tour(body.get('map', 'lab2d'), camera=bool(body.get('camera')),
+                                     dwell=float(body.get('dwell', 3)))
         elif action == 'start_gtsam':
             ok, msg = mgr.start_gtsam(bool(body.get('use_imu', True)))
         elif action == 'stop_gtsam':

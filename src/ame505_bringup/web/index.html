@@ -213,6 +213,7 @@
     <div class="tools" style="margin-bottom:10px">
       <select id="mapsel" style="width:auto;min-width:160px" title="saved maps"></select>
       <button class="big go" id="bNav" style="width:auto;padding:8px 16px;font-size:14px" onclick="startNav()">▶ Start navigation</button>
+      <button class="big view" id="bTour" style="width:auto;padding:8px 16px;font-size:14px" onclick="tour()" title="one click: start navigation on this map if needed, then tour its checkpoints in a loop. Checkpoints you add during the tour are visited too. Stop ends it. (Not the 'Run demo' card: that one photographs a single checkpoint.)">▶ Tour</button>
       <button class="big stop" id="bStop" style="width:auto;padding:8px 16px;font-size:14px" onclick="act('stop')">■ Stop</button>
       <label class="chk" style="margin:0" title="depth camera obstacles + live camera view. The camera arrives ~5 s late on the Nano, so lidar-only is steadier."><input type="checkbox" id="navcam"> camera</label>
     </div>
@@ -225,7 +226,7 @@
       <button class="tbtn" onclick="act('set_home')" title="make the robot's current spot its home">Set home here</button>
       <button class="tbtn" onclick="act('add_checkpoint')" title="save current spot as a patrol checkpoint">+ Checkpoint here</button>
       <button class="tbtn" onclick="nm.fit()">Fit</button>
-      <label class="chk" style="margin:0 0 0 6px"><input type="checkbox" id="follow" checked> follow robot</label>
+      <label class="chk" style="margin:0 0 0 6px" title="keeps the robot in view: the map stays still and only shifts when the robot nears the edge"><input type="checkbox" id="follow" checked> follow robot</label>
     </div>
     <div class="mapwrap"><canvas id="mapcanvas"></canvas><div id="maphint" class="maphint">No saved map yet. Make one with "Start mapping".</div>
       <div id="mapbanner" class="mapbanner" style="display:none"></div></div>
@@ -341,6 +342,7 @@ function startMapping() { act('start_mapping', {map: $('mapname').value.trim(), 
   map3d: $('map3d').checked, camera: $('mapcam').checked || $('map3d').checked}); }
 function startNav() { act('start_navigation', {map: $('mapsel').value, rviz: false, camera: $('navcam').checked}); }
 function patrol() { act('patrol', {loops: +$('loops').value, dwell: +$('dwell').value}); }
+function tour() { act('tour', {map: $('mapsel').value, camera: $('navcam').checked, dwell: +$('dwell').value || 3}); }
 function openLatest() {
   const c = files.clouds.find(x => x.name.endsWith('_mesh.ply')) || files.clouds.find(x => x.name.endsWith('_dense.ply')) || files.clouds[0];
   if (!c) { $('job').textContent = 'No 3D map saved yet.'; return; }
@@ -417,11 +419,12 @@ function renderHeader() {
 function renderMode() {
   const m = st.mode || 'idle', run = st.running;
   $('mode').className = 'badge ' + m;
-  $('mode').textContent = m.toUpperCase() + (st.map && m !== 'idle' ? ' · ' + st.map : '') + (st.patrol ? ' · PATROL' : '');
+  $('mode').textContent = m.toUpperCase() + (st.map && m !== 'idle' ? ' · ' + st.map : '') + (st.tour ? ' · TOUR' : st.patrol ? ' · PATROL' : '');
   $('uptime').textContent = run ? `${Math.floor(st.uptime_s / 60)}:${String(st.uptime_s % 60).padStart(2, '0')}` : '';
   $('bStart').disabled = run; $('bNav').disabled = run; $('bDrive').disabled = run; $('bStop2').disabled = !run;
   $('bSave').disabled = !(run && m === 'mapping');
   $('bStop').disabled = !run; $('bPatrol').disabled = !(run && m === 'navigation') || st.patrol;
+  $('bTour').disabled = st.patrol || (run && m !== 'navigation');
   $('bView').disabled = !files.clouds.length;
   $('bGtsam').disabled = !run || st.gtsam_running; $('bGtsamStop').disabled = !st.gtsam_running;
   $('bGtsamAnchor').disabled = !st.gtsam_running;
@@ -612,7 +615,12 @@ const nm = (() => {
     try { st = await (await fetch('/api/navstate?map=' + encodeURIComponent(sel))).json(); } catch (e) { return; }
     if (st.map && st.map.url !== imgVer) { imgVer = st.map.url; img = new Image(); img.onload = draw; img.src = st.map.url; if (!fitted) { fitted = true; setTimeout(fit, 50); } }
     if (!st.map) fitted = false;
-    if ($('follow').checked && st.robot && !drag && st.live) { view.cx = st.robot.x; view.cy = st.robot.y; }
+    // "follow robot" keeps the map still and only moves it when the robot gets close to the edge of the view
+    // (re-centring on every update made the whole map slide under a robot that looked parked in the middle)
+    if ($('follow').checked && st.robot && !drag && st.live) {
+      const [px, py] = toPx(st.robot.x, st.robot.y), mx = W() * 0.15, my = H() * 0.15;
+      if (px < mx || px > W() - mx || py < my || py > H() - my) { view.cx = st.robot.x; view.cy = st.robot.y; }
+    }
     const n = st.nav || {}, lbl = n.label ? ` → ${n.label}` : '';
     const txt = {driving: `🚗 Driving${lbl}` + (n.remaining_m !== undefined ? ` · ${n.remaining_m} m left · ~${n.eta_s}s` : ''),
                  arrived: `✅ Arrived${lbl}`, failed: `⚠️ Could not reach${lbl}`, canceled: '■ Cancelled', rejected: '⚠️ Goal rejected',

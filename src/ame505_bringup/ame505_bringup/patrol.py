@@ -2,6 +2,7 @@
 """Autonomous patrol: visit every recorded checkpoint with Nav2, stop, dwell.
 
     ros2 run ame505_bringup patrol --map lab_map --loops 1 --dwell 5
+    ros2 run ame505_bringup patrol --map lab_map --loops 0 --follow     # tour forever, pick up new checkpoints (dashboard Tour button)
 
 At each checkpoint it publishes the checkpoint id on /patrol/at_checkpoint
 (std_msgs/String) and waits --dwell seconds. That is the hook for the
@@ -58,18 +59,29 @@ def main():
     ap.add_argument('--file', default='', help='explicit checkpoint yaml (overrides --map)')
     ap.add_argument('--loops', type=int, default=1, help='patrol loops (0 = forever)')
     ap.add_argument('--dwell', type=float, default=5.0, help='seconds to stop at each checkpoint')
+    ap.add_argument('--follow', action='store_true',
+                    help='re-read the checkpoint file before every leg, so checkpoints added (or removed) '
+                         'while patrolling are followed; waits if there are none yet')
     ap.add_argument('--return-home', action='store_true', help='go back to cp_01 at the end')
     ap.add_argument('--nav2-timeout', type=float, default=180.0, help='seconds to wait for Nav2 to be active')
     args = ap.parse_args(rclpy.utilities.remove_ros_args(sys.argv)[1:])
 
     path = args.file or checkpoints_file(args.map)
-    if not os.path.exists(path):
-        sys.exit(f'No checkpoint file {path}. Record checkpoints first (Y button during navigation).')
-    with open(path) as f:
-        data = yaml.safe_load(f)
-    cps, frame = data['checkpoints'], data.get('frame_id', 'map')
-    if not cps:
-        sys.exit(f'No checkpoints in {path}')
+    def load():
+        """(checkpoints, frame) from the file; ([], 'map') when it is missing, empty or half-written."""
+        try:
+            with open(path) as f:
+                data = yaml.safe_load(f) or {}
+            return list(data.get('checkpoints') or []), data.get('frame_id', 'map')
+        except (OSError, yaml.YAMLError):
+            return [], 'map'
+
+    cps, frame = load()
+    if not args.follow:                                   # --follow waits for checkpoints instead
+        if not os.path.exists(path):
+            sys.exit(f'No checkpoint file {path}. Record checkpoints first (Y button during navigation).')
+        if not cps:
+            sys.exit(f'No checkpoints in {path}')
 
     rclpy.init()
     nav = BasicNavigator()
@@ -100,18 +112,41 @@ def main():
 
     loop = 0
     try:
+        waiting = False
         while args.loops == 0 or loop < args.loops:
+            if args.follow:
+                cps, frame = load()
+                if not cps:                               # nothing to visit yet: wait for the first checkpoint
+                    if not waiting:
+                        nav.get_logger().info('No checkpoints yet. Add one ("+ Checkpoint here" or Y) and the robot will go.')
+                    waiting = True
+                    time.sleep(2.0)
+                    continue
+                waiting = False
             loop += 1
-            missed = [cp for cp in cps if not visit(cp, f'loop {loop}')]
+            if args.follow:
+                # one leg at a time, re-reading the file: a checkpoint added during this loop is visited in it
+                done, missed = set(), []
+                while True:
+                    cps, frame = load()
+                    cp = next((c for c in cps if c['id'] not in done), None)
+                    if cp is None:
+                        break
+                    done.add(cp['id'])
+                    if not visit(cp, f'loop {loop}'):
+                        missed.append(cp)
+            else:
+                missed = [cp for cp in cps if not visit(cp, f'loop {loop}')]
             # Something was in the way (people, a cart). Come back at the end of the loop: it may
             # have moved, and the robot now arrives from a different direction.
             missed = [cp for cp in missed if not visit(cp, f'loop {loop}, second attempt')]
+            total = len(done) if args.follow else len(cps)   # with --follow the list can change during the loop
             for cp in missed:
                 missed_pub.publish(String(data=cp['id']))
             nav.get_logger().info(
-                f'Loop {loop}: {len(cps) - len(missed)}/{len(cps)} checkpoints inspected'
+                f'Loop {loop}: {total - len(missed)}/{total} checkpoints inspected'
                 + (f', NOT reached: {", ".join(cp["id"] for cp in missed)}' if missed else ''))
-        if args.return_home:
+        if args.return_home and cps:
             drive_to(cps[0])
         nav.get_logger().info('Patrol finished')
     except KeyboardInterrupt:
