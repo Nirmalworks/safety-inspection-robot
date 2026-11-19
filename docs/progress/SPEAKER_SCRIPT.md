@@ -33,7 +33,7 @@ captures RGB-D frames, which is implemented, and then decides. The decision step
 non-learned rule is built, and the learned models are next. Results go to a log and the web dashboard.
 
 Data so far: two independent lidar maps of BHE 301, Data 1 and Data 2. Data 1 looks rotated because the
-robot started facing another way. Data 2 is 24.6 by 9.8 metres and holds the first three checkpoints. The camera streams live, but we have no labelled images yet. That is our main risk.
+robot started facing another way. Data 2 is 24.6 by 9.8 metres and holds the first three checkpoints. The slide shows both as 3D views, with the checkpoint names on Data 2. The camera streams live, but we have no labelled images yet. That is our main risk.
 
 What is prepared: a capture tool that saves every frame with its labels, and a split by session and
 location, 70/15/15, with one whole checkpoint held out for testing. We split by location rather than
@@ -103,7 +103,7 @@ Thank you.
 
 ## Demo slide (after slide 5, only if time allows)
 
-Three videos, click to play: the phone video from start to checkpoint A, the dashboard during the same kind of run, and the laptop simulation touring the checkpoints.
+Two videos, click to play: the phone video of the robot in BHE 301, and the laptop simulation touring the checkpoints. The dashboard run is already on slide 4 as a GIF.
 
 ## Backup slide: Robot Platform (Q&A only)
 
