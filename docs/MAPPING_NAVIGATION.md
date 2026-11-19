@@ -25,6 +25,7 @@ Open **http://localhost:8505** on the robot, or **http://\<robot-ip\>:8505** fro
 | **3 Stop & Save** | saves `maps_2d/<name>.pgm/.yaml` |
 | **Map panel** | pick a map → ▶ Start navigation → 📍 Set pose if needed → 🎯 Go to goal; light-blue dots = AMCL particles; status shows Localization GOOD/FAIR/POOR |
 | **Patrol** | record checkpoints (Y or "+ Checkpoint here"), then Patrol |
+| **▶ Tour** (next to Start navigation) | one click: starts navigation on the selected map if needed, then tours its checkpoints in an endless loop. A checkpoint added during the tour joins it; with no checkpoints yet the robot waits for the first one. **Stop** ends it |
 | **camera** checkbox | depth camera obstacles + live camera view (needed for dataset capture) |
 | **GTSAM SLAM** | start/stop GTSAM next to anything running; orange path on the map ([GTSAM_SLAM.md](GTSAM_SLAM.md)) |
 | **E-STOP** | zero velocity + stops patrol/navigation |
@@ -107,6 +108,32 @@ ros2 run ame505_bringup patrol --map lab_map --loops 1 --dwell 5
 # RViz from a laptop (same Wi-Fi, ROS_DOMAIN_ID=0)
 ros2 launch ame505_bringup rviz.launch.py mode:=robot|mapping|navigation
 ```
+
+## Cleaning up a saved map (map editor, on a laptop)
+
+`scripts/map_editor.py` is a small browser tool for editing a saved 2D map: erase chairs and speckle,
+redraw or close walls, cut out a badly mapped section, or turn the whole map. It never overwrites
+the map you open; **Save** writes a new map name with its checkpoints, home and landmarks.
+
+```bash
+source scripts/sim_env.sh              # laptop: maps in ~/ame505_sim_data  (robot: source scripts/env.sh)
+scripts/backup_map.sh lab2d --restore  # only if the map is in the repo's maps/ and not yet in the data folder
+scripts/map_editor.py                  # then open http://localhost:8506
+```
+
+| Control | What it does |
+|---|---|
+| **Map to edit** / **Compare with** | the map on screen, and an optional second map of the same place. The second map is lined up automatically (15-20 s the first time) and shown below; its walls (red) and the cells where the two differ (orange) can be laid over the map |
+| Floor / Wall / Unknown | what to paint. Brush (hold **Shift** for a straight line), Line, Box (a Wall box is an outline with unknown inside) |
+| Select / Polygon, **Fill selection** | select a box or a slanted area, then fill it. Unknown + Fill cuts a section out |
+| Copy / Paste, Rotate, Flip | move or repeat a piece of the map |
+| **Use second map here** / **Restore original here** | take the selected area from the second map, or put the saved map back there |
+| **Rotate whole map** | turns the map with its checkpoints, home and landmarks (rotate first, then edit) |
+
+Use it on a laptop, not on the robot during a run: lining up two maps needs a lot of CPU. To put an
+edited map on the robot: `scripts/backup_map.sh <name>` on the laptop, commit, push, then on the robot
+`git pull && scripts/backup_map.sh <name> --restore`. Drive a few goals on it before trusting it:
+the lidar still sees the furniture you erased, which is fine, but a wall you moved by hand is not.
 
 ## How to drive for a good 3D map
 
