@@ -25,3 +25,12 @@ data/
 # YOLO weights (downloaded by ml/yolo_coco.py)
 ml/weights/
 *.pt
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Raw screen recordings (share the trimmed .mp4 instead)
+*.mov
+Screen Recording*

@@ -1,0 +1,20 @@
+name: Task / feature
+description: New capability, experiment or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should work when this is done?
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: Proposed approach
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      placeholder: "- [ ] ...\n- [ ] tested on the robot"

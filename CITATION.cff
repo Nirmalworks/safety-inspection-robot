@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Safety Inspection Robot: autonomous checkpoint patrol and RGB-D hazard detection on a Hiwonder JetAuto"
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/Nirmalworks/safety-inspection-robot"
+date-released: 2026-11-19
+authors:
+  - given-names: Leo
+    family-names: Crampe
+  - given-names: Nirmal Kumar
+    family-names: Jagannathan
+  - given-names: Ryan
+    family-names: O'Gorman
+  - given-names: Soowhan
+    family-names: Yi
+keywords:
+  - ROS 2
+  - Nav2
+  - SLAM
+  - mobile robot
+  - safety inspection
+  - object detection

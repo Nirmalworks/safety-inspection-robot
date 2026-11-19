@@ -57,8 +57,8 @@ def fit_floor(depth_mm, camera=None, iters=300, tol=0.01, seed=0):
 def selftest():
     """Render bare floor seen by a camera pitched by a known angle and recover it."""
     cam, h = DEFAULT_CAMERA, 0.207
-    v, u = np.mgrid[0:240, 0:320].astype(np.float32)
-    right, down = (u - cam['cx']) / cam['fx'], (v - cam['cy']) / cam['fy']
+    v, _ = np.mgrid[0:240, 0:320].astype(np.float32)
+    down = (v - cam['cy']) / cam['fy']
     worst = 0.0
     for true_pitch in (-3.0, -1.0, 0.0, 2.0, 5.0):
         p = math.radians(true_pitch)

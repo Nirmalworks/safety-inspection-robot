@@ -1,0 +1,14 @@
+# Tooling configuration only. The ROS 2 packages are built with colcon (see src/*/setup.py).
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["build", "install", "log", "debug_logs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]  # long lines are allowed in launch files and parameter tables
+
+[tool.pytest.ini_options]
+testpaths = ["ml"]
+addopts = "-q"

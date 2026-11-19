@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# Binary assets
+*.png  binary
+*.jpg  binary
+*.pdf  binary
+*.stl  binary
+*.pgm  binary
+*.mp4  binary
+*.pptx binary
+
+# Keep GitHub language stats about the code, not generated or vendored files
+src/ame505_description/meshes/** linguist-vendored
+src/ame505_description/urdf/**   linguist-vendored
+debug_logs/**                    linguist-generated
+docs/progress/**                 linguist-documentation
+*.rviz                           linguist-generated
