@@ -103,9 +103,11 @@ when a topic stops publishing. This is also where the inspection results will ap
 ## Slide 6: Next Steps (4:15–5:00)
 
 This week: the remaining checkpoints and the first patrol with the camera. November 21 to 25: data
-sessions 1 to 3, with the first real baseline result on the 24th. November 30: the CNN detector
-fine-tuned, with latency measured on the Jetson. December 2: kNN, decision tree and SVM against the CNN
-on the same split. December 8: the live evaluation.
+sessions 1 to 3, before Thanksgiving, with the first real baseline result on the 24th. November 28: the
+YOLO detector fine-tuned, with latency measured on the Jetson. November 29 and 30: kNN, decision tree
+and SVM against the CNN on the same split, and the detector integrated on the robot. December 1 to 3:
+the live evaluation and system demonstration at the final presentation. The final report is due
+December 15.
 
 The targets come from our proposal: recall of at least 0.90, at most one false alarm per patrol, at
 least 80 percent of patrols completed, and at most 200 milliseconds of inference per frame. Every model
@@ -138,7 +140,7 @@ robot inspects only while stopped.
 
 - **Why a CNN and not only kNN or an SVM?** The classical models need features we design (HOG, colour,
   depth area); a CNN learns its own features from pixels. With few images the classical models may do
-  as well, which is exactly what the comparison on Dec 2 tests.
+  as well, which is exactly what the comparison on Nov 29 tests.
 - **Why transfer learning?** We will have hundreds of images, not tens of thousands. Starting from COCO
   weights means the early layers already detect edges and common objects; we only adapt the last layers.
 - **How do you avoid overfitting?** Small model (YOLO nano, 320 px input), pretrained weights, early
@@ -151,4 +153,4 @@ robot inspects only while stopped.
 - **Why 2D lidar instead of the camera for navigation?** Late camera frames (up to 7 s) and a 1.4 m
   relocalization error; the lidar maps agree to 7 cm.
 - **Latency?** COCO YOLO26n runs at about 1.5 fps on the Nano CPU; the TensorRT export at 320 px is
-  meant to reach the 200 ms target. To be measured on Nov 30.
+  meant to reach the 200 ms target. To be measured on Nov 28.

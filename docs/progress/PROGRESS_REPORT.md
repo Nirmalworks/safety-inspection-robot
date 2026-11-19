@@ -125,8 +125,8 @@ the baseline, the data pipeline, and the plan to collect data and train the mode
 |---|---|---|---|---|
 | Baseline: depth keep-clear rule | Geometric check of the depth points inside the zone. Shows whether ML adds value beyond geometry. | **Implemented**. Run on 432 synthetic frames only. Not evaluated on real data. | `src/ame505_bringup/ame505_bringup/keep_clear.py`, `ml/depth_baseline.py`; 7 unit tests pass (`pytest ml/test_ml.py`); Fig. 3 and Fig. 4 | Tune `min_area_m2` and camera pitch on the real validation split (first run **[Nov 24]**) |
 | Baseline: COCO-only YOLO | Pretrained detector without fine-tuning. Shows the value of our own data. | **Operational, not evaluated** | Runs live on the robot camera (`yolo_live.py`, ~1.5 fps on CPU); class mapping planned (chair, suitcase, …) | Run on the first real session **[Nov 25]** |
-| Main model: fine-tuned YOLO + TensorRT | Single-stage real-time detector. COCO pretraining reduces label needs. TensorRT for the Nano. | **Designed** | Classes, input size 320, split procedure defined | CVAT labels, then training **[Nov 28–30]**; measure Jetson latency |
-| Checkpoint classifier | kNN / DT / SVM on HOG, colour and depth features vs. a CNN. The best one is used in the final system. | **Designed** | Feature list defined; depth features come from `keep_clear.check()` | Train on the real split **[Dec 2]** |
+| Main model: fine-tuned YOLO + TensorRT | Single-stage real-time detector. COCO pretraining reduces label needs. TensorRT for the Nano. | **Designed** | Classes, input size 320, split procedure defined | CVAT labels, then training **[Nov 25–28]**; measure Jetson latency |
+| Checkpoint classifier | kNN / DT / SVM on HOG, colour and depth features vs. a CNN. The best one is used in the final system. | **Designed** | Feature list defined; depth features come from `keep_clear.check()` | Train on the real split **[Nov 29]** |
 | System integration | Map → AMCL → Nav2 patrol → capture → rule → CSV + dashboard | **Partially operational** | Lidar map (Fig. 2); AMCL + Nav2 run on the robot on Nov 13 (`debug_logs/20261113_195519`); inspection node and dashboard card implemented; laptop simulation | Save the remaining checkpoints (3 of 8–10 done) and run the first full patrol with the camera **[Nov 20–21]** |
 
 **Most important open decision:** how to handle the camera pitch. The rule assumes a known
@@ -187,10 +187,10 @@ starts once the checkpoints are saved (§7). The completed artifacts are:
 | Add the remaining checkpoints (3 of 8–10 saved), tape keep-clear zones, first patrol | `checkpoints/<map>.yaml`, patrol log, `inspections/index.csv` from one patrol | Nirmal (lead), all | [Nov 20–21] | Fallback: robot placed by hand at each checkpoint |
 | Data collection S1–S3 | `dataset/index.csv` with counts per checkpoint, scene and light | Ryan (lead), all | [Nov 21–25] | Fallback: 2 sessions (§6) |
 | Real depth-rule baseline and pitch calibration | Metrics on the val/test split | [Soowhan / Leo] | [Nov 24] | Needs S1 |
-| CVAT labels, then YOLO fine-tune and COCO-only baseline | Labelled set, mAP@0.5, Jetson latency | Soowhan (lead), Ryan | [Nov 30] | Nano variant + 320 px if > 200 ms |
-| Checkpoint classifiers (kNN / DT / SVM / CNN) | Comparison table on the same split | Ryan, Soowhan | [Dec 2] | |
-| Integrate detector into the inspection node, annotated images on the dashboard | Live patrol with detector output | Nirmal | [Dec 4] | Offline bag replay as fallback |
-| Final evaluation S1–S5 (≥ 5 patrols each), failure analysis | Recall, false alarms per patrol, confusion matrix | Leo (lead), all | [Dec 8] | |
+| CVAT labels, then YOLO fine-tune and COCO-only baseline | Labelled set, mAP@0.5, Jetson latency | Soowhan (lead), Ryan | [Nov 28] | Nano variant + 320 px if > 200 ms |
+| Checkpoint classifiers (kNN / DT / SVM / CNN) | Comparison table on the same split | Ryan, Soowhan | [Nov 29] | |
+| Integrate detector into the inspection node, annotated images on the dashboard | Live patrol with detector output | Nirmal | [Nov 30] | Offline bag replay as fallback |
+| Final evaluation S1–S5 (≥ 5 patrols each), failure analysis | Recall, false alarms per patrol, confusion matrix | Leo (lead), all | [Dec 1–3, final presentation and system demonstration; report Dec 15] | |
 | Final presentation, live demo, report | Slides, rehearsed 3-patrol demo, report | All | [final dates] | Recorded patrols as backup |
 
 Next concrete milestone: the **first full patrol with the camera on**. It is reached when

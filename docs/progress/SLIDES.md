@@ -57,6 +57,7 @@ Same numbers and status words as `PROGRESS_REPORT.md`. Figures are in `docs/prog
 
 - [Nov 20–21] checkpoints + first patrol with the camera
 - [Nov 21–25] data sessions S1–S3 · [Nov 24] first real baseline result
-- [Nov 30] YOLO fine-tuned + Jetson latency · [Dec 2] classifier comparison · [Dec 8] live evaluation S1–S5
+- [Nov 28] YOLO fine-tuned + Jetson latency · [Nov 29] classifier comparison · [Nov 30] detector integrated
+- [Dec 1–3] live evaluation and system demonstration (final presentation) · [Dec 15] final report
 - **Q1:** collection is one week late: is ~700 images (8 checkpoints, 2 sessions) enough, or should we drop a hazard type?
 - **Q2:** open door: is a detector class acceptable instead of a zone check?
