@@ -1,6 +1,6 @@
 # Progress presentation: speaker script
 
-Deck: `AME505_Group5_Progress.pptx` (5 slides + 2 backups, no speaker notes inside). Total 5:00, then Q&A.
+Deck: `AME505_Group5_Progress.pptx` (5 slides, a demo slide and 1 backup; no speaker notes inside). Total 5:00, then Q&A.
 Numbers and status words match `PROGRESS_REPORT.md`. Read this aloud while rehearsing; on the day,
 speak from the slides, not from this page.
 
@@ -101,6 +101,10 @@ Thank you.
 
 ---
 
+## Demo slide (after slide 5, only if time allows)
+
+Three videos, click to play: the phone video from start to checkpoint A, the dashboard during the same kind of run, and the laptop simulation touring the checkpoints.
+
 ## Backup slide: Robot Platform (Q&A only)
 
 Use it if asked what runs where. Sensors (lidar, RGB-D camera, IMU and wheel encoders) feed the Jetson
@@ -121,9 +125,9 @@ dashboard in a laptop browser. Camera frames come through the vendor's ROS 1 con
 - **Latency?** COCO YOLO26n runs at about 1.5 fps on the Nano CPU; the TensorRT export at 320 px is
   meant to reach the 200 ms target. To be measured on Nov 30.
 
-## Backup slide: Course Concepts (Q&A only)
+## If asked how the course material applies (no slide; the tags on slide 3 point to it)
 
-If asked how the class material shows up: the checkpoint decision is supervised classification (kNN,
+ the checkpoint decision is supervised classification (kNN,
 decision tree and SVM against a CNN); the classical models use engineered features (HOG, colour
 histograms, occupied area in the zone from depth); YOLO is transfer learning from COCO; the non-learned
 depth rule is the baseline every model must beat; the train/validation/test split is by session and
