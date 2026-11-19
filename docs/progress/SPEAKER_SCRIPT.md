@@ -32,8 +32,8 @@ drives it to each checkpoint. Those three blocks are operational on the robot. A
 captures RGB-D frames, which is implemented, and then decides. The decision step is partial: the
 non-learned rule is built, and the learned models are next. Results go to a log and the web dashboard.
 
-Data so far: the lidar map of BHE 301 on the left, 24.6 by 9.8 metres, mapped on November 18 with the first
-three checkpoints. The camera streams live, but we have no labelled images yet. That is our main risk.
+Data so far: two independent lidar maps of BHE 301, Data 1 and Data 2. Data 1 looks rotated because the
+robot started facing another way. Data 2 is 24.6 by 9.8 metres and holds the first three checkpoints. The camera streams live, but we have no labelled images yet. That is our main risk.
 
 What is prepared: a capture tool that saves every frame with its labels, and a split by session and
 location, 70/15/15, with one whole checkpoint held out for testing. We split by location rather than
@@ -70,9 +70,9 @@ so recall is the main number.
 
 Here is the robot working. On the left, a phone video: the robot drives from its start pose to
 checkpoint A on its own. On the right, the dashboard during a run: Nav2 plans the blue path to
-checkpoint 1 on the November 18 map, and the robot marker follows it.
+checkpoint 1 on the Data 2 map, and the robot marker follows it.
 
-Our strongest number: we mapped the lab twice, five days apart, starting from different places. After
+Our strongest number: we mapped the lab twice, Data 1 and Data 2, starting from different places. After
 aligning the two maps, the median distance between their walls is 7 centimetres. That includes
 furniture that moved, so it is a pessimistic number. The map is stable enough to return to the same
 checkpoints session after session.
