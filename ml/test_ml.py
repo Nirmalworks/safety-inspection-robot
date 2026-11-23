@@ -49,3 +49,23 @@ def test_split_keeps_groups_whole_and_holdout_out_of_training():
 def test_metrics():
     m = metrics([(True, True)] * 9 + [(True, False)] + [(False, False)] * 8 + [(False, True)] * 2)
     assert m['recall'] == 0.9 and round(m['precision'], 3) == 0.818 and m['fp'] == 2
+
+
+def test_scores_and_labels():
+    from data import CLASSES, label, scores
+    assert label({'scene': 'normal', 'hazard': 'none'}) == 0
+    assert label({'scene': 'hazard', 'hazard': 'open_door'}) == CLASSES.index('open_door')
+    assert label({'scene': 'hazard', 'hazard': 'multiple'}) is None
+    s = scores([0, 0, 1, 2, 3], [0, 1, 1, 2, 0])       # one false alarm, one missed hazard
+    assert s['hazard_precision'] == 2 / 3 and s['hazard_recall'] == 2 / 3 and s['accuracy'] == 3 / 5
+
+
+def test_hog_shape_and_response():
+    import numpy as np
+    from classic_baselines import hog
+    flat = hog(np.zeros((96, 128), np.uint8))
+    edge = np.zeros((96, 128), np.uint8)
+    edge[:, 64:] = 255                                   # one vertical edge
+    h = hog(edge)
+    assert flat.shape == h.shape == (11 * 15 * 2 * 2 * 9,)
+    assert h.max() > 0 and flat.max() == 0

@@ -8,7 +8,10 @@ Runs on a laptop with Python 3, NumPy, OpenCV and PyYAML. No ROS, no robot.
 | Baseline | `python3 ml/depth_baseline.py <dataset>` | runs the keep-clear depth rule on every frame, writes `pred_depth_rule.csv`, prints recall / precision / F1 / false alarms per split |
 | Score a model | `python3 ml/evaluate.py <dataset> <predictions.csv> --split test` | same metrics for any predictions file with columns `file_rgb`, `pred` (1 = hazard) |
 | COCO detector | `python3 ml/yolo_coco.py <dataset> --save-images --prelabels` | pretrained YOLO26n on every frame: `frames.csv` / `detections.csv` (class, confidence, depth distance), annotated images, CVAT YOLO 1.1 pre-labels. Install: `pip install ultralytics` (robot: `scripts/setup_yolo.sh`) |
-| Tests | `python3 -m pytest ml/` | geometry of the rule, split rules, metrics |
+| Classic models | `python3 ml/classic_baselines.py <dataset>` | HOG + colour histogram + depth-geometry features → standardize → PCA → kNN, decision tree, SVM, logistic regression, random forest; hyperparameters chosen on **val**, scored once on **test**, next to the depth rule. Needs `scikit-learn` |
+| CNN | `python3 ml/train_cnn.py <dataset> [--arch mobilenet_v3_small] [--onnx]` | transfer learning from ImageNet (ResNet-18 default), class-weighted loss, best epoch on **val**, scored once on **test**; `--onnx` exports opset 13 for TensorRT on the Jetson. Needs `torch torchvision` (+ `onnx onnxscript` for `--onnx`) |
+| Comparison table | `python3 ml/results_table.py <dataset>` | every model's test row from `results/metrics.csv` as a Markdown table (confusion matrices in `results/`) |
+| Tests | `python3 -m pytest ml/` | geometry of the rule, split rules, metrics, HOG |
 | Placeholder data | `python3 ml/fake_dataset.py /tmp/fake` | rendered floor / wall / box scenes in the real file layout, to try the commands above |
 
 `<dataset>` is the folder with `index.csv` that `capture_dataset` writes (`$AME505_DATA/dataset`).
@@ -35,7 +38,23 @@ Limits:
 and writes `$AME505_DATA/inspections/index.csv` plus the image pair. The dashboard's
 **Inspection results** card lists the latest 20; results are also published on `inspection/result`.
 
+## Train and compare (after a data session)
+
+```bash
+python3 ml/dataset_summary.py <dataset>                              # enough frames per class / checkpoint?
+python3 ml/split.py <dataset> --holdout cp_03 cp_05 cp_08            # one held-out checkpoint per hazard type
+python3 ml/classic_baselines.py <dataset>                            # depth rule + 5 classical models (~1 min)
+python3 ml/train_cnn.py <dataset> --onnx                             # CNN (~5 min on a laptop GPU)
+python3 ml/train_cnn.py <dataset> --no-pretrained                    # optional: what transfer learning buys
+python3 ml/results_table.py <dataset>                                # table for the report and slides
+```
+
+Classes: `normal`, `blocked_exit`, `obstructed_walkway`, `open_door` (from `scene` / `hazard` in
+`index.csv`; frames labelled `multiple` are skipped). Precision, recall, F1 and the false-alarm rate are
+for hazard vs normal (the proposal's metrics); accuracy and macro F1 are over the four classes.
+A hazard type that appears at only one checkpoint cannot be told apart from that location: give each
+hazard type at least two training checkpoints.
+
 ## Not here yet
 
-YOLO training and TensorRT export (need the CVAT labels), the checkpoint classifier comparison,
-and the detector inside the inspection node.
+YOLO fine-tuning on CVAT box labels, and the detector inside the inspection node.
