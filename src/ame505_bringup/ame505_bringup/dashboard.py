@@ -35,6 +35,7 @@ from nav2_msgs.action import NavigateToPose
 from nav2_msgs.msg import ParticleCloud
 from nav_msgs.msg import OccupancyGrid, Odometry, Path
 from rclpy.action import ActionClient
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.time import Time
 from tf2_ros import Buffer, TransformListener
@@ -87,36 +88,38 @@ class Sensors(Node):
         self.jpeg = {'rgb': None, 'depth': None, 'yolo': None}
         self.frame_id = {'rgb': 0, 'depth': 0, 'yolo': 0}
         sd = qos_profile_sensor_data
-        self.create_subscription(LaserScan, '/scan', self.on_scan, sd)
-        self.create_subscription(Image, '/depth_cam/rgb/image_raw', self.on_rgb, sd)
-        self.create_subscription(Image, '/depth_cam/depth/image_raw', self.on_depth, sd)
-        self.create_subscription(Odometry, '/odom', self.on_odom, sd)
-        self.create_subscription(Imu, '/imu', self.on_imu, sd)
-        self.create_subscription(Joy, '/joy', self.on_joy, 10)
-        self.create_subscription(UInt16, '/ros_robot_controller/battery', self.on_batt, 10)
-        self.create_subscription(Twist, '/controller/cmd_vel', lambda m: self.on_cmd('teleop', m), 10)
-        self.create_subscription(Twist, '/cmd_vel', lambda m: self.on_cmd('nav2', m), 10)
+        self._sub(LaserScan, '/scan', self.on_scan, sd)
+        self._sub(Image, '/depth_cam/rgb/image_raw', self.on_rgb, sd)
+        self._sub(Image, '/depth_cam/depth/image_raw', self.on_depth, sd)
+        self._sub(Odometry, '/odom', self.on_odom, sd)
+        self._sub(Imu, '/imu', self.on_imu, sd)
+        self._sub(Joy, '/joy', self.on_joy, 10)
+        self._sub(UInt16, '/ros_robot_controller/battery', self.on_batt, 10)
+        self._sub(Twist, '/controller/cmd_vel', lambda m: self.on_cmd('teleop', m), 10)
+        self._sub(Twist, '/cmd_vel', lambda m: self.on_cmd('nav2', m), 10)
         latched = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
                              durability=DurabilityPolicy.TRANSIENT_LOCAL)
-        self.create_subscription(OccupancyGrid, '/map', self.on_map, latched)
-        self.create_subscription(Path, '/plan', self.on_plan, 10)
+        self._sub(OccupancyGrid, '/map', self.on_map, latched)
+        self._sub(Path, '/plan', self.on_plan, 10)
         # AMCL (2D navigation): pose + uncertainty, and the particle cloud for the live map
-        self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose', self.on_amcl, latched)
-        self.create_subscription(ParticleCloud, '/particle_cloud', self.on_particles, sd)
+        self._sub(PoseWithCovarianceStamped, '/amcl_pose', self.on_amcl, latched)
+        self._sub(ParticleCloud, '/particle_cloud', self.on_particles, sd)
         self.amcl_nomotion = self.create_client(Empty, '/request_nomotion_update')
         self.amcl, self.particles = None, []
         # GTSAM lidar/gyro odometry (gtsam_slam node)
-        self.create_subscription(String, '/gtsam/status', self.on_gtsam_status, 10)
-        self.create_subscription(Path, '/gtsam/path', self.on_gtsam_path, 1)
+        self._sub(String, '/gtsam/status', self.on_gtsam_status, 10)
+        self._sub(Path, '/gtsam/path', self.on_gtsam_path, 1)
         # live COCO detection (yolo_live node, started from the dashboard)
-        self.create_subscription(Image, '/yolo/image', self.on_yolo_image, 1)
-        self.create_subscription(String, '/yolo/detections', self.on_yolo_dets, 1)
+        self._sub(Image, '/yolo/image', self.on_yolo_image, 1)
+        self._sub(String, '/yolo/detections', self.on_yolo_dets, 1)
         self.gtsam_reanchor = self.create_client(Trigger, '/gtsam/reanchor')
         self.gtsam_path, self.gtsam_frame = [], 'gtsam_odom'
         self.estop_pub = self.create_publisher(Twist, '/controller/cmd_vel', 1)
         self.initpose_pub = self.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
         self.tf = Buffer()
-        self.tf_listener = TransformListener(self.tf, self)
+        # Own thread: /tf arrives at 50-100 Hz and used to starve the sensor callbacks (all topics
+        # read ~1.4 Hz on the loaded Nano, so burst mode refused to start).
+        self.tf_listener = TransformListener(self.tf, self, spin_thread=True)
         self.nav = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         self.nav_cancel_all = self.create_client(CancelGoal, 'navigate_to_pose/_action/cancel_goal')
         self.goal_handle = None
@@ -125,6 +128,12 @@ class Sensors(Node):
         self.map_png, self.map_info, self.map_ver = None, None, 0
         self.plan = []
         self.last_scan = None
+        self.raw_rgb = self.raw_depth = None
+
+    def _sub(self, typ, topic, cb, qos):
+        """Each subscription in its own group: topics run in parallel on the executor's threads
+        (one shared group made them take turns), but one topic never runs twice at once."""
+        return self.create_subscription(typ, topic, cb, qos, callback_group=MutuallyExclusiveCallbackGroup())
 
     def set(self, key, val, topic):
         with self.lock:
@@ -153,6 +162,8 @@ class Sensors(Node):
         return None
 
     def on_rgb(self, m):
+        with self.lock:
+            self.raw_rgb = m                # burst mode saves these directly to the SSD
         img = self._img(m)
         if img is not None:
             ok, j = cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 75])
@@ -179,6 +190,8 @@ class Sensors(Node):
         self.set('yolo', d, '/yolo/detections')
 
     def on_depth(self, m):
+        with self.lock:
+            self.raw_depth = m
         d = self._img(m)
         if d is None:
             return
@@ -403,14 +416,14 @@ class Sensors(Node):
         self.goal = None
         return True, 'Goal cancelled - robot stops.'
 
-    def set_initial_pose(self, x, y, yaw):
+    def set_initial_pose(self, x, y, yaw, tight=False):
         m = PoseWithCovarianceStamped()
         m.header.frame_id = 'map'
         m.header.stamp = self.get_clock().now().to_msg()
         m.pose.pose = self._pose(x, y, yaw).pose
         cov = [0.0] * 36
-        cov[0] = cov[7] = 0.05            # +-0.22 m: you clicked roughly the right spot
-        cov[35] = 0.03                    # +-10 deg
+        cov[0] = cov[7] = 0.01 if tight else 0.05     # +-0.1 m from Auto-locate, +-0.22 m from a click
+        cov[35] = 0.008 if tight else 0.03            # +-5 deg / +-10 deg
         m.pose.covariance = cov
         for _ in range(3):
             self.initpose_pub.publish(m)
@@ -505,6 +518,7 @@ class Manager:
         self.key_t, self.key_moving = 0.0, False
         self.demo = {'state': 'idle', 'id': 0}
         self.burst = None          # burst.BurstRun while burst mode runs (and after, for its status)
+        self.cam_proc = None       # Astra bridge started by burst mode when navigation ran without camera
         threading.Thread(target=self.key_deadman, daemon=True).start()
         self.mode = 'idle'
         self.stopping = False      # True while _stop_job runs: no second Stop, no Start
@@ -842,21 +856,52 @@ class Manager:
     def burst_running(self):
         return self.burst is not None and self.burst.status.get('state') not in ('done', 'failed', 'stopped')
 
+    def ensure_camera(self, wait=25.0):
+        """Start the Astra bridge if the camera is silent (navigation started without "camera")."""
+        if self.node.rate['/depth_cam/rgb/image_raw'].hz() >= 0.2:
+            return True, ''
+        if not self.running():
+            return False, 'Start the robot software first.'
+        if self.cam_proc is None or self.cam_proc.poll() is not None:
+            bridge = os.environ.get('AME505_ASTRA_BRIDGE',
+                                    os.path.expanduser('~/jetauto_toolkit/scripts/camera/astra_bridge.py'))
+            if not os.path.exists(bridge):
+                return False, f'Camera bridge not found ({bridge}).'
+            logf = open(os.path.join(data_dir('logs'), f'camera_{time.strftime("%Y%m%d_%H%M%S")}.log'), 'w')
+            self.cam_proc = subprocess.Popen(['python3', bridge], stdout=logf, stderr=subprocess.STDOUT,
+                                             start_new_session=True)
+        t0 = time.time()
+        while time.time() - t0 < wait:
+            time.sleep(0.5)
+            if self.node.rate['/depth_cam/rgb/image_raw'].hz() >= 0.2 and self.node.raw_depth is not None:
+                return True, ''
+        return False, ('Camera did not start within 25 s. Hiwonder\'s ROS 1 camera container may be down '
+                       '(power-cycle the robot) or check logs/camera_*.log on the SSD.')
+
     def start_burst(self, body):
-        if self.mode != 'navigation' or not self.running():
-            return False, 'Start navigation first (tick "camera").'
+        mode = 'here' if body.get('mode') == 'here' else 'route'
+        if not self.running() or self.mode not in (('navigation',) if mode == 'route' else
+                                                  ('drive', 'mapping', 'navigation')):
+            return False, ('Start navigation first.' if mode == 'route' else
+                           'Start the robot first (Drive, or Navigation).')
         if self.burst_running() or self.demo_running():
             return False, 'Burst mode or a demo is already running.'
-        cps = load_checkpoints(self.map)
-        if not cps:
-            return False, f'Map {self.map} has no checkpoints. Save some first (Xbox Y during navigation).'
-        want = [c.strip() for c in str(body.get('checkpoints', 'all')).split(',') if c.strip()]
-        if want and want != ['all']:
-            known = {c['id']: c for c in cps}
-            bad = [c for c in want if c not in known]
-            if bad:
-                return False, f'Unknown checkpoint(s) {", ".join(bad)} (map {self.map} has: {", ".join(known)}).'
-            cps = [known[c] for c in want]
+        if mode == 'here':
+            spot = str(body.get('spot', '')).strip()
+            if not NAME_RE.match(spot):
+                return False, 'Checkpoint name: letters, numbers, _ or - (e.g. cp_03).'
+            cps = [{'id': spot}]
+        else:
+            cps = load_checkpoints(self.map)
+            if not cps:
+                return False, f'Map {self.map} has no checkpoints. Save some first (Xbox Y during navigation).'
+            want = [c.strip() for c in str(body.get('checkpoints', 'all')).split(',') if c.strip()]
+            if want and want != ['all']:
+                known = {c['id']: c for c in cps}
+                bad = [c for c in want if c not in known]
+                if bad:
+                    return False, f'Unknown checkpoint(s) {", ".join(bad)} (map {self.map} has: {", ".join(known)}).'
+                cps = [known[c] for c in want]
         scene, hazard = str(body.get('scene', 'normal')), str(body.get('hazard', 'none'))
         hazards = ('none', 'blocked_exit', 'obstructed_walkway', 'open_door', 'multiple')
         if scene not in ('normal', 'hazard') or hazard not in hazards:
@@ -868,17 +913,35 @@ class Manager:
             if not re.match(r'^[A-Za-z0-9_ ,.-]{0,60}$', v):
                 return False, 'Use letters, digits, space , . _ - in session / objects.'
         try:
-            bursts, photos = int(body.get('bursts', 4)), int(body.get('photos', 6))
+            photos, positions = int(body.get('photos', 120)), int(body.get('positions', 12))
             nudge_cm = max(0.0, min(float(body.get('nudge_cm', 5)), 10.0))
             nudge_deg = max(0.0, min(float(body.get('nudge_deg', 8)), 15.0))
         except (TypeError, ValueError):
-            return False, 'Bursts, photos and nudge sizes must be numbers.'
-        self.burst = burst.start(self, cps, session=session.replace(' ', '_'), scene=scene,
+            return False, 'Photos, positions and nudge sizes must be numbers.'
+        self.burst = burst.start(self, cps, mode=mode, session=session.replace(' ', '_'), scene=scene,
                                  hazard=hazard if scene == 'hazard' else 'none', objects=objects,
-                                 bursts=bursts, photos=photos, nudge_cm=nudge_cm, nudge_deg=nudge_deg)
+                                 photos=photos, positions=positions, nudge_cm=nudge_cm, nudge_deg=nudge_deg)
         b = self.burst
-        return True, (f'Burst mode: {len(cps)} checkpoint(s) x {b.bursts} bursts x {b.photos} photos, '
-                      f'nudges {nudge_cm:g} cm / {nudge_deg:g} deg. Saving to {b.out}')
+        where = f'at {cps[0]["id"]}' if mode == 'here' else f'at {len(cps)} checkpoint(s)'
+        return True, (f'Burst {where}: {b.photos} photos over {b.positions} nudge positions '
+                      f'({nudge_cm:g} cm / {nudge_deg:g} deg). Saving to {data_dir("dataset")}/{b.session}')
+
+    def initial_locate(self, home):
+        """Navigation just came up: find the robot with the lidar on the whole map instead of assuming
+        it stands at home (it usually doesn't, and AMCL then stays unsure). Home if that fails."""
+        time.sleep(2.0)                                   # first scans + map in the dashboard
+        ok, msg, _ = burst.relocate(self.node)
+        if not ok:
+            self.node.set_initial_pose(home['x'], home['y'], home['yaw'])
+            msg = 'Start pose: home (lidar locate failed: ' + msg + ')'
+        self.job = 'Start pose: ' + msg if ok else msg
+
+    def auto_locate(self):
+        if self.mode != 'navigation' or not self.running():
+            return False, 'Start navigation first.'
+        self.job = 'Auto-locate: matching the lidar against the whole map (~5 s)...'
+        ok, msg, _ = burst.relocate(self.node)
+        return ok, msg
 
     def stop_burst(self):
         if not self.burst_running():
@@ -1176,8 +1239,7 @@ def create_app(node, mgr):
                 if phase == 'ready' and mgr.auto_pose:
                     mgr.auto_pose = False
                     h = get_home(name)
-                    threading.Thread(target=node.set_initial_pose, args=(h['x'], h['y'], h['yaw']),
-                                     daemon=True).start()
+                    threading.Thread(target=mgr.initial_locate, args=(h,), daemon=True).start()
                 if phase == 'ready' and loc and loc['quality'] == 'poor':
                     phase = 'lost'                # AMCL unsure: ask the user to Set pose
             else:
@@ -1281,6 +1343,8 @@ def create_app(node, mgr):
                                      str(body.get('objects', '')), str(body.get('note', '')))
         elif action == 'burst_start':
             ok, msg = mgr.start_burst(body)
+        elif action == 'auto_locate':
+            ok, msg = mgr.auto_locate()
         elif action == 'burst_stop':
             ok, msg = mgr.stop_burst()
         elif action == 'snapshot':
@@ -1412,7 +1476,7 @@ def create_app(node, mgr):
 def main():
     rclpy.init()
     node = Sensors()
-    ex = MultiThreadedExecutor(num_threads=3)
+    ex = MultiThreadedExecutor(num_threads=4)
     ex.add_node(node)
     threading.Thread(target=ex.spin, daemon=True).start()
     mgr = Manager(node)

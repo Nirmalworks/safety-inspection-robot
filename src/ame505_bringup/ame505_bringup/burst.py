@@ -1,23 +1,27 @@
-"""Burst mode: visit the checkpoints with Nav2 and, at each one, take several bursts of RGB-D photos
-with a small nudge of the robot between bursts (turn a few degrees, slide a few cm), so the frames
-of one checkpoint are not near-duplicates. Runs inside the dashboard (Burst mode card,
-POST /api/burst_start, scripts/burst_mode.sh); photos go to the SSD through capture_dataset.
+"""Burst mode: take a large set of RGB-D photos (default 120) at a spot, nudging the robot between
+groups of photos (turns of 8 / 16 deg, slides and backs of 5 cm) so the frames are not all the same
+view. Runs inside the dashboard (Burst mode card); photos go straight to the SSD
+($AME505_DATA/dataset/<session>/<spot>/ + index.csv, same format as capture_dataset).
 
-Localization is checked instead of trusted, because AMCL can be confidently wrong in the lab (four
-identical tables): before every drive and every burst it must be
-  * confident: AMCL position std < 0.15 m and heading std < 9 deg ("good" on the dashboard),
-  * consistent with the map: most lidar points land on walls of the saved map at the AMCL pose,
-  * consistent with odometry: AMCL may not jump away from where wheels + IMU say the robot went.
-If a check fails it asks AMCL to re-match a few times; if it still fails the run stops instead of
-driving or capturing with a wrong pose. Nudges are closed-loop on odometry (EKF: wheels + IMU),
-which is smooth and doesn't jump, and each one is skipped if the lidar sees anything close in the
-direction of motion.
+Two ways to use it:
+  * "Burst here" (mode 'here'): drive the robot to the spot yourself (Xbox or the dashboard keys),
+    then press the button. No map or localization needed: works in drive, mapping or navigation.
+    The pose is still written to index.csv (map frame when navigation is localized, else odom).
+  * "All checkpoints" (mode 'route'): Nav2 drives to each saved checkpoint and bursts there.
+
+Localization for the route is judged by the lidar, not by AMCL's own confidence (AMCL standing
+still stays "unsure" for a long time even when it is right): the scan must line up with the
+saved map's walls. If it doesn't, the robot locates itself on the whole map by scan matching
+(locate.py, like the dashboard's Auto-locate) and tries again. AMCL jumps that odometry doesn't
+explain stop the route (wrong aisle among the identical tables).
+
+Nudges are closed-loop on odometry (EKF: wheels + IMU), each skipped if the lidar sees something
+close in the direction of motion. Missing photos are made up at the spot at the end.
 """
+import csv
 import json
 import math
 import os
-import re
-import subprocess
 import threading
 import time
 
@@ -26,34 +30,46 @@ import numpy as np
 from geometry_msgs.msg import Twist
 from std_srvs.srv import Empty
 
+from ame505_bringup import locate
+from ame505_bringup.capture_dataset import FIELDS, to_np
 from ame505_bringup.paths import data_dir
 
-# Nudge pattern, relative to the checkpoint pose in the robot's frame: (forward, left, turn), in
-# units of the run's nudge_cm / nudge_deg. Burst k uses entry k; the first burst is at the checkpoint.
-NUDGES = [(0, 0, 0), (0, 0, 1), (0, 0, -1), (0, 1, 0), (0, -1, 0), (-1, 0, 0), (0, 1, 1), (0, -1, -1)]
-NUDGE_NAMES = ['at checkpoint', 'turn left', 'turn right', 'slide left', 'slide right', 'back',
-               'slide left + turn left', 'slide right + turn right']
+# Nudge positions relative to the spot, in the robot's frame: (forward, left, turn) in units of the
+# run's nudge_cm / nudge_deg. Position k uses entry k; the first is the spot itself.
+NUDGES = [(0, 0, 0), (0, 0, 1), (0, 0, -1), (0, 0, 2), (0, 0, -2), (0, 1, 0), (0, -1, 0),
+          (-1, 0, 0), (0, 1, 1), (0, -1, -1), (-1, 1, -1), (-1, -1, 1)]
+NUDGE_NAMES = ['at the spot', 'turn left', 'turn right', 'turn left x2', 'turn right x2', 'slide left',
+               'slide right', 'back', 'slide left + turn left', 'slide right + turn right',
+               'back + left, turn right', 'back + right, turn left']
 
-# Localization gates
-POS_STD_MAX = 0.15          # m
-YAW_STD_MAX = math.radians(9)
-# Share of lidar points within MATCH_DIST of a wall on the saved map. Tuned on lab2d_11_23_1 with
-# simulated lidar (3 cm noise, 15 % of rays hitting unmapped clutter) at all 8 checkpoints: correct
-# pose >= 81 %, 10 cm or 3 deg off >= 73 %, 25 cm off ~54 %, one table-aisle over <= 55 %.
-SCAN_MATCH_MIN = 0.65
-MATCH_DIST = 0.10           # m
+# Localization gates (route mode only)
+SCAN_MATCH_MIN = 0.65       # share of lidar points within 10 cm of a wall on the saved map. Tuned
+                            # on lab2d_11_23_1: correct pose >= 81 %, one table-aisle over <= 55 %.
+POS_STD_MAX = 0.5           # m: AMCL may be "fair", only a wide-spread cloud fails
 JUMP_POS = 0.5              # m: AMCL moved this much more than odometry did -> it jumped
 JUMP_YAW = math.radians(20)
+# Sensors: the minimum for a burst (the Nano under load is slow, this only catches dead sensors)
+NEED_HZ = {'/depth_cam/rgb/image_raw': 0.2, '/depth_cam/depth/image_raw': 0.2, '/scan': 1.0, '/odom': 1.0}
 # Nudge motion limits
 V_MAX, W_MAX = 0.06, 0.25   # m/s, rad/s
-TOL_XY, TOL_YAW = 0.015, math.radians(1.5)
+V_MIN, W_MIN = 0.025, 0.12  # m/s, rad/s: slowest command sent while not yet there
+TOL_XY, TOL_YAW = 0.015, math.radians(2.0)
 CLEAR_AHEAD = 0.25          # m from the robot's edge in the direction of motion
 CLEAR_ROTATE = 0.30         # m from the centre (footprint corner radius is ~0.22 m)
 HALF_L, HALF_W = 0.165, 0.14
+SETTLE_S = 3.0              # after a nudge: the camera arrives 1-3 s late through the ROS 1 bridge
+FRAME_GAP = 0.25            # s between photos (each must be a new camera frame)
 
 
 def wrap(a):
     return math.atan2(math.sin(a), math.cos(a))
+
+
+def slow_floor(cmd, vmax, vmin, deadzone, err):
+    """Clamp |cmd| to [vmin, vmax] (sign of err); zero once |err| is inside the dead zone."""
+    if abs(err) < deadzone:
+        return 0.0
+    return math.copysign(max(vmin, min(vmax, abs(cmd))), err)
 
 
 def compose(base, rel):
@@ -69,18 +85,49 @@ def relative(a, b):
     return c * dx + s * dy, -s * dx + c * dy, wrap(b[2] - a[2])
 
 
+def relocate(node, prior=None):
+    """Find the robot on the whole saved map with the lidar and give AMCL that pose.
+    (ok, message, result dict or None). Used by the dashboard's Auto-locate and by the route."""
+    with node.lock:
+        grid, info = getattr(node, 'map_grid', None), dict(node.map_info) if node.map_info else None
+    if grid is None or info is None:
+        return False, 'No map yet (start navigation with a saved map).', None
+    pts = node.scan_in_map(step=1, frame='base_footprint')
+    if len(pts) < 30:
+        return False, 'No lidar scan (is the lidar running?).', None
+    r = locate.locate(grid, info, pts, prior=prior)
+    if r is None:
+        return False, 'Lidar scan too thin to locate (too close to a wall or blocked?).', None
+    x, y, yaw = r['pose']
+    if r['score'] < SCAN_MATCH_MIN:
+        return False, (f'No place on the map fits the lidar well (best {r["score"]:.0%} at '
+                       f'{x:.2f}, {y:.2f}). Clutter around the robot? Use Set pose.'), r
+    node.set_initial_pose(x, y, yaw, tight=True)
+    msg = f'Located at ({x:.2f}, {y:.2f}, {math.degrees(yaw):.0f} deg), {r["score"]:.0%} of lidar points on walls.'
+    if r['ambiguous']:
+        ru = r['runner_up']['pose']
+        msg += (f' Another place looks similar ({ru[0]:.2f}, {ru[1]:.2f}): check that the red lidar dots '
+                'sit on the walls; if not, Set pose.')
+    return True, msg, r
+
+
 class BurstRun:
-    def __init__(self, mgr, cps, session, scene, hazard, objects, bursts, photos, nudge_cm, nudge_deg):
+    def __init__(self, mgr, cps, session, scene, hazard, objects, photos, positions, nudge_cm, nudge_deg,
+                 mode='route'):
         self.mgr, self.node = mgr, mgr.node
+        self.mode = mode
         self.cps, self.session, self.scene, self.hazard, self.objects = cps, session, scene, hazard, objects
-        self.bursts, self.photos = max(1, min(bursts, len(NUDGES))), max(1, min(photos, 20))
+        self.photos = max(1, min(int(photos), 500))                  # per spot
+        self.positions = max(1, min(int(positions), len(NUDGES)))
+        self.per_pos = math.ceil(self.photos / self.positions)
         self.nudge_m, self.nudge_rad = nudge_cm / 100.0, math.radians(nudge_deg)
+        self.allowed = ('navigation',) if mode == 'route' else ('drive', 'mapping', 'navigation')
         self.stop_flag = False
         self.out = data_dir(os.path.join('bursts', f'{session}_{time.strftime("%Y%m%d_%H%M%S")}'))
         self.results = [{'id': c['id'], 'state': 'waiting', 'frames': 0, 'bursts': 0, 'note': ''} for c in cps]
-        self.status = {'state': 'starting', 'msg': 'starting', 'cp': '', 'index': 0, 'total': len(cps),
-                       'burst': 0, 'bursts': self.bursts, 'frames': 0, 'results': self.results,
-                       'last_rgb': '', 'dir': self.out, 'loc': {}}
+        self.status = {'state': 'starting', 'msg': 'starting', 'mode': mode, 'cp': '', 'index': 0,
+                       'total': len(cps), 'burst': 0, 'bursts': self.positions, 'target': self.photos,
+                       'frames': 0, 'results': self.results, 'last_rgb': '', 'dir': self.out, 'loc': {}}
         self.prev = None                # (map pose, odom pose) at the previous check, for jump detection
         self._dist = (None, None)       # (map version, distance-to-wall field) for the scan match
         self.nomotion = self.node.create_client(Empty, '/request_nomotion_update')
@@ -94,42 +141,36 @@ class BurstRun:
 
     def save(self):
         """run.json on the SSD after every step, so a crash keeps everything up to that point."""
-        meta = dict(session=self.session, scene=self.scene, hazard=self.hazard, objects=self.objects,
-                    bursts=self.bursts, photos=self.photos, nudge_cm=self.nudge_m * 100,
-                    nudge_deg=round(math.degrees(self.nudge_rad), 1), map=self.mgr.map)
+        meta = dict(mode=self.mode, session=self.session, scene=self.scene, hazard=self.hazard,
+                    objects=self.objects, photos=self.photos, positions=self.positions,
+                    nudge_cm=self.nudge_m * 100, nudge_deg=round(math.degrees(self.nudge_rad), 1), map=self.mgr.map)
         tmp = os.path.join(self.out, 'run.json.tmp')
         with open(tmp, 'w') as f:
             json.dump(dict(meta=meta, status=self.status), f, indent=1)
         os.replace(tmp, os.path.join(self.out, 'run.json'))
 
     def stopped(self):
-        return self.stop_flag or self.mgr.mode != 'navigation' or not self.mgr.running()
+        return self.stop_flag or self.mgr.mode not in self.allowed or not self.mgr.running()
 
-    # ------------------------------------------------------------------ localization checks
+    # ------------------------------------------------------------------ localization (route mode)
     def scan_match(self):
-        """Share of lidar points (at the AMCL pose) that land within MATCH_DIST of a wall on the map."""
+        """Share of lidar points (at the AMCL pose) that land within 10 cm of a wall on the map."""
         n = self.node
         with n.lock:
             grid, info = getattr(n, 'map_grid', None), dict(n.map_info) if n.map_info else None
         if grid is None or info is None:
             return None
         if self._dist[0] != info['ver']:
-            free = (grid < 50).astype(np.uint8)        # unknown (-1) and free count as not-wall
-            self._dist = (info['ver'], cv2.distanceTransform(free, cv2.DIST_L2, 5) * info['res'])
-        dist = self._dist[1]
-        pts = np.asarray(n.scan_in_map(step=2), dtype=np.float32)
+            self._dist = (info['ver'], locate.distance_field(grid, info['res']))
+        pts = np.asarray(n.scan_in_map(step=1, frame='base_footprint'), dtype=np.float32)
+        pose = n.robot_pose('map')
+        if len(pts) < 30 or pose is None:
+            return None
+        r = np.hypot(pts[:, 0], pts[:, 1])
+        pts = pts[(r > 0.15) & (r < locate.MAX_RANGE)]
         if len(pts) < 30:
             return None
-        pose = n.robot_pose('map')
-        if pose is not None:
-            near = np.hypot(pts[:, 0] - pose[0], pts[:, 1] - pose[1]) < 6.0   # far points: fewer, noisier
-            pts = pts[near] if near.sum() >= 30 else pts
-        u = ((pts[:, 0] - info['ox']) / info['res']).astype(int)
-        v = ((pts[:, 1] - info['oy']) / info['res']).astype(int)
-        inside = (u >= 0) & (u < info['w']) & (v >= 0) & (v < info['h'])
-        if inside.sum() < 30:
-            return 0.0
-        return float((dist[v[inside], u[inside]] <= MATCH_DIST).mean())
+        return locate.hit_share(self._dist[1], info, pose, pts[:, 0], pts[:, 1])
 
     def refresh_amcl(self, times=3):
         """AMCL only re-matches after 10 cm / 6 deg of motion; ask it to update now."""
@@ -140,7 +181,7 @@ class BurstRun:
         time.sleep(0.6)
 
     def check_localization(self, refresh=True):
-        """(ok, reason): confident, lines up with the map, and no jump since the previous check."""
+        """(ok, reason): the lidar lines up with the map at the AMCL pose and AMCL didn't jump."""
         n = self.node
         if refresh:
             self.refresh_amcl()
@@ -159,31 +200,42 @@ class BurstRun:
             if math.hypot(err[0], err[1]) > JUMP_POS or abs(err[2]) > JUMP_YAW:
                 return False, (f'AMCL jumped {math.hypot(err[0], err[1]):.2f} m / {math.degrees(err[2]):+.0f} deg '
                                'away from what odometry says: possibly the wrong aisle')
-        if loc['pos_std_m'] > POS_STD_MAX or loc['yaw_std_deg'] > math.degrees(YAW_STD_MAX):
-            return False, (f'AMCL unsure: position +-{loc["pos_std_m"]} m, heading +-{loc["yaw_std_deg"]} deg '
-                           f'(need < {POS_STD_MAX} m, < {math.degrees(YAW_STD_MAX):.0f} deg)')
-        if match is not None and match < SCAN_MATCH_MIN:
+        if match is None:
+            return False, 'no lidar scan to check the pose against the map'
+        if match < SCAN_MATCH_MIN:
             return False, (f'lidar does not line up with the map ({match:.0%} of points on walls, '
                            f'need {SCAN_MATCH_MIN:.0%})')
-        return True, f'localized (+-{loc["pos_std_m"]} m, scan match {match:.0%})' if match is not None else 'localized'
+        if loc['pos_std_m'] > POS_STD_MAX:
+            return False, f'AMCL particles spread out (+-{loc["pos_std_m"]} m)'
+        return True, f'localized: {match:.0%} of lidar points on walls (AMCL +-{loc["pos_std_m"]} m)'
 
-    def ensure_localized(self, tries=4):
+    def ensure_localized(self, tries=3, may_relocate=True):
         ok, why = self.check_localization()
-        for _ in range(tries - 1):
+        for k in range(tries - 1):
             if ok or self.stopped():
                 break
-            self.say(self.status['state'], f'checking localization again: {why}')
-            time.sleep(1.0)
+            if may_relocate and k == 0 and 'jumped' not in why:
+                self.say(self.status['state'], f'{why}: locating the robot on the map with the lidar')
+                good, msg, _ = relocate(self.node, prior=self.prev[0] if self.prev else None)
+                self.say(self.status['state'], msg)
+                self.prev = None                          # the re-seed is not a jump
+                time.sleep(1.5 if good else 0.5)
+            else:
+                time.sleep(1.0)
             ok, why = self.check_localization()
         return ok, why
 
     def sensors_ok(self):
+        if self.node.rate['/depth_cam/rgb/image_raw'].hz() < 0.2:
+            self.say('starting', 'camera is off: starting it (takes ~10 s)')
+            ok, msg = self.mgr.ensure_camera()
+            if not ok:
+                return False, msg
         _, rates = self.node.snapshot()
-        need = {'/scan': 4.0, '/odom': 4.0, '/imu': 8.0, '/depth_cam/rgb/image_raw': 0.2}
-        low = [f'{t} {rates.get(t, 0):.1f} Hz' for t, hz in need.items() if rates.get(t, 0) < hz]
+        low = [f'{t} {rates.get(t, 0):.1f} Hz' for t, hz in NEED_HZ.items() if rates.get(t, 0) < hz]
         if low:
-            return False, ('sensors too slow or silent: ' + ', '.join(low) +
-                           '. If /imu is 0 Hz, Hiwonder\'s ROS 1 board driver may hold the serial port.')
+            return False, ('no data from: ' + ', '.join(low) + '. Is the robot software running? '
+                           '(camera: tick "camera" before starting, or restart it)')
         return True, ''
 
     # ------------------------------------------------------------------ motion
@@ -238,8 +290,9 @@ class BurstRun:
         """Closed loop on odometry: reach pose `rel` (robot frame of `ref`, an odom pose)."""
         n = self.node
         goal = compose(ref, rel)
+        start = n._lookup('odom', 'base_footprint')
         t0, next_check, ok = time.time(), 0.0, True
-        while time.time() - t0 < 10:
+        while time.time() - t0 < 12:
             if self.stopped():
                 ok = False
                 break
@@ -250,9 +303,10 @@ class BurstRun:
             ex, ey, eyaw = relative(cur, goal)
             if math.hypot(ex, ey) < TOL_XY and abs(eyaw) < TOL_YAW:
                 break
-            vx = max(-V_MAX, min(V_MAX, 1.2 * ex))
-            vy = max(-V_MAX, min(V_MAX, 1.2 * ey))
-            wz = max(-W_MAX, min(W_MAX, 1.5 * eyaw))
+            # Proportional, but never slower than V_MIN / W_MIN: tiny commands barely turn the
+            # mecanum wheels (motor dead band), and the last few mm / degrees took most of the time.
+            vx, vy = slow_floor(1.2 * ex, V_MAX, V_MIN, TOL_XY / 2, ex), slow_floor(1.2 * ey, V_MAX, V_MIN, TOL_XY / 2, ey)
+            wz = slow_floor(1.5 * eyaw, W_MAX, W_MIN, TOL_YAW / 2, eyaw)
             if time.time() >= next_check:            # lidar clearance before moving, then every 0.5 s
                 next_check = time.time() + 0.5
                 if not self.clear_for(vx, vy, wz):
@@ -264,28 +318,123 @@ class BurstRun:
             n.estop_pub.publish(t)
             time.sleep(0.05)
         else:
-            ok = False
+            # Timed out: good enough if it got most of the way (the aim is a different view, not
+            # an exact spot); not if it hardly moved (blocked, slipping on the floor).
+            cur = n._lookup('odom', 'base_footprint')
+            if start is None or cur is None:
+                ok = False
+            else:
+                want = relative(start, goal)
+                left = relative(cur, goal)
+                ok = (math.hypot(left[0], left[1]) <= 0.5 * math.hypot(want[0], want[1]) + TOL_XY and
+                      abs(left[2]) <= 0.5 * abs(want[2]) + TOL_YAW)
         self.mgr.estop_twist()
         return ok
 
-    # ------------------------------------------------------------------ capture
-    def capture(self, cp, k, label):
-        cmd = ['ros2', 'run', 'ame505_bringup', 'capture_dataset', '--session', self.session,
-               '--checkpoint', cp['id'], '--scene', self.scene, '--hazard', self.hazard,
-               '--n', str(self.photos), '--note', f'burst {k + 1}/{self.bursts} {label}'.replace('+', 'and')]
-        if self.objects:
-            cmd += ['--objects', self.objects]
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=240)
-        lines = (r.stdout + r.stderr).strip().splitlines()
-        if r.returncode != 0:
-            return 0, lines[-1] if lines else f'exit {r.returncode}'
-        saved = sum(1 for ln in lines if re.match(r'^\s*\d+/\d+\s', ln))   # '  3/6  <file> ...'
-        folder = data_dir(os.path.join('dataset', self.session, cp['id']))
-        pngs = sorted((p for p in os.listdir(folder) if p.endswith('_rgb.png')),
-                      key=lambda p: os.path.getmtime(os.path.join(folder, p)))
-        if pngs:
-            self.status['last_rgb'] = os.path.join(self.session, cp['id'], pngs[-1])
+    # ------------------------------------------------------------------ capture (in this process)
+    def capture(self, cp_id, n, note):
+        """Save n new RGB-D frames from the dashboard's own camera subscription. (saved, error)"""
+        node = self.node
+        folder = data_dir(os.path.join('dataset', self.session, cp_id))
+        index = os.path.join(data_dir('dataset'), 'index.csv')
+        new_index = not os.path.exists(index)
+        tag = f'{self.scene}_{self.hazard}_{time.strftime("%H%M%S")}'
+        saved, last, t_new = 0, None, time.time()
+        with open(index, 'a', newline='') as f:
+            w = csv.DictWriter(f, FIELDS)
+            if new_index:
+                w.writeheader()
+            while saved < n and not self.stopped():
+                with node.lock:
+                    rgb_m, dep_m = node.raw_rgb, node.raw_depth
+                if rgb_m is None or dep_m is None or rgb_m is last:
+                    if time.time() - t_new > 10:
+                        return saved, 'camera stopped sending frames for 10 s'
+                    time.sleep(0.05)
+                    continue
+                last, t_new = rgb_m, time.time()
+                try:
+                    rgb, dep = to_np(rgb_m), to_np(dep_m)
+                except ValueError as e:
+                    return saved, str(e)
+                base = os.path.join(folder, f'{tag}_{saved:03d}')
+                cv2.imwrite(base + '_rgb.png', rgb)
+                cv2.imwrite(base + '_depth.png', dep.astype(np.uint16))
+                frame = 'map' if node.robot_pose('map') is not None else 'odom'
+                x, y, yaw = node.robot_pose(frame) or (float('nan'),) * 3
+                stamp = rgb_m.header.stamp.sec + rgb_m.header.stamp.nanosec * 1e-9
+                w.writerow({'file_rgb': os.path.relpath(base + '_rgb.png', data_dir('dataset')),
+                            'file_depth': os.path.relpath(base + '_depth.png', data_dir('dataset')),
+                            'stamp': f'{stamp:.3f}', 'session': self.session, 'checkpoint': cp_id,
+                            'scene': self.scene, 'hazard': self.hazard, 'objects': self.objects,
+                            'light': 'normal', 'occluded': '0', 'note': note, 'pose_frame': frame,
+                            'x': round(x, 3), 'y': round(y, 3), 'yaw': round(yaw, 3),
+                            'depth_valid_pct': round(100.0 * float((dep > 0).mean()), 1),
+                            'rgb_age_s': round(time.time() - stamp, 2)})
+                f.flush()
+                saved += 1
+                self.status['frames'] += 1
+                self.status['last_rgb'] = os.path.relpath(base + '_rgb.png', data_dir('dataset'))
+                time.sleep(FRAME_GAP)
         return saved, ''
+
+    # ------------------------------------------------------------------ one spot
+    def burst_at_spot(self, cp_id, res, check_loc):
+        """All nudge positions at the current spot until self.photos are saved. Returns False to abort."""
+        self.say('settling', f'{cp_id}: holding still {SETTLE_S:.0f} s (camera is late)')
+        time.sleep(SETTLE_S)
+        ref = self.node._lookup('odom', 'base_footprint')
+        if ref is None:
+            res['note'] = 'no odometry: photos only at the spot, no nudges'
+        for k in range(self.positions):
+            if self.stopped():
+                return False
+            want = min(self.per_pos, self.photos - res['frames'])
+            if want <= 0:
+                break
+            self.status['burst'] = k + 1
+            fx, fy, fyaw = NUDGES[k]
+            label = NUDGE_NAMES[k]
+            if k > 0:
+                if ref is None:
+                    break
+                self.say('nudging', f'{cp_id} position {k + 1}/{self.positions}: {label}')
+                rel = (fx * self.nudge_m, fy * self.nudge_m, fyaw * self.nudge_rad)
+                if not self.move_to(ref, rel, label):
+                    if self.stopped():
+                        return False
+                    continue
+                time.sleep(SETTLE_S)
+            if check_loc:
+                ok, why = self.ensure_localized(tries=2, may_relocate=False)
+                if not ok:
+                    res['note'] = f'position {k + 1} skipped: {why}'
+                    self.say('capturing', f'{cp_id} position {k + 1}: skipped ({why})')
+                    if 'jumped' in why:
+                        break
+                    continue
+            self.say('capturing', f'{cp_id} position {k + 1}/{self.positions} ({label}): '
+                                  f'{want} photos ({res["frames"]}/{self.photos} so far)')
+            saved, err = self.capture(cp_id, want, f'burst {k + 1}/{self.positions} {label}'.replace('+', 'and'))
+            res['frames'] += saved
+            res['bursts'] += 1 if saved else 0
+            self.save()
+            if err:
+                res['note'] = f'capture: {err}'
+                self.say('capturing', f'{cp_id}: {err}')
+                return False
+        if ref is not None and self.positions > 1 and not self.stopped():
+            self.say('nudging', f'{cp_id}: back to the spot')
+            self.move_to(ref, (0.0, 0.0, 0.0), 'back to the spot')
+        missing = self.photos - res['frames']
+        if missing > 0 and not self.stopped():           # skipped nudges: make up the count here
+            time.sleep(SETTLE_S)
+            self.say('capturing', f'{cp_id}: {missing} more photos at the spot to reach {self.photos}')
+            saved, err = self.capture(cp_id, missing, 'burst top-up at the spot')
+            res['frames'] += saved
+            if err:
+                res['note'] = f'capture: {err}'
+        return not self.stopped()
 
     # ------------------------------------------------------------------ the run
     def run(self):
@@ -301,11 +450,23 @@ class BurstRun:
         ok, why = self.sensors_ok()
         if not ok:
             return self.say('failed', why)
+        if self.mode == 'here':
+            res = self.results[0]
+            self.status.update(cp=res['id'], index=1)
+            res['state'] = 'capturing'
+            self.burst_at_spot(res['id'], res, check_loc=False)
+            res['state'] = 'done' if res['frames'] >= self.photos else 'partial' if res['frames'] else 'no photos'
+            self.save()
+            if self.stopped():
+                return self.say('stopped', f'stopped: {res["frames"]} photos saved')
+            return self.say('done', f'done: {res["frames"]} photos of {res["id"]} saved in '
+                                    f'{data_dir("dataset")}/{self.session}/{res["id"]}')
+
         self.say('checking', 'checking localization before moving')
-        ok, why = self.ensure_localized()
+        ok, why = self.ensure_localized(tries=3)
         if not ok:
-            return self.say('failed', f'not starting: {why}. Use "Set pose" on the map (or drive a '
-                                      'little) until localization shows good, then start again.')
+            return self.say('failed', f'not starting: {why}. Press Auto-locate (or Set pose) on the map, '
+                                      'or use "Burst here" after driving to the spot yourself.')
         for i, cp in enumerate(self.cps):
             res = self.results[i]
             self.status.update(cp=cp['id'], index=i + 1, burst=0)
@@ -314,51 +475,30 @@ class BurstRun:
             res['state'] = 'driving'
             self.say('driving', f'{cp["id"]} ({i + 1}/{len(self.cps)}): driving there')
             arrived, why = self.drive_to(cp)
-            if not arrived and 'jumped' not in why and not self.stopped():
+            if not arrived and 'jumped' in why and not self.stopped():
+                ok, why2 = self.ensure_localized(tries=3)
+                if ok:
+                    arrived, why = self.drive_to(cp)
+            elif not arrived and not self.stopped():
                 self.say('driving', f'{cp["id"]}: {why}, trying once more')
                 arrived, why = self.drive_to(cp)
             if not arrived:
                 res.update(state='not reached', note=why)
                 self.save()
+                if self.stopped():
+                    return self.say('stopped', 'stopped')
                 if 'jumped' in why:
-                    return self.say('failed', f'stopped at {cp["id"]}: {why}. Set the pose again, then restart '
+                    return self.say('failed', f'stopped at {cp["id"]}: {why}. Auto-locate, then restart '
                                               'from this checkpoint.')
+                continue
+            res['state'] = 'capturing'
+            if not self.burst_at_spot(cp['id'], res, check_loc=True):
+                res['state'] = 'partial' if res['frames'] else 'no photos'
+                self.save()
                 if self.stopped():
                     return self.say('stopped', 'stopped')
                 continue
-            self.say('settling', f'{cp["id"]}: arrived, holding still 4 s (camera is 1-7 s late)')
-            time.sleep(4)
-            ref = self.node._lookup('odom', 'base_footprint')
-            for k in range(self.bursts):
-                if self.stopped():
-                    return self.say('stopped', 'stopped')
-                self.status['burst'] = k + 1
-                fx, fy, fyaw = NUDGES[k]
-                label = NUDGE_NAMES[k]
-                if k > 0:
-                    self.say('nudging', f'{cp["id"]} burst {k + 1}/{self.bursts}: {label}')
-                    rel = (fx * self.nudge_m, fy * self.nudge_m, fyaw * self.nudge_rad)
-                    if not self.move_to(ref, rel, label):
-                        continue
-                    time.sleep(3)                     # let a fresh camera frame arrive
-                ok, why = self.ensure_localized(tries=3)
-                if not ok:
-                    res['note'] = f'burst {k + 1} skipped: {why}'
-                    self.say('capturing', f'{cp["id"]} burst {k + 1}: skipped ({why})')
-                    if 'jumped' in why:
-                        break
-                    continue
-                self.say('capturing', f'{cp["id"]} burst {k + 1}/{self.bursts} ({label}): {self.photos} photos')
-                saved, err = self.capture(cp, k, label)
-                res['frames'] += saved
-                res['bursts'] += 1 if saved else 0
-                self.status['frames'] += saved
-                if err:
-                    res['note'] = f'capture: {err}'
-                self.save()
-            if self.bursts > 1 and ref is not None and not self.stopped():
-                self.move_to(ref, (0.0, 0.0, 0.0), 'back to the checkpoint')
-            res['state'] = 'done' if res['frames'] else 'no photos'
+            res['state'] = 'done' if res['frames'] >= self.photos else 'partial' if res['frames'] else 'no photos'
             self.save()
         done = sum(1 for r in self.results if r['state'] == 'done')
         self.say('done', f'done: {self.status["frames"]} photos at {done}/{len(self.cps)} checkpoints, '

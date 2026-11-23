@@ -133,24 +133,32 @@ ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_03 --scene 
 
 Between bursts, nudge the robot a few cm / a few degrees (Xbox LB) so frames aren't identical.
 
-### Burst mode (all checkpoints, nudges done by the robot)
+### Burst mode: "Burst here" at each checkpoint (main way to collect)
 
-Dashboard **Burst mode** card, or `scripts/burst_mode.sh` (`scripts/burst_mode.sh cp_01,cp_03`,
-`BURSTS=6 PHOTOS=8 SESSION=s2 scripts/burst_mode.sh`, `scripts/burst_mode.sh stop`). Needs navigation
-running with **camera** ticked and localization **good**. For each checkpoint it drives there, holds
-still 4 s, and takes `bursts` bursts of `photos` photos; between bursts it nudges the robot (turn left,
-turn right, slide left, slide right, back, ... by `nudge cm` / `nudge °`, default 5 cm / 8°) and finally
-returns to the checkpoint pose. Photos go to the same dataset folders and `index.csv` as
-`capture_dataset` (on the SSD); the run's log and per-checkpoint results go to
-`$AME505_DATA/bursts/<session>_<time>/` (`run.log`, `run.json`, updated after every burst).
+1. Dashboard: **▶ Start driving** (or navigation). The camera starts by itself when a burst begins.
+2. Put the robot on a checkpoint (carry it or drive it), facing the way the checkpoint looks.
+3. **Burst mode (dataset)** card: pick the checkpoint (`cp_01` ... `cp_08`), the session (one per
+   staging, e.g. `run1_normal`, `run2_obstructed`), scene `normal` / `hazard` + hazard type, objects.
+4. **📸 Burst here.** The robot stays at the spot and takes 120 photos (setting: photos) over 12
+   positions: at the spot, turn ±8° and ±16°, slide left/right 5 cm, back 5 cm and combinations, then
+   returns. ~2 minutes. Nudges are closed-loop on odometry and skipped if the lidar sees something
+   within 25 cm that way; skipped photos are made up at the spot. When done, the checkpoint field moves
+   to the next one. Move the robot there and press again. E-STOP, ■ Stop or driving by hand stops it.
 
-It does not trust AMCL blindly (the four identical tables can make it confidently wrong). Before every
-drive and every burst the pose must be confident (position std < 0.15 m, heading < 9°), the lidar must
-line up with the saved map (≥ 65 % of points within 10 cm of a wall: tuned on `lab2d_11_23_1`, where a
-pose one table-aisle over scores ≤ 55 %), and AMCL must not have jumped away from what wheels + IMU
-say the robot did. Otherwise it asks AMCL to re-match, and if that doesn't help it skips the burst or
-stops the run instead of driving with a wrong pose. Nudges are closed-loop on odometry and skipped if
-the lidar sees anything within 25 cm in that direction. E-STOP, ■ Stop, or driving by hand stops it.
+Terminal: `SESSION=run2_obstructed SCENE=hazard HAZARD=obstructed_walkway OBJECTS=box scripts/burst_mode.sh here cp_03`.
+No map/localization is needed; the pose in `index.csv` is the map pose when navigation is localized,
+else odometry. Run log: `$AME505_DATA/bursts/<session>_<time>/run.log`.
+
+**Automatic route** (card → "Automatic", or `scripts/burst_mode.sh route all`): Nav2 drives to every
+checkpoint and does the same there. Localization is judged by the lidar (≥ 65 % of points within 10 cm
+of a wall of the saved map; one table-aisle over scores ≤ 55 %) and AMCL jumps vs odometry. If it
+doesn't fit, the robot locates itself on the whole map by scan matching and checks again.
+
+**🧭 Auto-locate** (map toolbar) and navigation start-up find the robot on the whole saved map with the
+lidar (`locate.py`, ~3-5 s on the Nano; on `lab2d_11_23_1` correct within 5 cm at 15 of 16 test poses),
+so it no longer has to start at home. If it says another place looks similar, check that the red
+lidar dots sit on the walls; otherwise use 📍 Set pose.
+
 Each frame = `*_rgb.png` + `*_depth.png` (16-bit, mm, aligned to RGB) under
 `data/ssd/dataset/<session>/<checkpoint>/`, and one row in `data/ssd/dataset/index.csv` with all labels +
 robot pose. That CSV is the proposal's "staging log" (checkpoint-level ground truth).

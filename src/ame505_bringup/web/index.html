@@ -142,25 +142,32 @@
   </div>
 
   <div class="card">
-    <h2>Burst mode</h2>
-    <p style="color:var(--mut);margin:0 0 8px;font-size:12px">Navigation running with <b>camera</b> and localization <b>good</b>.
-      Visits each checkpoint and takes several bursts of photos, nudging the robot between bursts (turn, slide).
-      Saved on the robot SSD. Checks localization before every drive and burst and stops instead of guessing.
-      Manual driving or E-STOP stops it.</p>
-    <div class="row"><input type="text" id="burstCps" value="all" title="checkpoints: all, or e.g. cp_01,cp_03">
-      <input type="text" id="burstSess" value="burst" title="session (dataset folder)"></div>
+    <h2>Burst mode (dataset)</h2>
+    <p style="color:var(--mut);margin:0 0 8px;font-size:12px"><b>Burst here:</b> put the robot on a checkpoint (by hand or drive it),
+      pick that checkpoint and the scene, press the button. The robot stays there and takes the photos, nudging itself
+      between groups (turn ±8/16°, slide/back 5 cm). No map or localization needed: <b>Drive</b> or <b>Navigation</b> running is enough;
+      the camera is started automatically. Photos + depth go to the SSD:
+      <code>dataset/&lt;session&gt;/&lt;checkpoint&gt;/</code> and <code>dataset/index.csv</code> (labels per photo). Keys/Xbox or E-STOP stop it.</p>
+    <div class="row">
+      <label style="font-size:12px;color:var(--mut)">checkpoint <input type="text" id="burstSpot" value="cp_01" list="burstCpList" title="where the robot is now" style="width:70px"></label>
+      <datalist id="burstCpList"><option>cp_01</option><option>cp_02</option><option>cp_03</option><option>cp_04</option><option>cp_05</option><option>cp_06</option><option>cp_07</option><option>cp_08</option></datalist>
+      <label style="font-size:12px;color:var(--mut)">session <input type="text" id="burstSess" value="run1" title="dataset folder, e.g. run1_normal, run2_obstructed" style="width:110px"></label></div>
     <div class="row" style="margin-top:6px">
-      <label style="font-size:12px;color:var(--mut)">bursts <input type="number" id="burstN" value="4" min="1" max="8" title="bursts per checkpoint (nudge between)" style="width:52px"></label>
-      <label style="font-size:12px;color:var(--mut)">photos <input type="number" id="burstPhotos" value="6" min="1" max="20" title="photos per burst" style="width:52px"></label></div>
+      <select id="burstScene" title="scene" onchange="$('burstHaz').disabled = this.value !== 'hazard'"><option>normal</option><option>hazard</option></select>
+      <select id="burstHaz" title="hazard type" disabled><option>blocked_exit</option><option>obstructed_walkway</option><option>open_door</option><option>multiple</option></select>
+      <input type="text" id="burstObj" placeholder="objects, e.g. box,chair" title="staged objects (written to index.csv)" style="width:130px"></div>
     <div class="row" style="margin-top:6px">
-      <label style="font-size:12px;color:var(--mut)">nudge cm <input type="number" id="burstCm" value="5" min="0" max="10" step="1" title="slide per nudge (cm)" style="width:52px"></label>
-      <label style="font-size:12px;color:var(--mut)">nudge ° <input type="number" id="burstDeg" value="8" min="0" max="15" step="1" title="turn per nudge (degrees)" style="width:52px"></label></div>
-    <div class="row" style="margin-top:6px">
-      <select id="burstScene" title="scene"><option>normal</option><option>hazard</option></select>
-      <select id="burstHaz" title="hazard type"><option>none</option><option>blocked_exit</option><option>obstructed_walkway</option><option>open_door</option><option>multiple</option></select></div>
+      <label style="font-size:12px;color:var(--mut)">photos <input type="number" id="burstPhotos" value="120" min="10" max="500" step="10" title="photos at this checkpoint" style="width:60px"></label>
+      <label style="font-size:12px;color:var(--mut)">positions <input type="number" id="burstPos" value="12" min="1" max="12" title="nudge positions (photos are split over them)" style="width:46px"></label>
+      <label style="font-size:12px;color:var(--mut)">cm <input type="number" id="burstCm" value="5" min="0" max="10" step="1" title="slide / back per nudge (cm)" style="width:42px"></label>
+      <label style="font-size:12px;color:var(--mut)">° <input type="number" id="burstDeg" value="8" min="0" max="15" step="1" title="turn per nudge (degrees)" style="width:42px"></label></div>
     <div class="row" style="margin-top:8px">
-      <button class="big view" id="bBurst" onclick="runBurst()">▶ Start burst mode</button>
+      <button class="big view" id="bBurstHere" onclick="runBurst('here')">📸 Burst here</button>
       <button class="big stop" id="bBurstStop" onclick="act('burst_stop')" disabled>■ Stop</button></div>
+    <details style="margin-top:8px"><summary style="font-size:12px;color:var(--mut);cursor:pointer">Automatic: Nav2 drives to every checkpoint (needs navigation + localization)</summary>
+      <div class="row" style="margin-top:6px"><input type="text" id="burstCps" value="all" title="checkpoints: all, or e.g. cp_01,cp_03">
+        <button class="view" id="bBurst" onclick="runBurst('route')">▶ All checkpoints</button></div>
+    </details>
     <div class="kbstat" id="burstStat" style="margin-top:6px;text-align:left">–</div>
     <div id="burstLoc" style="font-size:11px;color:var(--mut);margin-top:2px"></div>
     <table id="burstTbl" style="width:100%;font-size:11px;margin-top:6px;border-collapse:collapse"></table>
@@ -245,6 +252,7 @@
     <div class="tools">
       <button class="tool on" data-tool="pan" title="drag to move, wheel/pinch to zoom">✋ Pan</button>
       <button class="tool" data-tool="pose" title="click where the robot is, drag the direction it faces">📍 Set pose</button>
+      <button class="tbtn" onclick="act('auto_locate')" title="find the robot on the whole map with the lidar (~5 s) and give AMCL that pose">🧭 Auto-locate</button>
       <button class="tool" data-tool="goal" title="click the destination, drag the direction to face">🎯 Go to goal</button>
       <button class="tbtn red" onclick="act('cancel_goal')">■ Cancel</button>
       <button class="tbtn green" onclick="act('go_home')">🏠 Go home</button>
@@ -337,18 +345,26 @@ function renderDemo() {
     sel.innerHTML = cps.map(c => `<option>${c}</option>`).join('') || '<option value="">no checkpoints</option>';
     if (cps.includes(cur)) sel.value = cur; }
 }
-function runBurst() {
-  act('burst_start', {checkpoints: $('burstCps').value.trim() || 'all', session: $('burstSess').value.trim(),
-    bursts: +$('burstN').value, photos: +$('burstPhotos').value, nudge_cm: +$('burstCm').value,
-    nudge_deg: +$('burstDeg').value, scene: $('burstScene').value,
-    hazard: $('burstScene').value === 'hazard' ? $('burstHaz').value : 'none', objects: $('demoObj').value.trim()});
+function runBurst(mode) {
+  const scene = $('burstScene').value;
+  act('burst_start', {mode, spot: $('burstSpot').value.trim(), checkpoints: $('burstCps').value.trim() || 'all',
+    session: $('burstSess').value.trim(), photos: +$('burstPhotos').value, positions: +$('burstPos').value,
+    nudge_cm: +$('burstCm').value, nudge_deg: +$('burstDeg').value, scene,
+    hazard: scene === 'hazard' ? $('burstHaz').value : 'none', objects: $('burstObj').value.trim()});
 }
+let burstPrevState = '';
 function renderBurst() {
   const b = st.burst || {}, busy = !['idle', 'done', 'failed', 'stopped', undefined].includes(b.state);
   $('bBurst').disabled = busy || !(st.running && st.mode === 'navigation');
+  $('bBurstHere').disabled = busy || !(st.running && ['drive', 'mapping', 'navigation'].includes(st.mode));
+  if (b.state === 'done' && burstPrevState && burstPrevState !== 'done' && b.mode === 'here') {
+    const m = /^(.*?)(\d+)$/.exec($('burstSpot').value.trim());   // done: suggest the next checkpoint
+    if (m) $('burstSpot').value = m[1] + String(+m[2] + 1).padStart(m[2].length, '0');
+  }
+  burstPrevState = b.state || '';
   $('bBurstStop').disabled = !busy;
   $('burstStat').textContent = b.state && b.state !== 'idle'
-    ? `${b.index || 0}/${b.total || 0} · ${b.cp || ''}${b.burst ? ' burst ' + b.burst + '/' + b.bursts : ''} · ${b.frames || 0} photos · ${b.msg || ''}` : '–';
+    ? `${b.mode === 'here' ? '' : (b.index || 0) + '/' + (b.total || 0) + ' · '}${b.cp || ''}${b.burst ? ' · position ' + b.burst + '/' + b.bursts : ''} · ${b.frames || 0}${b.target ? '/' + b.target : ''} photos · ${b.msg || ''}` : '–';
   $('burstStat').style.color = b.state === 'failed' ? 'var(--bad)' : b.state === 'done' ? 'var(--ok)' : '';
   const l = b.loc || {};
   $('burstLoc').textContent = l.quality ? `localization ${l.quality}: ±${l.pos_std_m} m, ±${l.yaw_std_deg}°` +
@@ -677,8 +693,8 @@ const nm = (() => {
                  arrived: `✅ Arrived${lbl}`, failed: `⚠️ Could not reach${lbl}`, canceled: '■ Cancelled', rejected: '⚠️ Goal rejected',
                  sending: `Sending goal${lbl}...`}[n.state] || (st.mode === 'navigation' ? {
                    starting: `⏳ Starting navigation... ${st.uptime_s}s (the Nano needs about 1-2 min - don't press Stop)`,
-                   localizing: `📍 Finding the robot on the map... If it takes long, choose 📍 Set pose and click-drag where the robot really is.`,
-                   lost: `⚠️ Not sure where the robot is (blue dots spread out). Use 📍 Set pose: click where it really is, drag the way it faces.`,
+                   localizing: `📍 Finding the robot on the map... If it takes long, press 🧭 Auto-locate (or 📍 Set pose).`,
+                   lost: `⚠️ Not sure where the robot is (blue dots spread out). Press 🧭 Auto-locate, or 📍 Set pose: click where it really is, drag the way it faces.`,
                    ready: '✅ Ready: choose 🎯 Go to goal, then click the destination on the map and drag to set the direction'}[st.phase] || ''
                    : st.live ? `Live map (${st.mode})` : st.map ? `Saved map "${st.map_name}" (preview). Press ▶ Start navigation to drive in it.` : '');
     $('hLoc').textContent = st.loc ? `${st.loc.quality} ±${st.loc.pos_std_m} m` : '–';
@@ -693,8 +709,8 @@ const nm = (() => {
       ban.style.display = ''; ban.textContent = st.phase === 'starting'
         ? `⏳ Navigation starting... ${st.uptime_s}s - the Jetson Nano needs about 1 minute. The saved map is shown meanwhile.`
         : st.phase === 'lost'
-        ? '⚠️ Localization is unsure. Check: do the red lidar dots line up with the black walls? If not, 📍 Set pose (click where the robot is, drag the way it faces).'
-        : '📍 Finding the robot on the map. Use 📍 Set pose (click where the robot is, drag the way it faces).';
+        ? '⚠️ Localization is unsure. Check: do the red lidar dots line up with the black walls? If not, press 🧭 Auto-locate or 📍 Set pose.'
+        : '📍 Finding the robot on the map. Press 🧭 Auto-locate, or 📍 Set pose (click where it is, drag the way it faces).';
     } else ban.style.display = 'none';
     $('cplist').innerHTML = (st.checkpoints || []).map(c => `<span class="cp" title="go here" onclick="act('go_checkpoint',{id:'${c.id}'})">${c.id}</span>`).join('');
     draw();
