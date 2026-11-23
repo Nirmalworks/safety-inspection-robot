@@ -67,9 +67,11 @@ plus `state.json` (pose, localization, detections), to `$AME505_DATA/presentatio
 Take one at each checkpoint for normal and for hazard, one during a patrol drive, and one with YOLO on.
 **Demo at checkpoint** (dashboard card, or `scripts/demo_checkpoint.sh cp_01 hazard blocked_exit box`):
 drives to the checkpoint, turns YOLO on, holds still 4 s, captures the photos into the dataset
-(session `demo` unless set) and saves a snapshot. **⏺ Record screen** records the dashboard tab to a
-`.webm` in your Downloads. It needs the page opened as `http://localhost:8505` (SSH tunnel), because
-browsers block screen capture on plain `http://<robot-ip>`.
+(session `demo` unless set) and saves a snapshot. **⏺ Record screen** records the dashboard tab and
+streams it to the robot SSD every second (`$AME505_DATA/recordings/dashboard_<time>.webm`, download
+link when you stop), so a long recording can't fill the browser's memory and a closed tab keeps what
+was recorded. It needs the page opened as `http://localhost:8505` (SSH tunnel), because browsers block
+screen capture on plain `http://<robot-ip>`.
 Also take **phone photos / short videos of the robot itself** next to the staged hazard. The dashboard
 cannot show the robot from the outside.
 
@@ -130,6 +132,25 @@ ros2 run ame505_bringup capture_dataset --session s1 --checkpoint cp_03 --scene 
 ```
 
 Between bursts, nudge the robot a few cm / a few degrees (Xbox LB) so frames aren't identical.
+
+### Burst mode (all checkpoints, nudges done by the robot)
+
+Dashboard **Burst mode** card, or `scripts/burst_mode.sh` (`scripts/burst_mode.sh cp_01,cp_03`,
+`BURSTS=6 PHOTOS=8 SESSION=s2 scripts/burst_mode.sh`, `scripts/burst_mode.sh stop`). Needs navigation
+running with **camera** ticked and localization **good**. For each checkpoint it drives there, holds
+still 4 s, and takes `bursts` bursts of `photos` photos; between bursts it nudges the robot (turn left,
+turn right, slide left, slide right, back, ... by `nudge cm` / `nudge °`, default 5 cm / 8°) and finally
+returns to the checkpoint pose. Photos go to the same dataset folders and `index.csv` as
+`capture_dataset` (on the SSD); the run's log and per-checkpoint results go to
+`$AME505_DATA/bursts/<session>_<time>/` (`run.log`, `run.json`, updated after every burst).
+
+It does not trust AMCL blindly (the four identical tables can make it confidently wrong). Before every
+drive and every burst the pose must be confident (position std < 0.15 m, heading < 9°), the lidar must
+line up with the saved map (≥ 65 % of points within 10 cm of a wall: tuned on `lab2d_11_23_1`, where a
+pose one table-aisle over scores ≤ 55 %), and AMCL must not have jumped away from what wheels + IMU
+say the robot did. Otherwise it asks AMCL to re-match, and if that doesn't help it skips the burst or
+stops the run instead of driving with a wrong pose. Nudges are closed-loop on odometry and skipped if
+the lidar sees anything within 25 cm in that direction. E-STOP, ■ Stop, or driving by hand stops it.
 Each frame = `*_rgb.png` + `*_depth.png` (16-bit, mm, aligned to RGB) under
 `data/ssd/dataset/<session>/<checkpoint>/`, and one row in `data/ssd/dataset/index.csv` with all labels +
 robot pose. That CSV is the proposal's "staging log" (checkpoint-level ground truth).

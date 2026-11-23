@@ -44,6 +44,7 @@ from sensor_msgs.msg import Image, Imu, Joy, LaserScan, PointCloud2
 from std_msgs.msg import String, UInt16
 from std_srvs.srv import Empty, Trigger
 
+from ame505_bringup import burst
 from ame505_bringup.motor_stop import board_stop
 from ame505_bringup.paths import checkpoints_file, data_dir, map_db, map_yaml
 from ame505_bringup.reconstruct_3d import mat_uncompress
@@ -236,6 +237,7 @@ class Sensors(Node):
         if ok:
             q = i.origin.orientation
             with self.lock:
+                self.map_grid = g                                 # burst mode checks the lidar against it
                 self.map_png = png.tobytes()
                 self.map_ver += 1
                 self.map_info = {'res': i.resolution, 'w': i.width, 'h': i.height,
@@ -502,6 +504,7 @@ class Manager:
         self.yolo = None
         self.key_t, self.key_moving = 0.0, False
         self.demo = {'state': 'idle', 'id': 0}
+        self.burst = None          # burst.BurstRun while burst mode runs (and after, for its status)
         threading.Thread(target=self.key_deadman, daemon=True).start()
         self.mode = 'idle'
         self.stopping = False      # True while _stop_job runs: no second Stop, no Start
@@ -567,6 +570,7 @@ class Manager:
             self.auto_pose = mode == 'navigation' and kind == '2d'
             with self.node.lock:                   # forget the previous run's map / AMCL state
                 self.node.map_png, self.node.map_info, self.node.plan = None, None, []
+                self.node.map_grid = None
                 self.node.particles = []
                 self.node.amcl = None
             if mode == 'drive':
@@ -769,6 +773,8 @@ class Manager:
             return False, 'Start navigation first (tick "camera").'
         if self.demo_running():
             return False, 'A demo is already running.'
+        if self.burst_running():
+            return False, 'Burst mode is running. Stop it first.'
         cps = {c['id']: c for c in load_checkpoints(self.map)}
         if cp_id not in cps:
             return False, f'Unknown checkpoint {cp_id} (map {self.map} has: {", ".join(cps) or "none"}).'
@@ -832,12 +838,64 @@ class Manager:
         except Exception as e:  # noqa: BLE001  (a demo must never take the dashboard down)
             self._demo_step('failed', f'error: {e}')
 
+    # ---------- burst mode: every checkpoint, several bursts with nudges in between ----------
+    def burst_running(self):
+        return self.burst is not None and self.burst.status.get('state') not in ('done', 'failed', 'stopped')
+
+    def start_burst(self, body):
+        if self.mode != 'navigation' or not self.running():
+            return False, 'Start navigation first (tick "camera").'
+        if self.burst_running() or self.demo_running():
+            return False, 'Burst mode or a demo is already running.'
+        cps = load_checkpoints(self.map)
+        if not cps:
+            return False, f'Map {self.map} has no checkpoints. Save some first (Xbox Y during navigation).'
+        want = [c.strip() for c in str(body.get('checkpoints', 'all')).split(',') if c.strip()]
+        if want and want != ['all']:
+            known = {c['id']: c for c in cps}
+            bad = [c for c in want if c not in known]
+            if bad:
+                return False, f'Unknown checkpoint(s) {", ".join(bad)} (map {self.map} has: {", ".join(known)}).'
+            cps = [known[c] for c in want]
+        scene, hazard = str(body.get('scene', 'normal')), str(body.get('hazard', 'none'))
+        hazards = ('none', 'blocked_exit', 'obstructed_walkway', 'open_door', 'multiple')
+        if scene not in ('normal', 'hazard') or hazard not in hazards:
+            return False, 'Unknown scene / hazard type.'
+        if scene == 'hazard' and hazard == 'none':
+            return False, 'A hazard scene needs a hazard type.'
+        session, objects = str(body.get('session', 'burst')).strip() or 'burst', str(body.get('objects', '')).strip()
+        for v in (session, objects):
+            if not re.match(r'^[A-Za-z0-9_ ,.-]{0,60}$', v):
+                return False, 'Use letters, digits, space , . _ - in session / objects.'
+        try:
+            bursts, photos = int(body.get('bursts', 4)), int(body.get('photos', 6))
+            nudge_cm = max(0.0, min(float(body.get('nudge_cm', 5)), 10.0))
+            nudge_deg = max(0.0, min(float(body.get('nudge_deg', 8)), 15.0))
+        except (TypeError, ValueError):
+            return False, 'Bursts, photos and nudge sizes must be numbers.'
+        self.burst = burst.start(self, cps, session=session.replace(' ', '_'), scene=scene,
+                                 hazard=hazard if scene == 'hazard' else 'none', objects=objects,
+                                 bursts=bursts, photos=photos, nudge_cm=nudge_cm, nudge_deg=nudge_deg)
+        b = self.burst
+        return True, (f'Burst mode: {len(cps)} checkpoint(s) x {b.bursts} bursts x {b.photos} photos, '
+                      f'nudges {nudge_cm:g} cm / {nudge_deg:g} deg. Saving to {b.out}')
+
+    def stop_burst(self):
+        if not self.burst_running():
+            return False, 'Burst mode is not running.'
+        self.burst.stop_flag = True
+        self.node.cancel_goal()
+        self.estop_twist()
+        return True, 'Burst mode stopping (the robot stops now; the current photo burst finishes).'
+
     # ---------- keyboard drive (dashboard): same topic as the Xbox teleop ----------
     KEY_MAX = (0.30, 0.30, 1.0)          # m/s, m/s, rad/s (Xbox turbo limits)
 
     def teleop(self, x, y, z):
         if not self.running() or self.mode not in ('drive', 'mapping', 'navigation'):
             return False, 'Start driving, mapping or navigation first.'
+        if (x or y or z) and self.burst_running():
+            self.burst.stop_flag = True    # manual control overrides burst mode
         if self.node.nav_state.get('state') in ('driving', 'sending'):
             self.node.cancel_goal()        # manual control overrides the current Nav2 goal
         lx, ly, lz = self.KEY_MAX
@@ -864,6 +922,8 @@ class Manager:
             time.sleep(0.02)
 
     def estop(self):
+        if self.burst is not None:
+            self.burst.stop_flag = True    # burst mode must not send another goal or nudge
         self.node.cancel_all_goals()       # Nav2 then commands zero itself, before anything is killed
         self.estop_twist()
         self._stop_proc(self.patrol, 3)
@@ -1070,6 +1130,7 @@ def create_app(node, mgr):
             'job': mgr.job, 'last_saved': mgr.last_saved, 'sensors': v, 'rates': rates,
             'log': mgr.log_tail(), 'gtsam_running': mgr.gtsam_running(), 'gtsam_check': mgr.gtsam_check,
             'yolo_running': mgr.yolo_running(), 'demo': mgr.demo,
+            'burst': mgr.burst.status if mgr.burst else {'state': 'idle'},
         })
 
     @app.get('/api/scan')
@@ -1218,6 +1279,10 @@ def create_app(node, mgr):
             ok, msg = mgr.start_demo(str(body.get('id', 'cp_01')), body.get('n', 6), str(body.get('session', 'demo')),
                                      str(body.get('scene', 'normal')), str(body.get('hazard', 'none')),
                                      str(body.get('objects', '')), str(body.get('note', '')))
+        elif action == 'burst_start':
+            ok, msg = mgr.start_burst(body)
+        elif action == 'burst_stop':
+            ok, msg = mgr.stop_burst()
         elif action == 'snapshot':
             ok, msg = save_snapshot(node, mgr, body)
         elif action == 'start_yolo':
@@ -1261,6 +1326,45 @@ def create_app(node, mgr):
     @app.get('/files/inspections/<path:name>')
     def inspection_file(name):
         return send_from_directory(data_dir('inspections'), name)
+
+    # ---------- Record screen: the browser streams the video to the robot's SSD every second ----------
+    # (it used to keep the whole video in browser memory until Stop, which could crash a long recording
+    # and lost everything if the tab closed). Files: $AME505_DATA/recordings/dashboard_<time>.webm
+    REC_RE = re.compile(r'^dashboard_\d{8}_\d{6}\.webm$')
+
+    @app.post('/api/record/start')
+    def record_start():
+        name = f'dashboard_{time.strftime("%Y%m%d_%H%M%S")}.webm'
+        open(os.path.join(data_dir('recordings'), name), 'wb').close()
+        return jsonify({'ok': True, 'name': name, 'msg': f'Recording to the robot SSD: recordings/{name}'})
+
+    @app.post('/api/record/chunk/<name>')
+    def record_chunk(name):
+        if not REC_RE.match(name):
+            abort(400)
+        path = os.path.join(data_dir('recordings'), name)
+        if not os.path.exists(path):
+            abort(404)
+        with open(path, 'ab') as f:
+            f.write(request.get_data())
+        return jsonify({'ok': True, 'bytes': os.path.getsize(path)})
+
+    @app.post('/api/record/stop/<name>')
+    def record_stop(name):
+        if not REC_RE.match(name):
+            abort(400)
+        path = os.path.join(data_dir('recordings'), name)
+        size = os.path.getsize(path) if os.path.exists(path) else 0
+        return jsonify({'ok': True, 'name': name, 'bytes': size, 'url': f'/files/recordings/{name}',
+                        'msg': f'Recording saved on the robot SSD: {path} ({size / 1e6:.1f} MB)'})
+
+    @app.get('/files/recordings/<path:name>')
+    def recording_file(name):
+        return send_from_directory(data_dir('recordings'), name, as_attachment=True)
+
+    @app.get('/files/dataset/<path:name>')
+    def dataset_file(name):
+        return send_from_directory(data_dir('dataset'), name)
 
     @app.get('/files/presentation/<path:name>')
     def presentation_file(name):

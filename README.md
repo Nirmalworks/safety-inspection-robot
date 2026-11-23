@@ -25,6 +25,7 @@ Course project for AME 505 *Machine Learning for Engineering Applications* (USC,
 | Localization | AMCL, omnidirectional motion model; EKF (15 Hz) over wheel odometry and IMU | `launch/navigation_2d.launch.py`, `config/ekf.yaml` |
 | Navigation | Nav2 (DWB controller, collision monitor, no-spin behaviour tree with a short reverse recovery) | `config/nav2_params.yaml`, `config/navigate_no_spin.xml` |
 | Patrol | Nav2 simple commander, checkpoint list per map | `ame505_bringup/patrol.py` |
+| Burst capture | Every checkpoint: Nav2, then photo bursts with odometry-controlled nudges; localization checked (AMCL confidence, lidar-to-map match, jump vs odometry) before each drive and burst | `ame505_bringup/burst.py`, `scripts/burst_mode.sh` |
 | Hazard baseline | Depth points projected to the robot frame; area inside the keep-clear zone | `ame505_bringup/keep_clear.py` |
 | Object detection | Pretrained COCO YOLO26n (Ultralytics): live on the dashboard, offline over the dataset with CVAT pre-labels | `ame505_bringup/yolo_live.py`, `ml/yolo_coco.py` |
 | Hazard model | YOLO fine-tuned from COCO, TensorRT on the Jetson; checkpoint classifier | in progress (`ml/`) |

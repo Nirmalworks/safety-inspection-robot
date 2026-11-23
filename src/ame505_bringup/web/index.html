@@ -142,6 +142,32 @@
   </div>
 
   <div class="card">
+    <h2>Burst mode</h2>
+    <p style="color:var(--mut);margin:0 0 8px;font-size:12px">Navigation running with <b>camera</b> and localization <b>good</b>.
+      Visits each checkpoint and takes several bursts of photos, nudging the robot between bursts (turn, slide).
+      Saved on the robot SSD. Checks localization before every drive and burst and stops instead of guessing.
+      Manual driving or E-STOP stops it.</p>
+    <div class="row"><input type="text" id="burstCps" value="all" title="checkpoints: all, or e.g. cp_01,cp_03">
+      <input type="text" id="burstSess" value="burst" title="session (dataset folder)"></div>
+    <div class="row" style="margin-top:6px">
+      <label style="font-size:12px;color:var(--mut)">bursts <input type="number" id="burstN" value="4" min="1" max="8" title="bursts per checkpoint (nudge between)" style="width:52px"></label>
+      <label style="font-size:12px;color:var(--mut)">photos <input type="number" id="burstPhotos" value="6" min="1" max="20" title="photos per burst" style="width:52px"></label></div>
+    <div class="row" style="margin-top:6px">
+      <label style="font-size:12px;color:var(--mut)">nudge cm <input type="number" id="burstCm" value="5" min="0" max="10" step="1" title="slide per nudge (cm)" style="width:52px"></label>
+      <label style="font-size:12px;color:var(--mut)">nudge ° <input type="number" id="burstDeg" value="8" min="0" max="15" step="1" title="turn per nudge (degrees)" style="width:52px"></label></div>
+    <div class="row" style="margin-top:6px">
+      <select id="burstScene" title="scene"><option>normal</option><option>hazard</option></select>
+      <select id="burstHaz" title="hazard type"><option>none</option><option>blocked_exit</option><option>obstructed_walkway</option><option>open_door</option><option>multiple</option></select></div>
+    <div class="row" style="margin-top:8px">
+      <button class="big view" id="bBurst" onclick="runBurst()">▶ Start burst mode</button>
+      <button class="big stop" id="bBurstStop" onclick="act('burst_stop')" disabled>■ Stop</button></div>
+    <div class="kbstat" id="burstStat" style="margin-top:6px;text-align:left">–</div>
+    <div id="burstLoc" style="font-size:11px;color:var(--mut);margin-top:2px"></div>
+    <table id="burstTbl" style="width:100%;font-size:11px;margin-top:6px;border-collapse:collapse"></table>
+    <img id="burstImg" alt="latest burst photo" style="width:100%;margin-top:6px;border-radius:6px;display:none">
+  </div>
+
+  <div class="card">
     <h2>Make a 2D map</h2>
     <div class="step" id="st1"><div class="num">1</div><div style="flex:1">
       <b>Start mapping</b><p>Put the robot at the spot you want as <b>home</b> (navigation will assume it starts here). Name the map, then press Start. The map grows live in the <b>Map</b> panel →</p>
@@ -311,7 +337,31 @@ function renderDemo() {
     sel.innerHTML = cps.map(c => `<option>${c}</option>`).join('') || '<option value="">no checkpoints</option>';
     if (cps.includes(cur)) sel.value = cur; }
 }
-// ⏺ Record screen: the browser asks which tab/window to record; the video downloads when stopped.
+function runBurst() {
+  act('burst_start', {checkpoints: $('burstCps').value.trim() || 'all', session: $('burstSess').value.trim(),
+    bursts: +$('burstN').value, photos: +$('burstPhotos').value, nudge_cm: +$('burstCm').value,
+    nudge_deg: +$('burstDeg').value, scene: $('burstScene').value,
+    hazard: $('burstScene').value === 'hazard' ? $('burstHaz').value : 'none', objects: $('demoObj').value.trim()});
+}
+function renderBurst() {
+  const b = st.burst || {}, busy = !['idle', 'done', 'failed', 'stopped', undefined].includes(b.state);
+  $('bBurst').disabled = busy || !(st.running && st.mode === 'navigation');
+  $('bBurstStop').disabled = !busy;
+  $('burstStat').textContent = b.state && b.state !== 'idle'
+    ? `${b.index || 0}/${b.total || 0} · ${b.cp || ''}${b.burst ? ' burst ' + b.burst + '/' + b.bursts : ''} · ${b.frames || 0} photos · ${b.msg || ''}` : '–';
+  $('burstStat').style.color = b.state === 'failed' ? 'var(--bad)' : b.state === 'done' ? 'var(--ok)' : '';
+  const l = b.loc || {};
+  $('burstLoc').textContent = l.quality ? `localization ${l.quality}: ±${l.pos_std_m} m, ±${l.yaw_std_deg}°` +
+    (l.scan_match != null ? `, lidar on map walls ${Math.round(100 * l.scan_match)}%` : '') : '';
+  const rows = (b.results || []).map(r => `<tr><td>${r.id}</td><td>${r.state}</td><td style="text-align:right">${r.frames}</td>` +
+    `<td style="color:var(--mut)">${r.note || ''}</td></tr>`).join('');
+  if ($('burstTbl').innerHTML !== rows) $('burstTbl').innerHTML = rows;
+  const img = $('burstImg'), src = b.last_rgb ? '/files/dataset/' + b.last_rgb : '';
+  if (src && img.dataset.src !== src) { img.dataset.src = src; img.src = src; img.style.display = 'block'; }
+}
+// ⏺ Record screen: the browser asks which tab/window to record; every second the video is sent to the
+// robot and appended to $AME505_DATA/recordings/ on the SSD, so the browser holds almost nothing and a
+// closed tab or crash keeps everything recorded so far.
 // Needs a secure page: open the dashboard as http://localhost:8505 (on the robot, or through
 // ssh -L 8505:localhost:8505). Over http://<robot-ip> browsers block screen capture.
 let rec = null;
@@ -324,15 +374,24 @@ async function toggleRec() {
   let stream;
   try { stream = await navigator.mediaDevices.getDisplayMedia({video: {frameRate: 15}, audio: false, preferCurrentTab: true}); }
   catch (e) { $('job').textContent = 'Screen recording cancelled.'; return; }
-  const chunks = [], type = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+  let name;
+  try { const r = await (await fetch('/api/record/start', {method: 'POST'})).json(); name = r.name; $('job').textContent = r.msg; }
+  catch (e) { stream.getTracks().forEach(t => t.stop()); $('job').textContent = 'Could not start the recording on the robot.'; return; }
+  const type = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
   rec = new MediaRecorder(stream, {mimeType: type, videoBitsPerSecond: 3e6});
-  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  let queue = Promise.resolve(), sentMB = 0;        // chunks go out one at a time, in order
+  rec.ondataavailable = e => {
+    if (!e.data.size) return;
+    queue = queue.then(() => fetch('/api/record/chunk/' + name, {method: 'POST', body: e.data})
+      .then(r => r.json()).then(r => { sentMB = r.bytes / 1e6; $('bRec').textContent = `■ Stop recording (${sentMB.toFixed(1)} MB on robot)`; })
+      .catch(() => { $('job').textContent = 'A recording chunk did not reach the robot (Wi-Fi?); recording continues.'; }));
+  };
   rec.onstop = () => {
     stream.getTracks().forEach(t => t.stop());
-    const a = document.createElement('a'), ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-    a.href = URL.createObjectURL(new Blob(chunks, {type: 'video/webm'})); a.download = `safety-robot-dashboard-${ts}.webm`; a.click();
+    queue.then(() => fetch('/api/record/stop/' + name, {method: 'POST'})).then(r => r.json()).then(r => {
+      $('job').innerHTML = `${r.msg} <a href="${r.url}">download</a>`;
+    }).catch(() => { $('job').textContent = 'Recording saved on the robot SSD (recordings/).'; });
     rec = null; $('bRec').textContent = '⏺ Record screen'; $('bRec').classList.remove('red');
-    $('job').textContent = 'Recording saved to your Downloads folder.';
   };
   stream.getVideoTracks()[0].onended = () => rec && rec.state !== 'inactive' && rec.stop();
   rec.start(1000); $('bRec').textContent = '■ Stop recording'; $('bRec').classList.add('red');
@@ -435,7 +494,7 @@ function renderMode() {
 }
 
 async function poll() {
-  try { st = await (await fetch('/api/status')).json(); renderSensors(); renderMode(); renderHeader(); renderDemo(); } catch (e) { $('job').textContent = 'Dashboard server not reachable'; }
+  try { st = await (await fetch('/api/status')).json(); renderSensors(); renderMode(); renderHeader(); renderDemo(); renderBurst(); } catch (e) { $('job').textContent = 'Dashboard server not reachable'; }
 }
 async function pollFiles() {
   files = await (await fetch('/api/files')).json();
