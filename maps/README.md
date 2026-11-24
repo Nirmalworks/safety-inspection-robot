@@ -19,7 +19,7 @@ and `scripts/backup_map.sh <name> --restore` to copy here → SSD.
 | `lab2d_11_24_4` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 23.9 × 8.6 m | No checkpoints yet. |
 | `lab2d_11_24_6` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 22.4 × 8.7 m | No checkpoints yet. |
 | `lab2d_11_24_7` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 24.8 × 9.1 m | No checkpoints yet. |
-| `lab2d-11_24_8` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 24.8 × 9.0 m | Newest map (note the hyphen in the name, as saved). No checkpoints yet. |
+| `lab2d_11_24_8` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 24.8 × 9.0 m | Newest map. No checkpoints yet. |
 | `lab2d_11_18_3` | 2026-11-18, slam_toolbox (lidar), 0.05 m/cell, 18.3 × 10.9 m | 5 checkpoints, but all at the same pose (8.68, -1.48): recorded without moving the robot, so re-record before patrolling. |
 | `lab_map_new` | 2026-11-09, 0.05 m/cell, 20.7 × 10.0 m | No checkpoints. |
 
