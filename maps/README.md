@@ -14,3 +14,17 @@ and `scripts/backup_map.sh <name> --restore` to copy here → SSD.
 | `lab2d_11_23_3` | 2026-11-23, slam_toolbox (lidar), 0.05 m/cell, 24.7 × 10.0 m | Saved to SSD 2026-11-23. No checkpoints yet. |
 | `lab2d_11_23_4` | 2026-11-23, slam_toolbox (lidar), 0.05 m/cell, 24.6 × 9.0 m | Saved to SSD 2026-11-23. No checkpoints yet. |
 | `lab2d_11_23_5` | 2026-11-23, slam_toolbox (lidar), 0.05 m/cell, 39.7 × 17.2 m | Saved to SSD 2026-11-23. No checkpoints yet. |
+| `lab2d_11_24_2` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 25.0 × 8.1 m | No checkpoints yet. |
+| `lab2d_11_24_3` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 24.7 × 9.5 m | No checkpoints yet. |
+| `lab2d_11_24_4` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 23.9 × 8.6 m | No checkpoints yet. |
+| `lab2d_11_24_6` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 22.4 × 8.7 m | No checkpoints yet. |
+| `lab2d_11_24_7` | 2026-11-24, slam_toolbox (lidar), 0.05 m/cell, 24.8 × 9.1 m | No checkpoints yet. |
+| `lab2d_11_18_3` | 2026-11-18, slam_toolbox (lidar), 0.05 m/cell, 18.3 × 10.9 m | 5 checkpoints, but all at the same pose (8.68, -1.48): recorded without moving the robot, so re-record before patrolling. |
+| `lab_map_new` | 2026-11-09, 0.05 m/cell, 20.7 × 10.0 m | No checkpoints. |
+
+## 3D and RTAB-Map data
+
+Not restored by `backup_map.sh`; copy back by hand to `$AME505_DATA/maps_3d` and `$AME505_DATA/maps` if needed.
+
+- `3d/` — point clouds and meshes (`.ply`) of `lab_map` and `lab_map_new`, 2026-11-09 and 2026-11-13.
+- `rtabmap/` — RTAB-Map databases `lab_map.db` (2026-11-09) and `lab_map_new.db` (2026-11-12).
