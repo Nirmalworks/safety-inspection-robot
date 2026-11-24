@@ -1,0 +1,7 @@
+image: lab2d_11_24_3.pgm
+mode: trinary
+resolution: 0.05
+origin: [-20.2, -2.46, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.25
