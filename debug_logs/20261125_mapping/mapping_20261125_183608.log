@@ -1,0 +1,247 @@
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2026-11-25-18-36-10-538202-jetauto-5554
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: [ame505] 2D MAPPING (slam_toolbox, lidar) -> map "lab2d_11_25_5"
+[INFO] [robot_state_publisher-1]: process started with pid [5638]
+[INFO] [joint_state_publisher-2]: process started with pid [5640]
+[INFO] [ros_robot_controller-3]: process started with pid [5642]
+[INFO] [odom_publisher-4]: process started with pid [5644]
+[INFO] [apply_calib-5]: process started with pid [5646]
+[INFO] [complementary_filter_node-6]: process started with pid [5648]
+[INFO] [ekf_node-7]: process started with pid [5650]
+[INFO] [cmd_vel_watchdog-8]: process started with pid [5653]
+[INFO] [servo_controller-9]: process started with pid [5655]
+[INFO] [init_pose-10]: process started with pid [5665]
+[INFO] [sllidar_node-11]: process started with pid [5671]
+[INFO] [scan_to_scan_filter_chain-12]: process started with pid [5676]
+[INFO] [astra_bridge-13]: process started with pid [5680]
+[INFO] [game_controller_node-14]: process started with pid [5686]
+[INFO] [xbox_teleop-15]: process started with pid [5688]
+[robot_state_publisher-1] [0m[INFO] [1795631776.114175514] [robot_state_publisher]: got segment back_shell_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114441411] [robot_state_publisher]: got segment base_footprint[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114487403] [robot_state_publisher]: got segment base_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114518550] [robot_state_publisher]: got segment depth_cam_frame[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114547458] [robot_state_publisher]: got segment depth_cam_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114576678] [robot_state_publisher]: got segment imu_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114607252] [robot_state_publisher]: got segment lidar_frame[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114634077] [robot_state_publisher]: got segment lidar_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114659651] [robot_state_publisher]: got segment lidar_sim_frame[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114686058] [robot_state_publisher]: got segment mic_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114713299] [robot_state_publisher]: got segment screen_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114740071] [robot_state_publisher]: got segment speaker_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.114765385] [robot_state_publisher]: got segment wheel_left_back_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.131349544] [robot_state_publisher]: got segment wheel_left_front_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.131451684] [robot_state_publisher]: got segment wheel_right_back_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795631776.131488873] [robot_state_publisher]: got segment wheel_right_front_link[0m
+[sllidar_node-11] [0m[INFO] [1795631776.548016224] [sllidar_node]: SLLidar running on ROS2 package SLLidar.ROS2 SDK Version:1.0.1, SLLIDAR SDK Version:2.1.0[0m
+[sllidar_node-11] [0m[INFO] [1795631776.583565695] [sllidar_node]: SLLidar S/N: 9AFDECF0C3E09ED2A0EA98F309254110[0m
+[sllidar_node-11] [0m[INFO] [1795631776.583681690] [sllidar_node]: Firmware Ver: 1.29[0m
+[sllidar_node-11] [0m[INFO] [1795631776.583719139] [sllidar_node]: Hardware Rev: 7[0m
+[sllidar_node-11] [0m[INFO] [1795631776.586437912] [sllidar_node]: SLLidar health status : 0[0m
+[sllidar_node-11] [0m[INFO] [1795631776.586542552] [sllidar_node]: SLLidar health status : OK.[0m
+[complementary_filter_node-6] [0m[INFO] [1795631776.811113811] [imu_filter]: Starting ComplementaryFilterROS[0m
+[sllidar_node-11] [0m[INFO] [1795631776.833372089] [sllidar_node]: current scan mode: Sensitivity, sample rate: 8 Khz, max_distance: 12.0 m, scan frequency:10.0 Hz, [0m
+[INFO] [async_slam_toolbox_node-16]: process started with pid [5887]
+[joint_state_publisher-2] [0m[INFO] [1795631782.167815818] [joint_state_publisher]: Waiting for robot_description to be published on the robot_description topic...[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631783.068482371] [slam_toolbox]: Node using stack size 40000000[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631784.733411977] [slam_toolbox]: Using solver plugin solver_plugins::CeresSolver[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631784.734463328] [slam_toolbox]: CeresSolver: Using SCHUR_JACOBI preconditioner.[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631784.896459063] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631784.632 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631784.905098477] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631784.707 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631784.955105497] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631784.807 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.041570313] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631784.865 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.117954658] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631784.951 for reason 'discarding message because the queue is full'[0m
+[apply_calib-5] [0m[INFO] [1795631785.166316966] [imu_calib]: Calibrating gyros; do not move the IMU[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.200094167] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.039 for reason 'discarding message because the queue is full'[0m
+[xbox_teleop-15] [0m[INFO] [1795631785.204661151] [xbox_teleop]: Xbox teleop ready -> controller/cmd_vel. Hold LB to drive, RB for turbo, B = E-STOP, START = clear E-STOP.[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.275640192] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.111 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.360001576] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.199 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.438580606] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.272 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.524232571] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.355 for reason 'discarding message because the queue is full'[0m
+[servo_controller-9] [0m[INFO] [1795631785.548750434] [servo_manager]: [1;32mstart[0m[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.597669018] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.430 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.682846430] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.520 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.753741404] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.591 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.842038857] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.687 for reason 'discarding message because the queue is full'[0m
+[ros_robot_controller-3] [0m[INFO] [1795631785.843991657] [ros_robot_controller]: [1;32mstart[0m[0m
+[ekf_node-7] Failed to meet update rate! Took 0.070600482000000006066seconds. Try decreasing the rate, limiting sensor output frequency, or limiting the number of sensors.
+[async_slam_toolbox_node-16] [0m[INFO] [1795631785.912092282] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795631785.749 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-16] Registering sensor: [Custom Described Lidar]
+[odom_publisher-4] [0m[INFO] [1795631786.014171888] [odom_publisher]: [1;32m1.000000 1.040000[0m[0m
+[odom_publisher-4] [0m[INFO] [1795631786.216290641] [odom_publisher]: [1;32mstart[0m[0m
+[astra_bridge-13] [0m[INFO] [1795631786.294728832] [astra_bridge]: infrared stream switched off for depth[0m
+[apply_calib-5] [0m[INFO] [1795631786.736585385] [imu_calib]: Gyro calibration complete! (bias = [-0.008, 0.021, -0.003])[0m
+[astra_bridge-13] [0m[INFO] [1795631787.194365441] [astra_bridge]: bridging /astra_cam/depth/image_raw/compressedDepth + /astra_cam/rgb/image_raw/compressed -> /depth_cam/depth/image_raw + /depth_cam/rgb/image_raw at 320x240, 6 Hz[0m
+[servo_controller-9] [0m[INFO] [1795631787.656251783] [controller_manager]: [1;32mstart[0m[0m
+[init_pose-10] [0m[INFO] [1795631789.852837392] [init_pose]: [1;32mstart[0m[0m
+[astra_bridge-13] [0m[INFO] [1795631797.723886396] [astra_bridge]: in: depth 9.3 Hz, colour 4.3 Hz | out: 1.8 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631807.922244608] [astra_bridge]: in: depth 14.7 Hz, colour 7.0 Hz | out: 2.2 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631817.984865739] [astra_bridge]: in: depth 8.7 Hz, colour 3.7 Hz | out: 1.8 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631827.979530775] [astra_bridge]: in: depth 10.7 Hz, colour 5.0 Hz | out: 1.8 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631838.967860661] [astra_bridge]: in: depth 11.0 Hz, colour 5.0 Hz | out: 2.0 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631847.812574044] [astra_bridge]: in: depth 7.3 Hz, colour 3.7 Hz | out: 1.3 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631857.797564997] [astra_bridge]: in: depth 13.3 Hz, colour 6.0 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631867.862603005] [astra_bridge]: in: depth 11.0 Hz, colour 5.3 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631878.278614737] [astra_bridge]: in: depth 12.7 Hz, colour 5.7 Hz | out: 2.1 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631888.146865623] [astra_bridge]: in: depth 12.7 Hz, colour 5.3 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631898.319984973] [astra_bridge]: in: depth 11.7 Hz, colour 5.7 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631908.462168238] [astra_bridge]: in: depth 12.0 Hz, colour 5.0 Hz | out: 1.5 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631918.200515284] [astra_bridge]: in: depth 12.7 Hz, colour 5.7 Hz | out: 1.8 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631928.260564056] [astra_bridge]: in: depth 9.3 Hz, colour 4.3 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631937.967990956] [astra_bridge]: in: depth 14.0 Hz, colour 6.3 Hz | out: 1.8 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631948.166337123] [astra_bridge]: in: depth 9.0 Hz, colour 4.3 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631958.661804321] [astra_bridge]: in: depth 11.7 Hz, colour 5.7 Hz | out: 1.7 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631967.990349828] [astra_bridge]: in: depth 11.3 Hz, colour 5.3 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631977.997982065] [astra_bridge]: in: depth 10.7 Hz, colour 5.0 Hz | out: 1.4 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631987.832887850] [astra_bridge]: in: depth 12.3 Hz, colour 5.7 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795631998.324010268] [astra_bridge]: in: depth 11.7 Hz, colour 5.7 Hz | out: 1.5 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632008.330831582] [astra_bridge]: in: depth 8.3 Hz, colour 4.0 Hz | out: 1.9 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632018.328768433] [astra_bridge]: in: depth 12.0 Hz, colour 6.0 Hz | out: 1.5 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632028.300607541] [astra_bridge]: in: depth 7.7 Hz, colour 3.7 Hz | out: 1.7 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632038.090503688] [astra_bridge]: in: depth 11.3 Hz, colour 5.0 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632048.238290591] [astra_bridge]: in: depth 12.0 Hz, colour 5.7 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632057.886498461] [astra_bridge]: in: depth 7.7 Hz, colour 3.7 Hz | out: 1.3 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632068.783878300] [astra_bridge]: in: depth 10.3 Hz, colour 5.0 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632078.367770559] [astra_bridge]: in: depth 12.0 Hz, colour 6.0 Hz | out: 1.7 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632087.650632365] [astra_bridge]: in: depth 9.0 Hz, colour 3.7 Hz | out: 1.7 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632098.237512393] [astra_bridge]: in: depth 13.0 Hz, colour 5.0 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632108.184377469] [astra_bridge]: in: depth 9.3 Hz, colour 4.7 Hz | out: 1.5 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632118.247640441] [astra_bridge]: in: depth 9.0 Hz, colour 4.0 Hz | out: 1.7 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632127.778023179] [astra_bridge]: in: depth 13.3 Hz, colour 6.3 Hz | out: 1.5 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632138.846137261] [astra_bridge]: in: depth 10.7 Hz, colour 5.3 Hz | out: 1.4 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632148.719677371] [astra_bridge]: in: depth 9.3 Hz, colour 4.3 Hz | out: 1.0 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632158.169088964] [astra_bridge]: in: depth 8.3 Hz, colour 3.7 Hz | out: 1.0 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632168.965911722] [astra_bridge]: in: depth 9.0 Hz, colour 4.7 Hz | out: 1.1 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632177.754081993] [astra_bridge]: in: depth 15.0 Hz, colour 6.3 Hz | out: 1.6 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632188.365012738] [astra_bridge]: in: depth 8.0 Hz, colour 3.7 Hz | out: 1.2 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632198.526902076] [astra_bridge]: in: depth 9.7 Hz, colour 4.0 Hz | out: 1.1 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632208.282284263] [astra_bridge]: in: depth 12.0 Hz, colour 5.3 Hz | out: 1.0 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632218.900221261] [astra_bridge]: in: depth 10.3 Hz, colour 5.0 Hz | out: 1.2 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632228.872347214] [astra_bridge]: in: depth 9.3 Hz, colour 4.3 Hz | out: 1.0 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632238.238485998] [astra_bridge]: in: depth 9.0 Hz, colour 3.7 Hz | out: 1.2 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632247.868544680] [astra_bridge]: in: depth 12.7 Hz, colour 5.7 Hz | out: 1.4 Hz[0m
+[astra_bridge-13] [0m[INFO] [1795632260.050222787] [astra_bridge]: in: depth 10.0 Hz, colour 4.3 Hz | out: 2.1 Hz[0m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[scan_to_scan_filter_chain-12] [0m[INFO] [1795632260.658429796] [rclcpp]: signal_handler(signum=2)[0m
+[ekf_node-7] [0m[INFO] [1795632260.659834078] [rclcpp]: signal_handler(signum=2)[0m
+[async_slam_toolbox_node-16] [0m[INFO] [1795632260.662833223] [rclcpp]: signal_handler(signum=2)[0m
+[game_controller_node-14] [0m[INFO] [1795632260.663171260] [rclcpp]: signal_handler(signum=2)[0m
+[servo_controller-9] Traceback (most recent call last):
+[servo_controller-9]   File "/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller", line 33, in <module>
+[servo_controller-9]     sys.exit(load_entry_point('servo-controller', 'console_scripts', 'servo_controller')())
+[servo_controller-9]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 100, in main
+[servo_controller-9]     rclpy.spin(node)  # 循环等待ROS2退出
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[robot_state_publisher-1] [0m[INFO] [1795632260.663616957] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [apply_calib-5]: process has finished cleanly [pid 5646]
+[complementary_filter_node-6] [0m[INFO] [1795632260.664101614] [rclcpp]: signal_handler(signum=2)[0m
+[complementary_filter_node-6] [0m[INFO] [1795632260.717131240] [imu_filter]: Destroying ComplementaryFilterROS[0m
+[apply_calib-5] [0m[INFO] [1795632260.664413190] [rclcpp]: signal_handler(signum=2)[0m
+[xbox_teleop-15] Traceback (most recent call last):
+[xbox_teleop-15]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop", line 33, in <module>
+[xbox_teleop-15]     sys.exit(load_entry_point('ame505-bringup==0.1.0', 'console_scripts', 'xbox_teleop')())
+[xbox_teleop-15]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/python3.10/site-packages/ame505_bringup/xbox_teleop.py", line 115, in main
+[xbox_teleop-15]     node.stop()
+[xbox_teleop-15]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/python3.10/site-packages/ame505_bringup/xbox_teleop.py", line 78, in stop
+[xbox_teleop-15]     self.pub.publish(Twist())
+[xbox_teleop-15]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[xbox_teleop-15]     self.__publisher.publish(msg)
+[xbox_teleop-15] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[init_pose-10] Traceback (most recent call last):
+[init_pose-10]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose", line 33, in <module>
+[init_pose-10]     sys.exit(load_entry_point('controller', 'console_scripts', 'init_pose')())
+[init_pose-10]   File "/home/ubuntu/ros2_ws/build/controller/controller/init_pose.py", line 53, in main
+[init_pose-10]     rclpy.spin(node)  # 循环等待ROS2退出
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[init_pose-10]     executor.spin_once()
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[init_pose-10]     self._spin_once_impl(timeout_sec)
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[init_pose-10]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[init_pose-10]     return next(self._cb_iter)
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[init_pose-10]     wait_set.wait(timeout_nsec)
+[init_pose-10] KeyboardInterrupt
+[servo_controller-9] Exception in thread Thread-1 (publish_joint_states):
+[servo_controller-9] Traceback (most recent call last):
+[servo_controller-9]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[servo_controller-9]     self.run()
+[servo_controller-9]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[servo_controller-9]     executor.spin_once()
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[servo_controller-9]     self._spin_once_impl(timeout_sec)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[servo_controller-9]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[servo_controller-9]     self._target(*self._args, **self._kwargs)
+[servo_controller-9]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 94, in publish_joint_states
+[servo_controller-9]     self.joint_states_pub.publish(msg)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[servo_controller-9]     self.__publisher.publish(msg)
+[servo_controller-9] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[servo_controller-9]     return next(self._cb_iter)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[servo_controller-9]     wait_set.wait(timeout_nsec)
+[servo_controller-9] KeyboardInterrupt
+[ros_robot_controller-3] [0m[INFO] [1795632260.790450061] [ros_robot_controller]: [1;32mshutdown[0m[0m
+[ros_robot_controller-3] Exception in thread Thread-2 (pub_callback):
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[ros_robot_controller-3]     self.run()
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[ros_robot_controller-3]     self._target(*self._args, **self._kwargs)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 68, in pub_callback
+[ros_robot_controller-3]     self.pub_imu_data(self.imu_pub)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 261, in pub_imu_data
+[ros_robot_controller-3]     pub.publish(msg)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[ros_robot_controller-3]     self.__publisher.publish(msg)
+[ros_robot_controller-3] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[sllidar_node-11] [0m[INFO] [1795632260.828260148] [sllidar_node]: Stop motor[0m
+[INFO] [game_controller_node-14]: process has finished cleanly [pid 5686]
+[INFO] [scan_to_scan_filter_chain-12]: process has finished cleanly [pid 5676]
+[INFO] [sllidar_node-11]: process has finished cleanly [pid 5671]
+[INFO] [complementary_filter_node-6]: process has finished cleanly [pid 5648]
+[INFO] [async_slam_toolbox_node-16]: process has finished cleanly [pid 5887]
+[INFO] [robot_state_publisher-1]: process has finished cleanly [pid 5638]
+[INFO] [ekf_node-7]: process has finished cleanly [pid 5650]
+[ERROR] [init_pose-10]: process has died [pid 5665, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmpnxy2ewwt'].
+[ERROR] [xbox_teleop-15]: process has died [pid 5688, exit code 1, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml'].
+[ERROR] [servo_controller-9]: process has died [pid 5655, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params_g48cgqk6'].
+[INFO] [cmd_vel_watchdog-8]: process has finished cleanly [pid 5653]
+[INFO] [astra_bridge-13]: process has finished cleanly [pid 5680]
+[INFO] [joint_state_publisher-2]: process has finished cleanly [pid 5640]
+[ERROR] [odom_publisher-4]: process[odom_publisher-4] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[ERROR] [ros_robot_controller-3]: process[ros_robot_controller-3] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [odom_publisher-4]: sending signal 'SIGTERM' to process[odom_publisher-4]
+[INFO] [ros_robot_controller-3]: sending signal 'SIGTERM' to process[ros_robot_controller-3]
+[odom_publisher-4] [0m[INFO] [1795632265.968859950] [odom_publisher]: [1;32mshutdown[0m[0m
+[odom_publisher-4] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[odom_publisher-4] Traceback (most recent call last):
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher", line 33, in <module>
+[odom_publisher-4]     sys.exit(load_entry_point('controller', 'console_scripts', 'odom_publisher')())
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 246, in main
+[odom_publisher-4]     rclpy.spin(node)  # 循环等待ROS2退出
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[odom_publisher-4]     executor.spin_once()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[odom_publisher-4]     self._spin_once_impl(timeout_sec)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[odom_publisher-4]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[odom_publisher-4]     return next(self._cb_iter)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[odom_publisher-4]     wait_set.wait(timeout_nsec)
+[odom_publisher-4]   File "/home/ubuntu/ros2_ws/build/controller/controller/odom_publisher_node.py", line 141, in shutdown
+[odom_publisher-4]     rclpy.shutdown()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[odom_publisher-4]     _shutdown(context=context)
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[odom_publisher-4]     return context.shutdown()
+[odom_publisher-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[odom_publisher-4]     self.__context.shutdown()
+[odom_publisher-4] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ERROR] [odom_publisher-4]: process has died [pid 5644, exit code 1, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/odom_publisher --ros-args -r __node:=odom_publisher --params-file /home/ubuntu/ros2_ws/src/driver/controller/config/calibrate_params.yaml --params-file /tmp/launch_params_s6jwznog'].
+[ERROR] [ros_robot_controller-3]: process[ros_robot_controller-3] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[INFO] [ros_robot_controller-3]: sending signal 'SIGKILL' to process[ros_robot_controller-3]
+[ERROR] [ros_robot_controller-3]: process has died [pid 5642, exit code -9, cmd '/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller --ros-args --params-file /tmp/launch_params_h068me70'].

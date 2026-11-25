@@ -1,0 +1,220 @@
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2026-11-25-18-01-36-906916-jetauto-1074
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: [ame505] 2D MAPPING (slam_toolbox, lidar) -> map "lab2d_11_25_1"
+[INFO] [robot_state_publisher-1]: process started with pid [1178]
+[INFO] [joint_state_publisher-2]: process started with pid [1180]
+[INFO] [ros_robot_controller-3]: process started with pid [1183]
+[INFO] [odom_publisher-4]: process started with pid [1185]
+[INFO] [apply_calib-5]: process started with pid [1187]
+[INFO] [complementary_filter_node-6]: process started with pid [1190]
+[INFO] [ekf_node-7]: process started with pid [1192]
+[INFO] [cmd_vel_watchdog-8]: process started with pid [1194]
+[INFO] [servo_controller-9]: process started with pid [1196]
+[INFO] [init_pose-10]: process started with pid [1198]
+[INFO] [sllidar_node-11]: process started with pid [1200]
+[INFO] [scan_to_scan_filter_chain-12]: process started with pid [1205]
+[INFO] [game_controller_node-13]: process started with pid [1210]
+[INFO] [xbox_teleop-14]: process started with pid [1213]
+[complementary_filter_node-6] [0m[INFO] [1795629704.358602228] [imu_filter]: Starting ComplementaryFilterROS[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.458233914] [robot_state_publisher]: got segment back_shell_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.460687127] [robot_state_publisher]: got segment base_footprint[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.485418869] [robot_state_publisher]: got segment base_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.493154492] [robot_state_publisher]: got segment depth_cam_frame[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.495633698] [robot_state_publisher]: got segment depth_cam_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.495685892] [robot_state_publisher]: got segment imu_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.495715166] [robot_state_publisher]: got segment lidar_frame[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496307217] [robot_state_publisher]: got segment lidar_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496338210] [robot_state_publisher]: got segment lidar_sim_frame[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496366234] [robot_state_publisher]: got segment mic_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496392904] [robot_state_publisher]: got segment screen_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496418532] [robot_state_publisher]: got segment speaker_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496444369] [robot_state_publisher]: got segment wheel_left_back_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496470414] [robot_state_publisher]: got segment wheel_left_front_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496496354] [robot_state_publisher]: got segment wheel_right_back_link[0m
+[robot_state_publisher-1] [0m[INFO] [1795629704.496521305] [robot_state_publisher]: got segment wheel_right_front_link[0m
+[sllidar_node-11] [0m[INFO] [1795629704.746193118] [sllidar_node]: SLLidar running on ROS2 package SLLidar.ROS2 SDK Version:1.0.1, SLLIDAR SDK Version:2.1.0[0m
+[sllidar_node-11] [0m[INFO] [1795629704.794450674] [sllidar_node]: SLLidar S/N: 9AFDECF0C3E09ED2A0EA98F309254110[0m
+[sllidar_node-11] [0m[INFO] [1795629704.794571261] [sllidar_node]: Firmware Ver: 1.29[0m
+[sllidar_node-11] [0m[INFO] [1795629704.794615017] [sllidar_node]: Hardware Rev: 7[0m
+[sllidar_node-11] [0m[INFO] [1795629704.797497084] [sllidar_node]: SLLidar health status : 0[0m
+[sllidar_node-11] [0m[INFO] [1795629704.797609129] [sllidar_node]: SLLidar health status : OK.[0m
+[sllidar_node-11] [0m[INFO] [1795629705.139563145] [sllidar_node]: current scan mode: Sensitivity, sample rate: 8 Khz, max_distance: 12.0 m, scan frequency:10.0 Hz, [0m
+[INFO] [async_slam_toolbox_node-15]: process started with pid [1383]
+[async_slam_toolbox_node-15] [0m[INFO] [1795629711.090231383] [slam_toolbox]: Node using stack size 40000000[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629712.601394735] [slam_toolbox]: Using solver plugin solver_plugins::CeresSolver[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629712.613811601] [slam_toolbox]: CeresSolver: Using SCHUR_JACOBI preconditioner.[0m
+[joint_state_publisher-2] [0m[INFO] [1795629712.978427369] [joint_state_publisher]: Waiting for robot_description to be published on the robot_description topic...[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.463501613] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.008 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.484489047] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.085 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.495975489] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.157 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.498648520] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.246 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.551459074] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.330 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.623300941] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.416 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.736472806] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.502 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.762271344] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.589 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.853215573] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.680 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629713.928486604] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.760 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.009111616] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.848 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.096728724] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629713.919 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.188307561] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.008 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.295193875] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.092 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.353760021] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.186 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.443112912] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.283 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.546242365] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.352 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.611974117] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.435 for reason 'discarding message because the queue is full'[0m
+[xbox_teleop-14] [0m[INFO] [1795629714.685104473] [xbox_teleop]: Xbox teleop ready -> controller/cmd_vel. Hold LB to drive, RB for turbo, B = E-STOP, START = clear E-STOP.[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.690580135] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.521 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.774101435] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.607 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.854900844] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.683 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629714.950061468] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.768 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.027630746] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.875 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.115692491] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629714.938 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.211227588] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.024 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.288394682] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.112 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.363281865] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.197 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.441074972] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.285 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.536511307] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.361 for reason 'discarding message because the queue is full'[0m
+[ros_robot_controller-3] Exception in thread Thread-1 (recv_task):
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.617691230] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.440 for reason 'discarding message because the queue is full'[0m
+[ros_robot_controller-3]     self.run()
+[ros_robot_controller-3]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[ros_robot_controller-3]     self._target(*self._args, **self._kwargs)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_sdk.py", line 452, in recv_task
+[ros_robot_controller-3]     recv_data = self.port.read()
+[ros_robot_controller-3]   File "/home/ubuntu/.local/lib/python3.10/site-packages/serial/serialposix.py", line 595, in read
+[ros_robot_controller-3]     raise SerialException(
+[ros_robot_controller-3] serial.serialutil.SerialException: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.703488691] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.532 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.788616956] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.613 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629715.877629389] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.700 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.003048934] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.788 for reason 'discarding message because the queue is full'[0m
+[odom_publisher-4] [0m[INFO] [1795629716.028468362] [odom_publisher]: [1;32m1.000000 1.040000[0m[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.071175455] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629715.876 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.118563635] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.009 for reason 'discarding message because the queue is full'[0m
+[odom_publisher-4] [0m[INFO] [1795629716.127564984] [odom_publisher]: [1;32mstart[0m[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.206641788] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.072 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.300122209] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.118 for reason 'discarding message because the queue is full'[0m
+[servo_controller-9] [0m[INFO] [1795629716.378106485] [servo_manager]: [1;32mstart[0m[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.379551400] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.206 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.465885540] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.290 for reason 'discarding message because the queue is full'[0m
+[ros_robot_controller-3] [0m[INFO] [1795629716.512764700] [ros_robot_controller]: [1;32mstart[0m[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.561163418] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.376 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.643130259] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.463 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.743011038] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.559 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.810022216] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.641 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.888385757] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.719 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629716.974989357] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.807 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629717.055747198] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.882 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] [0m[INFO] [1795629717.139809917] [slam_toolbox]: Message Filter dropping message: frame 'lidar_frame' at time 1795629716.966 for reason 'discarding message because the queue is full'[0m
+[async_slam_toolbox_node-15] Registering sensor: [Custom Described Lidar]
+[servo_controller-9] [0m[INFO] [1795629717.712438761] [controller_manager]: [1;32mstart[0m[0m
+[init_pose-10] [0m[INFO] [1795629719.471805520] [init_pose]: [1;32mstart[0m[0m
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[async_slam_toolbox_node-15] [0m[INFO] [1795629824.162670170] [rclcpp]: signal_handler(signum=2)[0m
+[game_controller_node-13] [0m[INFO] [1795629824.162872329] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [scan_to_scan_filter_chain-12]: process has finished cleanly [pid 1205]
+[apply_calib-5] [0m[INFO] [1795629824.163572831] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [apply_calib-5]: process has finished cleanly [pid 1187]
+[complementary_filter_node-6] [0m[INFO] [1795629824.166317121] [rclcpp]: signal_handler(signum=2)[0m
+[complementary_filter_node-6] [0m[INFO] [1795629824.194717848] [imu_filter]: Destroying ComplementaryFilterROS[0m
+[INFO] [complementary_filter_node-6]: process has finished cleanly [pid 1190]
+[scan_to_scan_filter_chain-12] [0m[INFO] [1795629824.166248936] [rclcpp]: signal_handler(signum=2)[0m
+[servo_controller-9] Traceback (most recent call last):
+[servo_controller-9]   File "/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller", line 33, in <module>
+[servo_controller-9]     sys.exit(load_entry_point('servo-controller', 'console_scripts', 'servo_controller')())
+[servo_controller-9]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 100, in main
+[servo_controller-9]     rclpy.spin(node)  # 循环等待ROS2退出
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[servo_controller-9]     executor.spin_once()
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[servo_controller-9]     self._spin_once_impl(timeout_sec)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[servo_controller-9]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[servo_controller-9]     return next(self._cb_iter)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[servo_controller-9] Exception in thread Thread-1 (publish_joint_states):
+[servo_controller-9] Traceback (most recent call last):
+[servo_controller-9]   File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+[servo_controller-9]     self.run()
+[servo_controller-9]   File "/usr/lib/python3.10/threading.py", line 953, in run
+[servo_controller-9]     self._target(*self._args, **self._kwargs)
+[servo_controller-9]   File "/home/ubuntu/ros2_ws/build/servo_controller/servo_controller/controller_manager.py", line 94, in publish_joint_states
+[servo_controller-9]     self.joint_states_pub.publish(msg)
+[servo_controller-9]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[servo_controller-9]     self.__publisher.publish(msg)
+[servo_controller-9] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[servo_controller-9]     wait_set.wait(timeout_nsec)
+[servo_controller-9] KeyboardInterrupt
+[INFO] [game_controller_node-13]: process has finished cleanly [pid 1210]
+[robot_state_publisher-1] [0m[INFO] [1795629824.171563381] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [sllidar_node-11]: process has finished cleanly [pid 1200]
+[init_pose-10] Traceback (most recent call last):
+[init_pose-10]   File "/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose", line 33, in <module>
+[init_pose-10]     sys.exit(load_entry_point('controller', 'console_scripts', 'init_pose')())
+[init_pose-10]   File "/home/ubuntu/ros2_ws/build/controller/controller/init_pose.py", line 53, in main
+[init_pose-10]     rclpy.spin(node)  # 循环等待ROS2退出
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[init_pose-10]     executor.spin_once()
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[init_pose-10]     self._spin_once_impl(timeout_sec)
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[init_pose-10]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[init_pose-10]     return next(self._cb_iter)
+[init_pose-10]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[init_pose-10]     wait_set.wait(timeout_nsec)
+[init_pose-10] KeyboardInterrupt
+[ekf_node-7] [0m[INFO] [1795629824.187549429] [rclcpp]: signal_handler(signum=2)[0m
+[INFO] [robot_state_publisher-1]: process has finished cleanly [pid 1178]
+[xbox_teleop-14] Traceback (most recent call last):
+[xbox_teleop-14]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop", line 33, in <module>
+[xbox_teleop-14]     sys.exit(load_entry_point('ame505-bringup==0.1.0', 'console_scripts', 'xbox_teleop')())
+[xbox_teleop-14]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/python3.10/site-packages/ame505_bringup/xbox_teleop.py", line 115, in main
+[xbox_teleop-14]     node.stop()
+[xbox_teleop-14]   File "/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/python3.10/site-packages/ame505_bringup/xbox_teleop.py", line 78, in stop
+[xbox_teleop-14]     self.pub.publish(Twist())
+[xbox_teleop-14]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+[xbox_teleop-14]     self.__publisher.publish(msg)
+[xbox_teleop-14] rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[sllidar_node-11] [0m[INFO] [1795629824.288747815] [sllidar_node]: Stop motor[0m
+[INFO] [ekf_node-7]: process has finished cleanly [pid 1192]
+[INFO] [async_slam_toolbox_node-15]: process has finished cleanly [pid 1383]
+[ERROR] [init_pose-10]: process has died [pid 1198, exit code -2, cmd '/home/ubuntu/ros2_ws/install/controller/lib/controller/init_pose --ros-args -r __node:=init_pose --params-file /tmp/tmpuuxs61g0'].
+[INFO] [cmd_vel_watchdog-8]: process has finished cleanly [pid 1194]
+[INFO] [joint_state_publisher-2]: process has finished cleanly [pid 1180]
+[ERROR] [xbox_teleop-14]: process has died [pid 1213, exit code 1, cmd '/home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/lib/ame505_bringup/xbox_teleop --ros-args -r __node:=xbox_teleop --params-file /home/ubuntu/ame505-safety-inspection-robot/install/ame505_bringup/share/ame505_bringup/config/xbox.yaml'].
+[ERROR] [servo_controller-9]: process has died [pid 1196, exit code -2, cmd '/home/ubuntu/ros2_ws/install/servo_controller/lib/servo_controller/servo_controller --ros-args --params-file /home/ubuntu/ros2_ws/src/driver/servo_controller/config/servo_controller.yaml --params-file /tmp/launch_params_2902p86o'].
+[odom_publisher-4] [0m[INFO] [1795629827.388128734] [odom_publisher]: [1;32mshutdown[0m[0m
+[INFO] [odom_publisher-4]: process has finished cleanly [pid 1185]
+[ERROR] [ros_robot_controller-3]: process[ros_robot_controller-3] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [ros_robot_controller-3]: sending signal 'SIGTERM' to process[ros_robot_controller-3]
+[ros_robot_controller-3] [0m[INFO] [1795629829.835155698] [ros_robot_controller]: [1;32mshutdown[0m[0m
+[ros_robot_controller-3] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[ros_robot_controller-3] Traceback (most recent call last):
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller", line 33, in <module>
+[ros_robot_controller-3]     sys.exit(load_entry_point('ros-robot-controller', 'console_scripts', 'ros_robot_controller')())
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 265, in main
+[ros_robot_controller-3]     rclpy.spin(node)                                 # 循环等待ROS2退出
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 222, in spin
+[ros_robot_controller-3]     executor.spin_once()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 739, in spin_once
+[ros_robot_controller-3]     self._spin_once_impl(timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 728, in _spin_once_impl
+[ros_robot_controller-3]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 711, in wait_for_ready_callbacks
+[ros_robot_controller-3]     return next(self._cb_iter)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 608, in _wait_for_ready_callbacks
+[ros_robot_controller-3]     wait_set.wait(timeout_nsec)
+[ros_robot_controller-3]   File "/home/ubuntu/ros2_ws/build/ros_robot_controller/ros_robot_controller/ros_robot_controller_node.py", line 58, in shutdown
+[ros_robot_controller-3]     rclpy.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 126, in shutdown
+[ros_robot_controller-3]     _shutdown(context=context)
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[ros_robot_controller-3]     return context.shutdown()
+[ros_robot_controller-3]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[ros_robot_controller-3]     self.__context.shutdown()
+[ros_robot_controller-3] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[ERROR] [ros_robot_controller-3]: process has died [pid 1183, exit code 1, cmd '/home/ubuntu/ros2_ws/install/ros_robot_controller/lib/ros_robot_controller/ros_robot_controller --ros-args --params-file /tmp/launch_params_g7lvs_sk'].
