@@ -25,3 +25,7 @@ data/
 # YOLO weights (downloaded by ml/yolo_coco.py)
 ml/weights/
 *.pt
+
+# ...except bags copied into the repo on purpose (scripts/backup_bag.sh)
+!recordings/**/*.db3
+!recordings/**/*.mcap
