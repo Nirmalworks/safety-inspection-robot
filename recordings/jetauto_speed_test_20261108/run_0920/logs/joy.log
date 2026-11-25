@@ -1,0 +1,3 @@
+[0m[INFO] [1794129640.875236161] [joy_node]: No haptic (rumble) available, skipping initialization[0m
+[0m[INFO] [1794129640.875712534] [joy_node]: Opened joystick: Xbox Series X Controller.  deadzone: 0.080000[0m
+[0m[INFO] [1794129811.693570873] [rclcpp]: signal_handler(signum=15)[0m

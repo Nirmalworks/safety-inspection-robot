@@ -1,0 +1,4 @@
+cmd_mps,aborted,run_s,measured_mps,peak_mps,tracking_pct,start_delay_lidar_s,start_delay_imu_s,t50_s,t90_s,accel_mps2,imu_peak_accel_mps2,stop_delay_imu_s,stop_t50_s,stop_time_s,braking_distance_m,brake_decel_eff_mps2,imu_peak_decel_mps2,travel_m,commanded_m,wall_start_m,wall_rest_m
+0.2,False,4.02,0.194,0.264,96.8,0.327,0.161,0.238,0.309,1.08,1.27,0.165,0.222,0.217,0.05,0.38,1.33,0.84,0.803,3.812,2.972
+0.3,False,2.67,0.291,0.387,96.8,0.273,0.153,0.197,0.278,1.43,2.06,0.152,0.211,0.175,0.069,0.61,2.23,0.844,0.8,3.848,3.004
+0.5,False,1.61,0.511,0.58,102.2,0.272,0.162,0.257,0.379,1.67,2.43,0.151,0.222,0.191,0.109,1.2,3.39,0.82,0.804,3.86,3.04

@@ -1,0 +1,43 @@
+# Xbox controller driving for mapping (SLAM) on the mecanum JetAuto.
+# Loaded by teleop_xbox.sh into both nodes:
+#   ros2 run joy joy_node --ros-args --params-file xbox_teleop.yaml
+#   python3 xbox_teleop.py --ros-args --params-file xbox_teleop.yaml
+#
+# Index numbers are joy_node's (SDL GameController) order. They are only right for the
+# Xbox Series pad over Bluetooth with the SDL_GAMECONTROLLERCONFIG fix in teleop_xbox.sh.
+#   buttons: A=0 B=1 X=2 Y=3 Back=4 Guide=5 Start=6 LStick=7 RStick=8
+#            LB=9 RB=10 DpadUp=11 DpadDown=12 DpadLeft=13 DpadRight=14
+#   axes:    LeftX=0 LeftY=1 RightX=2 RightY=3 LT=4 RT=5   (stick up / left = +1)
+# Check with: ros2 topic echo /joy
+
+joy_node:
+  ros__parameters:
+    device_id: 0
+    deadzone: 0.08
+    autorepeat_rate: 20.0       # re-publish /joy at 20 Hz while a stick is held
+    coalesce_interval_ms: 1
+
+xbox_teleop:
+  ros__parameters:
+    cmd_topic: /controller/cmd_vel
+    estop_topic: /estop         # std_msgs/Bool, latched; publish true here to e-stop remotely
+
+    axis_forward: 1             # left stick up/down
+    axis_strafe: 0              # left stick left/right (mecanum sideways)
+    axis_turn: 2                # right stick left/right
+
+    button_deadman: 9           # LB: hold to move
+    button_turbo: 10            # RB: x turbo_scale
+    button_estop: 1             # B: E-STOP (latches until reset)
+    button_reset: 6             # Start: release the e-stop
+    button_speed_up: 11         # D-pad up
+    button_speed_down: 12       # D-pad down
+
+    # Forward/strafe speed levels in m/s. Slow is better for SLAM:
+    # 0.2 m/s and 0.5 rad/s give clean maps on this robot.
+    speed_levels: [0.1, 0.2, 0.3]
+    start_level: 1              # index into speed_levels -> 0.2 m/s
+    max_angular: 0.5            # rad/s
+    turbo_scale: 1.5
+    max_linear_limit: 0.5       # hard cap in m/s, even with turbo
+    timeout: 0.5                # s without /joy -> stop

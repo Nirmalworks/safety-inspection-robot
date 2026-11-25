@@ -1,0 +1,27 @@
+# Settings for run_speed_test.sh / speed_test.py / speed_analysis.py.
+# Edit here; no need to touch the Python.
+
+speed_test:
+  speeds: [0.2, 0.3, 0.5]   # m/s, run in this order; each is a straight forward run + hard stop
+  run_distance: 0.8         # m driven at full speed per run
+  margin: 0.6               # m extra free space required ahead, beyond run + braking
+  abort_distance: 0.45      # m: hard stop at once if anything is this close in front
+  rear_clearance: 0.35      # m free behind needed to back up to the start
+  return_speed: 0.12        # m/s when backing up to the start
+  still_before: 2.0         # s standing still before each run
+  rest_after: 3.0           # s standing still after each hard stop (measures the coast)
+  lidar_yaw_deg: 180        # lidar is mounted rotated 180 deg on this robot
+  wall_cone_deg: 8          # +- cone straight ahead; median range = distance to the wall
+  lane_half_width_m: 0.23   # obstacle checks look only inside this lane (robot ~0.12 m half-width + 10 cm)
+
+ping:
+  target: 192.168.1.1       # laptop IP if you have it; router = tests the robot's Wi-Fi link
+  count: 1200
+  interval: 0.1             # s; 1200 x 0.1 s = 2 min (below 0.2 s needs sudo)
+
+record:
+  # Same topics as the Nov 3 slow_drive bag, plus the test markers, e-stop and controller.
+  topics: [/scan, /scan_raw, /pose, /map, /odom, /odom_raw, /imu, /tf, /tf_static,
+           /controller/cmd_vel, /ros_robot_controller/battery,
+           /speed_test/event, /estop, /joy]
+  out_dir: ../CSCI-513/jetauto_recordings   # relative to scripts/: the folder in Shreyash's CSCI-513 repo

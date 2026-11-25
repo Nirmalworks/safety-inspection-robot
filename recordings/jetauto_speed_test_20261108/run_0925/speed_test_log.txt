@@ -1,0 +1,23 @@
+09:26:09 START speeds=[0.2, 0.3, 0.5] wall=3.78 lane_clear_ahead=3.18 lane_clear_behind=None
+09:26:09 still v=0.2 wall=3.784
+09:26:11 GO v=0.2
+09:26:15 STOP v=0.2
+09:26:19 rest v=0.2 wall=2.944
+09:26:19 RETURN to wall=3.784
+09:26:19 return stopped (no lidar data behind): move the robot back by hand or with the controller
+09:26:21 back at wall=2.944
+09:26:21 still v=0.3 wall=2.944
+09:26:23 GO v=0.3
+09:26:26 STOP v=0.3
+09:26:29 rest v=0.3 wall=2.148
+09:26:29 RETURN to wall=2.944
+09:26:29 return stopped (no lidar data behind): move the robot back by hand or with the controller
+09:26:31 back at wall=2.148
+09:26:31 still v=0.5 wall=2.148
+09:26:33 GO v=0.5
+09:26:35 STOP v=0.5
+09:26:38 rest v=0.5 wall=1.362
+09:26:38 RETURN to wall=2.148
+09:26:38 return stopped (no lidar data behind): move the robot back by hand or with the controller
+09:26:40 back at wall=1.362
+09:26:40 END stopped

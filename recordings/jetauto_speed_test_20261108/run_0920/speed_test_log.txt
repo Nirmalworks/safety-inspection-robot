@@ -1,0 +1,20 @@
+09:21:02 START speeds=[0.2, 0.3, 0.5] wall=3.81 lane_clear_ahead=3.79 lane_clear_behind=None
+09:21:02 still v=0.2 wall=3.812
+09:21:04 GO v=0.2
+09:21:08 STOP v=0.2
+09:21:12 rest v=0.2 wall=2.976
+09:21:12 RETURN to wall=3.812
+09:21:20 back at wall=3.844
+09:21:21 still v=0.3 wall=3.844
+09:21:23 GO v=0.3
+09:21:26 STOP v=0.3
+09:21:29 rest v=0.3 wall=3.008
+09:21:29 RETURN to wall=3.844
+09:21:38 back at wall=3.860
+09:21:38 still v=0.5 wall=3.858
+09:21:40 GO v=0.5
+09:21:42 STOP v=0.5
+09:21:45 rest v=0.5 wall=3.032
+09:21:45 RETURN to wall=3.858
+09:21:53 back at wall=3.900
+09:21:53 END stopped

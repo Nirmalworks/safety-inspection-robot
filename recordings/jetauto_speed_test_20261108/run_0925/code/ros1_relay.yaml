@@ -1,0 +1,19 @@
+# ROS 1 <-> ROS 2 relay settings (ros1_relay.py). Edit here, not in the Python.
+#
+# Hiwonder's ROS 1 stack on the robot's host owns the lidar and the motor board, and restarts
+# itself if stopped. Instead of fighting it for the serial ports, the relay uses it:
+# its sensors are republished in ROS 2, and our ROS 2 drive commands are passed to it.
+
+master: http://127.0.0.1:11311
+
+ros1_to_ros2:                 # ROS 1 topic: [ROS 2 topics it is republished on]
+  /scan: [/scan, /scan_raw]   # front half only (Hiwonder crops the rear like our /scan)
+  /imu: [/imu]
+  /ros_robot_controller/battery: [/ros_robot_controller/battery]
+
+drive:
+  ros2_cmd: /controller/cmd_vel            # what our scripts publish
+  ros1_cmd: /jetauto_controller/cmd_vel    # what Hiwonder's motor node listens to
+  timeout_s: 0.5     # no ROS 2 command for this long -> send a stop (their node keeps the last command)
+  max_linear: 0.6    # m/s cap on anything passed through
+  max_angular: 1.5   # rad/s cap

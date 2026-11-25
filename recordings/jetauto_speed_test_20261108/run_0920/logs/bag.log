@@ -1,0 +1,16 @@
+stdin is not a terminal device. Keyboard handling disabled.[0m[INFO] [1794129656.101979164] [rosbag2_recorder]: Press SPACE for pausing/resuming[0m
+[0m[INFO] [1794129656.110315414] [rosbag2_storage]: Opened database '/home/ubuntu/share/tmp/jetauto_toolkit/CSCI-513/jetauto_recordings/speed_test_20261108_0920/bag/bag_0.db3' for READ_WRITE.[0m
+[0m[INFO] [1794129656.118304620] [rosbag2_recorder]: Listening for topics...[0m
+[0m[INFO] [1794129656.146387183] [rosbag2_recorder]: Event publisher thread: Starting[0m
+[0m[INFO] [1794129656.151486436] [rosbag2_recorder]: Subscribed to topic '/joy'[0m
+[0m[INFO] [1794129656.151732227] [rosbag2_recorder]: Recording...[0m
+[0m[INFO] [1794129656.375526137] [rosbag2_recorder]: Subscribed to topic '/controller/cmd_vel'[0m
+[0m[INFO] [1794129656.385592504] [rosbag2_recorder]: Subscribed to topic '/estop'[0m
+[0m[INFO] [1794129656.943011160] [rosbag2_recorder]: Subscribed to topic '/imu'[0m
+[0m[INFO] [1794129656.959528498] [rosbag2_recorder]: Subscribed to topic '/ros_robot_controller/battery'[0m
+[0m[INFO] [1794129656.969698879] [rosbag2_recorder]: Subscribed to topic '/scan'[0m
+[0m[INFO] [1794129656.985571766] [rosbag2_recorder]: Subscribed to topic '/scan_raw'[0m
+[0m[INFO] [1794129662.334742850] [rosbag2_recorder]: Subscribed to topic '/speed_test/event'[0m
+[0m[INFO] [1794129715.058851230] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while[0m
+[0m[INFO] [1794129715.064601480] [rosbag2_recorder]: Event publisher thread: Exiting[0m
+[0m[INFO] [1794129715.064816384] [rosbag2_recorder]: Recording stopped[0m

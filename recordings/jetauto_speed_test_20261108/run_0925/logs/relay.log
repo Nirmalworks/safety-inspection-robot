@@ -1,0 +1,16 @@
+[0m[INFO] [1794129949.316068028] [ros1_relay]: relaying ['/scan', '/imu', '/ros_robot_controller/battery'] from ROS 1; /controller/cmd_vel -> ROS 1 /jetauto_controller/cmd_vel[0m
+[0m[INFO] [1794129959.125275085] [ros1_relay]: last 10 s: {'/imu': 500, '/scan': 126, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794129969.132382149] [ros1_relay]: last 10 s: {'/imu': 493, '/scan': 125, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794129979.125152533] [ros1_relay]: last 10 s: {'/scan': 126, '/imu': 493, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794129989.125015949] [ros1_relay]: last 10 s: {'/imu': 495, '/scan': 126, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794129999.125160864] [ros1_relay]: last 10 s: {'/imu': 497, '/scan': 126, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130009.125356237] [ros1_relay]: last 10 s: {'/imu': 498, '/scan': 126, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130019.125325763] [ros1_relay]: last 10 s: {'/imu': 499, '/scan': 126, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130029.125743577] [ros1_relay]: last 10 s: {'/imu': 501, '/scan': 126, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130039.125503504] [ros1_relay]: last 10 s: {'/imu': 500, '/scan': 125, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130049.126362568] [ros1_relay]: last 10 s: {'/scan': 126, '/imu': 500, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130059.125274382] [ros1_relay]: last 10 s: {'/scan': 126, '/imu': 500, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130069.125042296] [ros1_relay]: last 10 s: {'/imu': 499, '/scan': 126, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130079.125082589] [ros1_relay]: last 10 s: {'/imu': 501, '/scan': 126, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130089.126053237] [ros1_relay]: last 10 s: {'/imu': 496, '/scan': 126, '/ros_robot_controller/battery': 9} | ROS 1 motor node connected: True[0m
+[0m[INFO] [1794130099.125086969] [ros1_relay]: last 10 s: {'/imu': 490, '/scan': 126, '/ros_robot_controller/battery': 10} | ROS 1 motor node connected: True[0m

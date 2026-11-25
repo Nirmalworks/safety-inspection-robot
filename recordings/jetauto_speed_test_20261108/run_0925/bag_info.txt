@@ -1,0 +1,17 @@
+
+Files:             bag_0.db3
+Bag size:          9.5 MiB
+Storage id:        sqlite3
+Duration:          38.35s
+Start:             Nov  8 2026 09:26:04.327 (1794129964.327)
+End:               Nov  8 2026 09:26:42.363 (1794130002.363)
+Messages:          4014
+Topic information: Topic: /estop | Type: std_msgs/msg/Bool | Count: 1 | Serialization Format: cdr
+                   Topic: /controller/cmd_vel | Type: geometry_msgs/msg/Twist | Count: 553 | Serialization Format: cdr
+                   Topic: /joy | Type: sensor_msgs/msg/Joy | Count: 562 | Serialization Format: cdr
+                   Topic: /speed_test/event | Type: std_msgs/msg/String | Count: 23 | Serialization Format: cdr
+                   Topic: /scan_raw | Type: sensor_msgs/msg/LaserScan | Count: 479 | Serialization Format: cdr
+                   Topic: /scan | Type: sensor_msgs/msg/LaserScan | Count: 479 | Serialization Format: cdr
+                   Topic: /ros_robot_controller/battery | Type: std_msgs/msg/UInt16 | Count: 36 | Serialization Format: cdr
+                   Topic: /imu | Type: sensor_msgs/msg/Imu | Count: 1881 | Serialization Format: cdr
+
