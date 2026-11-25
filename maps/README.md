@@ -24,7 +24,8 @@ and `scripts/backup_map.sh <name> --restore` to copy here → SSD.
 | `lab2d_11_25_3` | 2026-11-25, slam_toolbox (lidar), 0.05 m/cell, 8.7 × 24.1 m | No checkpoints yet. |
 | `lab2d_11_25_4` | 2026-11-25, slam_toolbox (lidar), 0.05 m/cell, 23.7 × 9.6 m | No checkpoints yet. |
 | `lab2d_11_25_5` | 2026-11-25, slam_toolbox (lidar), 0.05 m/cell, 23.7 × 12.1 m | 8 checkpoints `cp_01`–`cp_08`. |
-| `lab2d_11_25_6` | 2026-11-25, slam_toolbox (lidar), 0.05 m/cell, 8.8 × 24.1 m | Newest map. No checkpoints yet. |
+| `lab2d_11_25_6` | 2026-11-25, slam_toolbox (lidar), 0.05 m/cell, 8.8 × 24.1 m | No checkpoints yet. |
+| `lab2d_11_25_7` | 2026-11-25, slam_toolbox (lidar), 0.05 m/cell, 24.1 × 9.2 m | Newest map. No checkpoints yet. Rosbag in `recordings/mapping/lab2d_11_25_7_20261125_192436`. |
 | `lab2d_11_18_3` | 2026-11-18, slam_toolbox (lidar), 0.05 m/cell, 18.3 × 10.9 m | 5 checkpoints, but all at the same pose (8.68, -1.48): recorded without moving the robot, so re-record before patrolling. |
 | `lab_map_new` | 2026-11-09, 0.05 m/cell, 20.7 × 10.0 m | No checkpoints. |
 
