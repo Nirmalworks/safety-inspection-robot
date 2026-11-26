@@ -10,17 +10,20 @@ Code: `ml/map_clean/`, labelling tool: `scripts/map_labeler.py`. Data, models an
 
 ## The maps for the robot
 
-`maps/lab2d_11_25_5/maps_2d_cleaned/` holds two candidates on the same grid and origin as the raw map, so the
+`maps/lab2d_11_25_5/maps_2d_cleaned/` holds three candidates on the same grid and origin as the raw map, so the
 checkpoints in `maps/lab2d_11_25_5/checkpoints/` apply unchanged.
 
 | File | What it is |
 |---|---|
+| `lab2d_11_25_5_model_only` | The lab model applied to the raw map, then the door-leak rule. No hand labels in the map: 95.2 % of structure kept, 74.9 % of clutter removed (162 structure cells lost, 352 clutter cells left) |
 | `lab2d_11_25_5_cleaned` | Hand labels where given (4,750 of 5,741 occupied cells), the lab model for the 991 cells left unsure, floor that leaked through the door cut off |
 | `lab2d_11_25_5_straightened` | The cleaned map with a regular outer wall and the four benches drawn as identical rectangles (3.45 x 1.25 m) |
 
-![Raw, cleaned and straightened](fig/robot_map.png)
+![Raw, model only, cleaned and straightened](fig/robot_map.png)
 
-Neither has been driven live yet.
+Recommended for driving: `cleaned`, because nothing real is missing from it. `model_only` is what the ML produces
+unaided. `straightened` is the polished version, to be used once a live run confirms it. None has been driven live yet.
+The hand labels of this map set the model's threshold but were not used to train it.
 
 ## The model
 
@@ -133,6 +136,7 @@ at least 22 cm (the robot's half diagonal) from any occupied cell; unknown is no
 | Map | Legs with a route | Tour length | Route cells within 22 cm of structure hand-marked keep |
 |---|---|---|---|
 | Raw | 8 of 8 | 47.6 m | 0 |
+| Model only | 8 of 8 | 42.5 m | 0 |
 | Cleaned | 8 of 8 | 42.3 m | 0 |
 | Straightened | 8 of 8 | 42.5 m | 0 |
 
