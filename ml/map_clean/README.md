@@ -1,5 +1,9 @@
 # Map cleaning: raw 2D lidar map in, clean map out
 
+**Current method and results: `docs/map_cleaning/RESULTS.md`.** The model in use is the erase-only U-Net in
+`erase.py` (keep or erase per occupied cell). The sections below describe the earlier model that redraws the whole
+map (`train.py`, `clean_map.py`); it is kept as the comparison it lost.
+
 A U-Net (11.0 M parameters) trained on simulated (dirty, clean) map pairs, with and without an
 adversarial term (pix2pix style). Maps are Nav2 trinary maps at 0.05 m per cell and are never resized.
 
