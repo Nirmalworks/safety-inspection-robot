@@ -21,6 +21,10 @@ checkpoints in `maps/lab2d_11_25_5/checkpoints/` apply unchanged.
 
 ![Raw, model only, cleaned and straightened](fig/robot_map.png)
 
+In all three, unseen patches inside the room (lidar shadows behind furniture, 1.7 m2 in total) are turned into floor;
+bench interiors and the insides of solid objects stay unknown (`ml/map_clean/fill_unknown.py`). The planning check gives
+the same routes with and without this step.
+
 Recommended for driving: `cleaned`, because nothing real is missing from it. `model_only` is what the ML produces
 unaided. `straightened` is the polished version, to be used once a live run confirms it. None has been driven live yet.
 One object marked keep, 15 cells at about (-6.57, 4.47) in the map frame, is erased in `model_only`; the planned leg from checkpoint 7 to 8 passes 10 cm from it.
