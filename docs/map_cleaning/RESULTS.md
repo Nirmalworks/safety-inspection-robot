@@ -40,33 +40,55 @@ The hand labels of this map set the model's threshold but were not used to train
   205 degree lidar, simulated drift, noise, dropouts and clutter), 10 epochs, 90 minutes.
 - Threshold: the highest-removal setting that keeps 95 % of structure on a separate hand-labelled validation map.
 
-## Scoreboard: one test map
+## Scoreboard
 
-Test map `lab2d_11_25_7`: 2,913 keep, 1,386 erase, 677 unsure cells (hand labels). Marks: structure kept >= 95 %,
-clutter removed >= 60 %. AMCL error is on a drive of the mapping session itself (raw: 4.8 cm).
+Scoring (changed on 26 Nov; the first version counted structure only on the exact cell, which is unfair to methods
+that redraw walls):
 
-| Method | Structure kept | Clutter removed | AMCL error |
-|---|---|---|---|
-| Raw | 100.0 % | 0.0 % | 4.8 cm |
-| Speckle filter | 95.5 % | 10.9 % | 4.2 cm |
-| ROSE2, default settings | 80.8 % | 47.7 % | 5.0 cm |
-| Session agreement, cautious | 99.9 % | 26.5 % | not run |
-| Session agreement, aggressive | 87.0 % | 73.4 % | not run |
-| Vote of all usable sessions | 22.0 % | 93.9 % | 17.7 cm |
-| Earlier model (redraws the map, simulated data) | 54.3 % | 96.9 % | 9.6 cm |
-| Earlier model + guardrail | 77.1 % | 84.7 % | 10.0 cm |
-| General model, simulated only, threshold from simulation | 63.6 % | 96.7 % | not run |
-| **Lab model** | **95.3 %** | **81.5 %** | 7.6 cm |
-| General model fine-tuned on the lab | 95.2 % | 82.3 % | 8.3 cm |
-| Lab model with ROSE2's kept cells put back | 98.0 % | 41.1 % | 4.5 cm |
+- Structure kept: a cell hand-marked keep counts if the output has an occupied cell within 10 cm. Mark: >= 95 %.
+- Clutter removed: a cell hand-marked erase counts if no occupied cell is left within 5 cm. Mark: >= 60 %.
+- Invented walls: occupied cells with no raw wall within 10 cm. Added floor: floor where the raw map was unknown.
+- All four lab maps: the same two measures as a mean over the four hand-labelled maps; for the lab-trained models each
+  map is scored by a model that never saw any map of that day.
+
+Test map `lab2d_11_25_7`: 2,913 keep, 1,386 erase, 677 unsure cells. Exact-cell figures in brackets. AMCL error is on
+a drive of the mapping session itself (raw: 4.8 cm).
+
+| Method | Structure kept | Clutter removed | Invented cells / added floor | All four lab maps: kept / removed | MIT Stata (unseen): kept / removed | AMCL error |
+|---|---|---|---|---|---|---|
+| Raw | 100.0 % | 0.0 % | 0 | 100 % / 0 % | 100 % / 0 % | 4.8 cm |
+| Speckle filter | 96.6 % (95.5) | 10.9 % (10.9) | 0 | 96.7 % / 10.1 % | 96.8 % / 27.1 % | 4.2 cm |
+| ROSE2, default settings | 96.3 % (80.8) | 27.3 % (47.7) | 0 | 96.0 % / 26.3 % | 72.2 % / 76.1 % | 5.0 cm |
+| Session agreement, cautious | 100.0 % (99.9) | 20.2 % (26.5) | 0 | 100 % / 11.1 % | needs several sessions | 5.2 cm |
+| Session agreement, aggressive | 91.4 % (87.0) | 66.7 % (73.4) | 0 | 94.0 % / 53.4 % | needs several sessions | 9.8 cm |
+| Vote of the other sessions | 79.2 % (22.0) | 77.2 % (93.9) | 686 / 9.8 m2 | 91.7 % / 62.9 % | needs several sessions | 17.7 cm |
+| Earlier model (redraws the map, simulated data) | 77.7 % (54.3) | 93.7 % (96.9) | 258 / 10.0 m2 | 74.6 % / 91.1 % | 89.8 % / 50.9 %, invents 3,685 cells and 341 m2 | 9.6 cm |
+| Earlier model + guardrail | 91.6 % (77.1) | 77.8 % (84.7) | 258 / 10.0 m2 | 91.1 % / 79.9 % | needs several sessions | 10.0 cm |
+| General model, simulated only | 69.9 % (63.6) | 96.5 % (96.7) | 0 | 97.1 % / 51.3 % with a lab-set threshold | 91.3 % / 52.9 % | 17.9 cm |
+| Lab model | 96.4 % (95.3) | 77.7 % (81.5) | 0 | 97.3 % / 68.0 % | 92.5 % / 26.9 % | 7.6 cm |
+| **General model fine-tuned on the lab** | **96.8 %** (95.2) | **79.6 %** (82.3) | 0 | **96.6 % / 73.9 %** | 96.9 % / 32.9 % | 8.3 cm |
+| Lab model with ROSE2's kept cells put back | 99.5 % (98.0) | 23.7 % (41.1) | 0 | 99.8 % / 19.0 % | 97.4 % / 23.4 % | 4.5 cm |
+
+For the lab-trained models the "all four lab maps" figure is with a whole day held out: worst case for the
+fine-tuned model 94.6 % kept and 67.7 % removed, for the lab model 95.1 % and 64.2 %. MIT Stata: 14 real map pieces,
+each method used with its lab settings.
 
 ![Four of the methods](fig/scoreboard_maps.png)
 
-This test map shares its day, and its furniture positions, with several training maps. The next test removes that.
+- Only the two lab-trained models pass both marks, and they invent nothing. The fine-tuned general model is the best
+  row: it also holds structure in the unseen building.
+- Nothing carries clutter removal over: methods that keep structure in MIT Stata remove a quarter to a third of the
+  clutter; ROSE2 removes 76 % there and loses 28 % of the structure.
+- The earlier model keeps the main walls and benches, so its map looks cleanest; about a fifth of the hand-marked
+  structure has no wall near it, it invents walls and floor, and on the robot's map the planned tour passes within the
+  robot's radius of real structure in 77 cells.
+- The tolerance is a choice: at 5 cm ROSE2 drops to 93.2 %, at 20 cm the earlier model with guardrail reaches 95.3 %.
+  The earlier model alone fails at every tolerance and the lab model passes at every one.
+- The hand labels started from session-agreement proposals, so they are not independent of the methods scored.
 
 ## Day held out (the number to quote)
 
-Four lab models. Two never see any 25 Nov map and are scored on the two hand-labelled 25 Nov maps; two never see
+Exact-cell scoring, with the threshold moved to compare models at one operating point. Four lab models. Two never see any 25 Nov map and are scored on the two hand-labelled 25 Nov maps; two never see
 24 Nov. Carried-over labels are rebuilt per model, so no hand label of the held-out day is used.
 
 | | Mean | Range over 8 tests |
