@@ -5,7 +5,8 @@ propose(): a method marks every occupied cell of a map keep (1) or erase (2). Wi
 between sessions, ROSE2 (loaded from a file made beforehand, see ROSE_DIR). With ML: the erase-only models, and the
 earlier model that redraws the map. The vote of the other sessions and the earlier model make a new map, so they
 return that map as well (the editor shows it in the result view) next to keep / erase marks derived from it.
-result(): the map that the current marks give, then the clean-up steps: cut the door leak, straighten, fill unseen patches.
+result(): the map that the current marks give, then the clean-up steps: cut the door leak, straighten, connect the
+walls (close gaps in the outer wall and make everything inside known except the desks), fill unseen patches.
 Class codes here are the labeler's: 0 free, 1 unknown, 2 occupied.
 """
 import os
@@ -184,7 +185,13 @@ def result(cls_lab, lab, steps, n_desks=4, desk_size=None, res=0.05):
         desks, info = straighten(out, n_desks, desk_size, min_len=8, gap=4, snap=2.0, lab=lab)
         out, _ = outline(out, desks)
         notes.append(f"straightened: {len(info['desks'])} desks redrawn, outer wall regularised")
-    if 'fill' in steps:
+    if 'connect' in steps:
+        from .connect_walls import connect_walls
+        out, info = connect_walls(out, lab, n_desks, desk_size)
+        left = info['openings_left_m']
+        notes.append(f"walls connected: {info['gaps_closed']} gaps closed with {info['wall_cells_drawn']} drawn wall cells, {info['filled_m2']:.1f} m2 inside made floor"
+                     + (f", {len(left)} opening(s) over 1.5 m left open" if left else ', room enclosed'))
+    if 'fill' in steps and 'connect' not in steps:
         from .fill_unknown import fill_unknown
         out, filled, _ = fill_unknown(out, lab, n_desks, desk_size)
         notes.append(f'unseen patches: {filled * res * res:.1f} m2 turned into floor')

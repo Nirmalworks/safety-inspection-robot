@@ -13,7 +13,7 @@ Needs only numpy and OpenCV (stdlib HTTP server, no CDN).
 Second toolbar (needs ml/map_clean, and PyTorch for the ML buttons): a method marks the whole map keep / erase
 (without ML: speckle filter, session agreement, the vote of the other sessions, ROSE2 from a file; with ML: the
 earlier model and the erase-only models; the vote and the earlier model draw a map of their own, shown in the result view), you correct the
-marks by hand, then the clean-up buttons (cut door leak, fill unseen patches, straighten) and "Show result" give the
+marks by hand, then the clean-up buttons (cut door leak, straighten, fill unseen patches, connect walls) and "Show result" give the
 map those marks produce, scored against the saved hand labels. "Export map" writes it to data/map_cleaning/exports/.
 """
 import argparse
@@ -215,7 +215,7 @@ button.on{background:#3d7bfd;border-color:#3d7bfd}
 <div class="bar" id="bar2">
 <span class="grp"><b>1 Without ML</b><span id="m_noml" class="grp"></span></span>
 <span class="grp"><b>2 With ML</b><span id="m_ml" class="grp"></span></span>
-<span class="grp"><b>3 Clean-up</b><button class="stepb" data-s="leak">Cut door leak</button><button class="stepb" data-s="straighten">Straighten</button><button class="stepb" data-s="fill">Fill unseen</button>
+<span class="grp"><b>3 Clean-up</b><button class="stepb" data-s="leak">Cut door leak</button><button class="stepb" data-s="straighten">Straighten</button><button class="stepb" data-s="fill">Fill unseen</button><button class="stepb" data-s="connect">Connect walls</button>
 <span class="sep"></span><button id="result">Show result (R)</button><button id="export">Export map</button></span>
 <span id="score" style="flex-basis:100%"></span>
 </div>

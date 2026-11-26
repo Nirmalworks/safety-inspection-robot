@@ -195,7 +195,8 @@ hand labels; "Export map" writes it to `data/map_cleaning/exports/`.
 2. With ML: the earlier model (its own redrawn map is shown in the result view), the fine-tuned general
    model, the lab model, the general model. Computed when the button is pressed; needs PyTorch and the model files in
    `data/map_cleaning/models2/`.
-3. Clean-up: cut door leak, straighten, fill unseen patches.
+3. Clean-up: cut door leak, straighten, fill unseen patches, connect walls (gaps in the outer wall up to 1.5 m are
+   drawn as wall, a doorway included, and everything inside becomes floor except the desks; `connect_walls.py`).
 
 ## Reproduce
 
