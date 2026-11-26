@@ -183,11 +183,24 @@ routes pass within the robot's radius of real bench edges; the rectangles now us
 - The planning check is not Nav2 itself, and nothing has been driven live on the cleaned or straightened map.
 - Session agreement, used for part of the training labels, cannot tell fixed furniture from furniture that never moved.
 
+## Live demo in the map editor
+
+`scripts/map_labeler.py` has a second toolbar. A method button marks the whole map keep / erase; the marks can be
+corrected by hand; the clean-up buttons and "Show result" give the map those marks produce, scored against the saved
+hand labels; "Export map" writes it to `data/map_cleaning/exports/`.
+
+1. Without ML: raw, speckle filter, session agreement (cautious / aggressive), ROSE2 (loaded from a file made
+   beforehand in `data/map_cleaning/rose2/`, since ROSE2 runs in its own container).
+2. With ML: the earlier model (shown as keep / erase marks; the walls it adds are not shown), the fine-tuned general
+   model, the lab model, the general model. Computed when the button is pressed; needs PyTorch and the model files in
+   `data/map_cleaning/models2/`.
+3. Clean-up: cut door leak, straighten, fill unseen patches.
+
 ## Reproduce
 
 ```
-# label maps in the browser (http://127.0.0.1:8507)
-python3 scripts/map_labeler.py
+# map editor (http://127.0.0.1:8507): hand labels, and buttons that run each method and the clean-up steps live
+python3 scripts/map_labeler.py --desk-size 3.45 1.25
 # train the lab model, then clean a map
 python -m ml.map_clean.erase train --name lab --lab-val lab2d_11_25_5 --lab-test lab2d_11_25_7
 python -m ml.map_clean.erase clean RAW.pgm OUT.pgm --model data/map_cleaning/models2/lab.pt --thr 0.26
