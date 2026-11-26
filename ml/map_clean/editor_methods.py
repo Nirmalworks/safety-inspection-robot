@@ -3,7 +3,8 @@
 
 propose(): a method marks every occupied cell of a map keep (1) or erase (2). Without ML: speckle filter, agreement
 between sessions, ROSE2 (loaded from a file made beforehand, see ROSE_DIR). With ML: the erase-only models, and the
-earlier model that redraws the map (shown as keep / erase marks; the walls it adds are not shown).
+earlier model that redraws the map. The vote of the other sessions and the earlier model make a new map, so they
+return that map as well (the editor shows it in the result view) next to keep / erase marks derived from it.
 result(): the map that the current marks give, then the clean-up steps: cut the door leak, straighten, fill unseen patches.
 Class codes here are the labeler's: 0 free, 1 unknown, 2 occupied.
 """
@@ -39,11 +40,58 @@ def _torch():
     return torch, ('cuda' if torch.cuda.is_available() else 'cpu')
 
 
+def _pairs(name, labels_dir):
+    f = os.path.join(labels_dir, 'pairs.json')
+    if not os.path.exists(f):
+        return None, 0.05
+    import json
+    pj = json.load(open(f))
+    return pj['pairs'].get(name), pj['res']
+
+
+def vote_map(name, raw, labels_dir, maps_dir):
+    """A new map from the cells most other usable sessions share, on this map's grid (this map left out). -> (map, sessions used)"""
+    import yaml
+    from .common import pgm_to_cls, warp
+    try:
+        from skimage.morphology import skeletonize
+    except ImportError:
+        from .vote import skeletonize
+    pairs, res = _pairs(name, labels_dir)
+    y = yaml.safe_load(open(os.path.join(maps_dir, name, 'maps_2d', name + '.yaml'))); origin = y['origin'][:2]
+    stack = []
+    for s, p in (pairs or {}).items():
+        f = os.path.join(maps_dir, s, 'maps_2d', s)
+        if p['median_m'] > 0.12 or not os.path.exists(f + '.yaml'):
+            continue
+        sy = yaml.safe_load(open(f + '.yaml')); sc = pgm_to_cls(cv2.imread(f + '.pgm', cv2.IMREAD_GRAYSCALE))
+        w = warp((sc + 10).astype(np.uint8), res, sy['origin'][:2], np.array(p['R']), np.array(p['t']), raw.shape, origin)
+        o = np.full(w.shape, UNK, np.uint8); m = w >= 10; o[m] = w[m] - 10
+        stack.append(o)
+    if len(stack) < 3:
+        raise ValueError('the vote needs at least 3 other sessions that line up with this map')
+    stack = np.stack(stack); K = len(stack)
+    k3, k21 = np.ones((3, 3), np.uint8), np.ones((21, 21), np.uint8)
+    n_cov = np.stack([cv2.dilate((s != UNK).astype(np.uint8), k21) for s in stack]).astype(bool).sum(0)
+    occ_sup = np.stack([cv2.dilate((s == OCC).astype(np.uint8), k3) for s in stack]).sum(0)
+    n_free = (stack == FREE).sum(0)
+    enough = n_cov >= min(3, K)
+    thick = (occ_sup >= np.maximum(2, np.ceil(0.5 * n_cov))) & enough
+    wall = skeletonize(thick)
+    vote = np.full(raw.shape, UNK, np.uint8)
+    vote[(n_free >= 0.4 * n_cov) & enough] = FREE
+    vote[thick & ~wall & (n_free < 0.4 * n_cov)] = UNK
+    vote[wall] = OCC
+    return vote, K
+
+
 def available(name, labels_dir):
     """Buttons to offer for this map: [{id, label, group, note}]"""
     out = [{'id': 'raw', 'label': 'Raw (keep all)', 'group': 'noml'}, {'id': 'speckle', 'label': 'Speckle filter', 'group': 'noml'}]
     if os.path.exists(os.path.join(labels_dir, name + '_prelabel.png')):
         out += [{'id': 'agree_c', 'label': 'Session agreement, cautious', 'group': 'noml'}, {'id': 'agree_a', 'label': 'Session agreement, aggressive', 'group': 'noml'}]
+    if _pairs(name, labels_dir)[0]:
+        out.append({'id': 'vote', 'label': 'Vote of the other sessions', 'group': 'noml'})
     if os.path.exists(os.path.join(ROSE_DIR, name + '.png')):
         out.append({'id': 'rose', 'label': 'ROSE2 (from file)', 'group': 'noml'})
     try:
@@ -67,10 +115,11 @@ def _erase_model(key):
     return _cache[key]
 
 
-def propose(name, method, cls_lab, labels_dir):
-    """-> (marks: 0 not occupied, 1 keep, 2 erase, 3 unsure; message)"""
+def propose(name, method, cls_lab, labels_dir, maps_dir=None):
+    """-> (marks: 0 not occupied, 1 keep, 2 erase, 3 unsure; message; the method's own map, or None when the marks say it all)"""
     raw = to_common(cls_lab); occ = raw == OCC
     lab = np.zeros(raw.shape, np.uint8); lab[occ] = 1
+    view = None
     if method == 'raw':
         msg = 'Raw map: every occupied cell kept.'
     elif method == 'speckle':
@@ -84,6 +133,12 @@ def propose(name, method, cls_lab, labels_dir):
             raise ValueError('no session-agreement file for this map')
         lab[occ & ((pre == 2) | ((pre == 3) if method == 'agree_a' else False))] = 2
         msg = 'Session agreement: erased what the other sessions ' + ('clearly lack.' if method == 'agree_c' else 'do not clearly share.')
+    elif method == 'vote':
+        view, K = vote_map(name, raw, labels_dir, maps_dir)
+        near = cv2.dilate((view == OCC).astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
+        lab[occ & ~near] = 2
+        msg = (f'Vote of {K} other sessions: a new map, shown in the result view. The marks say erase where the vote has no wall within 10 cm. '
+               f'{int(((view == OCC) & (cv2.dilate(occ.astype(np.uint8), np.ones((5, 5), np.uint8)) == 0)).sum())} of its wall cells have no wall of this map within 10 cm.')
     elif method == 'rose':
         keep = cv2.imread(os.path.join(ROSE_DIR, name + '.png'), cv2.IMREAD_GRAYSCALE)
         if keep is None or keep.shape != raw.shape:
@@ -98,8 +153,8 @@ def propose(name, method, cls_lab, labels_dir):
         with torch.no_grad():
             out = clean(raw, _cache['earlier'], dev)
         near = cv2.dilate((out == OCC).astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
-        lab[occ & ~near] = 2
-        msg = f'Earlier model (redraws the map): marked erase where it left no wall within 10 cm. It also drew {int(((out == OCC) & ~occ).sum())} wall cells of its own, not shown here.'
+        lab[occ & ~near] = 2; view = out
+        msg = f'Earlier model (redraws the map): its own map is shown in the result view. The marks say erase where it left no wall within 10 cm. It drew {int(((out == OCC) & ~occ).sum())} wall cells of its own.'
     elif method in MODELS:
         torch, _ = _torch()
         from .erase import predict
@@ -110,7 +165,7 @@ def propose(name, method, cls_lab, labels_dir):
         msg = f'{MODELS[method][0]}: erase where the score is above {thr:.2f} ({dev}).'
     else:
         raise ValueError('unknown method ' + method)
-    return lab, msg + f' Keep {int((lab == 1).sum())}, erase {int((lab == 2).sum())}.'
+    return lab, msg + f' Keep {int((lab == 1).sum())}, erase {int((lab == 2).sum())}.', view
 
 
 def result(cls_lab, lab, steps, n_desks=4, desk_size=None, res=0.05):

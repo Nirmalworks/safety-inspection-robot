@@ -11,7 +11,8 @@ Save writes <name>_label.png atomically (temp file + rename) after copying the o
 Needs only numpy and OpenCV (stdlib HTTP server, no CDN).
 
 Second toolbar (needs ml/map_clean, and PyTorch for the ML buttons): a method marks the whole map keep / erase
-(without ML: speckle filter, session agreement, ROSE2 from a file; with ML: the erase-only models), you correct the
+(without ML: speckle filter, session agreement, the vote of the other sessions, ROSE2 from a file; with ML: the
+earlier model and the erase-only models; the vote and the earlier model draw a map of their own, shown in the result view), you correct the
 marks by hand, then the clean-up buttons (cut door leak, fill unseen patches, straighten) and "Show result" give the
 map those marks produce, scored against the saved hand labels. "Export map" writes it to data/map_cleaning/exports/.
 """
@@ -130,10 +131,13 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 cls = classes(n)
                 with METHOD_LOCK:
-                    lab, msg = em.propose(n, parse_qs(urlparse(self.path).query).get('method', [''])[0], cls, LABELS)
-                    out, _ = em.result(cls, lab, [])
+                    lab, msg, view = em.propose(n, parse_qs(urlparse(self.path).query).get('method', [''])[0], cls, LABELS, MAPS)
+                    out = view if view is not None else em.result(cls, lab, [])[0]
                     sc = em.score_text(n, out, cls, LABELS)
-                return self.send({'ok': True, 'label': base64.b64encode(lab.tobytes()).decode(), 'msg': msg, 'score': sc})
+                d = {'ok': True, 'label': base64.b64encode(lab.tobytes()).decode(), 'msg': msg, 'score': sc}
+                if view is not None:                         # a method that draws its own map: show that map, not only the marks
+                    d['view'] = base64.b64encode(em.to_labeler(view).tobytes()).decode()
+                return self.send(d)
             except Exception as e:                           # noqa: BLE001
                 return self.send({'ok': False, 'msg': f'{type(e).__name__}: {e}'})
         self.send({'error': 'not found'}, code=404)
@@ -313,7 +317,8 @@ function setAll(nw){begin();for(let i=0;i<W*H;i++){if(base[i]!=2||lab[i]==nw[i]|
 function leaveResult(){if(resView){resView=false;$('result').classList.remove('on');repaintAll()}}
 async function applyMethod(id,btn){if(!W||busy)return;if(stroke)end();leaveResult();lock(true);msg('Running '+btn.textContent+'...');
   try{const d=await(await fetch('/api/propose?name='+encodeURIComponent(cur)+'&method='+id)).json();
-    if(!d.ok){msg(d.msg)}else{setAll(b64(d.label));document.querySelectorAll('.meth').forEach(b=>b.classList.toggle('on',b==btn));msg(d.msg+' One undo step.');$('score').textContent=d.score}}
+    if(!d.ok){msg(d.msg)}else{setAll(b64(d.label));document.querySelectorAll('.meth').forEach(b=>b.classList.toggle('on',b==btn));msg(d.msg+' One undo step.');$('score').textContent=d.score;
+      if(d.view){res=b64(d.view);resView=true;$('result').classList.add('on');repaintAll()}}}
   catch(e){msg('Failed: '+e.message)}lock(false)}
 async function showResult(exp){if(!W||busy)return;if(stroke)end();lock(true);msg(exp?'Exporting...':'Building the result...');
   try{const d=await(await fetch('/api/'+(exp?'export':'result')+'?name='+encodeURIComponent(cur)+'&steps='+steps(),{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:lab})).json();
