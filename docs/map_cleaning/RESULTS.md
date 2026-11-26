@@ -21,8 +21,10 @@ checkpoints in `maps/lab2d_11_25_5/checkpoints/` apply unchanged.
 
 ![Raw, model only, cleaned and straightened](fig/robot_map.png)
 
-In all three, unseen patches inside the room (lidar shadows behind furniture, 1.7 m2 in total) are turned into floor;
-bench interiors and the insides of solid objects stay unknown (`ml/map_clean/fill_unknown.py`). The planning check gives
+In all three, unseen patches inside the room (lidar shadows behind furniture, and notches in the wall whose opening
+to the outside is narrower than the robot, 2.5 m2 in total) are turned into floor; bench interiors, the insides of
+solid objects and openings wider than 35 cm stay unknown (`ml/map_clean/fill_unknown.py`). No wall is drawn across a
+notch. The planning check gives
 the same routes with and without this step.
 
 Recommended for driving: `cleaned`, because nothing real is missing from it. `model_only` is what the ML produces
