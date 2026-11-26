@@ -15,7 +15,7 @@ checkpoints in `maps/lab2d_11_25_5/checkpoints/` apply unchanged.
 
 | File | What it is |
 |---|---|
-| `lab2d_11_25_5_model_only` | The lab model applied to the raw map, then the door-leak rule. No hand labels in the map: 95.2 % of structure kept, 74.9 % of clutter removed (162 structure cells lost, 352 clutter cells left) |
+| `lab2d_11_25_5_model_only` | The general model fine-tuned on lab maps of other days, applied to the raw map, then the door-leak rule. The model never saw a 25 Nov map and its threshold was set on a 24 Nov map, so no hand label of this map or its day is used: 99.2 % of structure kept, 77.4 % of clutter removed (54 structure cells lost, 247 clutter cells left) |
 | `lab2d_11_25_5_cleaned` | Hand labels where given (4,750 of 5,741 occupied cells), the lab model for the 991 cells left unsure, floor that leaked through the door cut off |
 | `lab2d_11_25_5_straightened` | The cleaned map with a regular outer wall and the four benches drawn as identical rectangles (3.45 x 1.25 m) |
 
@@ -23,7 +23,7 @@ checkpoints in `maps/lab2d_11_25_5/checkpoints/` apply unchanged.
 
 Recommended for driving: `cleaned`, because nothing real is missing from it. `model_only` is what the ML produces
 unaided. `straightened` is the polished version, to be used once a live run confirms it. None has been driven live yet.
-The hand labels of this map set the model's threshold but were not used to train it.
+One object marked keep, 15 cells at about (-6.57, 4.47) in the map frame, is erased in `model_only`; the planned leg from checkpoint 7 to 8 passes 10 cm from it.
 
 ## The model
 
@@ -142,6 +142,7 @@ the pose slam_toolbox recorded.
 | 24 Nov map 8, raw / hand-cleaned | next day | 12.4 / 14.3 cm |
 | Robot map (25 Nov map 5), raw | another session | 18.8 cm |
 | Robot map, cleaned | another session | 18.7 cm |
+| Robot map, model only | another session | 18.5 cm |
 | Robot map, straightened | another session | 17.3 cm |
 
 - In the mapping session itself the chairs stand where the raw map shows them and act as landmarks; a perfectly
@@ -158,7 +159,7 @@ at least 22 cm (the robot's half diagonal) from any occupied cell; unknown is no
 | Map | Legs with a route | Tour length | Route cells within 22 cm of structure hand-marked keep |
 |---|---|---|---|
 | Raw | 8 of 8 | 47.6 m | 0 |
-| Model only | 8 of 8 | 42.5 m | 0 |
+| Model only | 8 of 8 | 42.3 m | 13 (one erased object on the leg from checkpoint 7 to 8) |
 | Cleaned | 8 of 8 | 42.3 m | 0 |
 | Straightened | 8 of 8 | 42.5 m | 0 |
 
