@@ -61,9 +61,14 @@ One object marked keep, 15 cells at about (-6.57, 4.47) in the map frame, is era
 | Raw | 100 % / 100 % | 0 % | 47.6 m | 0 | 18.8 cm |
 | Best, faithful | 100 % / 100 % | 94.8 % | 42.3 m | 0 | 19.8 cm |
 | Best (straight) | 71.1 % / 92.9 % | 90.7 % | 42.6 m | 0 | 18.0 cm |
+| Best, faithful, built blind (mean of 4 maps) | 98.7 % / 99.6 % | 72.8 % | | | |
+| Best, straight, built blind (mean of 4 maps) | 76.9 % / 92.4 % | 73.0 % | | | |
 
-The scores against this map's own hand labels are high by construction, since those labels are used; the fair figure
-for the method is the day-held-out one in step 1. The straight version moves walls and bench edges by up to 20 cm and
+The first three rows are the robot's map; its own hand labels are used, so those scores are high by construction.
+"Built blind" is the fair test of the whole recipe (`build(..., blind=True)`): for each of the four labelled maps the
+best map is built without that map's labels or any label from its day. Blind, the faithful form keeps more structure
+than the model alone (98.7 % against 96.6 %; worst map 98.1 %) and removes about as much clutter (72.8 % against
+73.9 %; worst map 62.2 %). The straight version moves walls and bench edges by up to 20 cm and
 draws wall where no session saw one. AMCL differences of a centimetre are within what one replay can show.
 
 ## The model

@@ -36,14 +36,14 @@ from .straighten import straighten
 LO, HI = 0.20, 0.85
 
 
-def carried_labels(target, tm, own, LB=LB, maps_dir='maps'):
+def carried_labels(target, tm, own, LB=LB, maps_dir='maps', same_day=True):
     """Hand labels of other sessions at the same place (within 2 cells), for cells the target's own labels leave open."""
     pj = json.load(open(f'{LB}/pairs.json')); pairs, res = pj['pairs'][target], pj['res']
     occ = tm['cls'] == OCC
     dk = np.full(occ.shape, 1e9, np.float32); de = dk.copy(); used = []
     for s, p in pairs.items():
         f = f'{LB}/{s}_label.png'
-        if s == target or not os.path.exists(f) or p['median_m'] > 0.12:
+        if s == target or not os.path.exists(f) or p['median_m'] > 0.12 or (not same_day and day(s) == day(target)):
             continue
         sm = load_map(os.path.join(maps_dir, s, 'maps_2d', s + '.yaml')); sl = cv2.imread(f, -1)
         w = warp((sl + 10).astype(np.uint8), res, sm['origin'], np.array(p['R']), np.array(p['t']), occ.shape, tm['origin'])
@@ -56,9 +56,10 @@ def carried_labels(target, tm, own, LB=LB, maps_dir='maps'):
     return out, used, de
 
 
-def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None, LB=LB, maps_dir='maps'):
+def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None, LB=LB, maps_dir='maps', blind=False):
     """-> {'raw', 'erase' (mask of the target's occupied cells), 'faithful', 'straight', 'log'}; writes the maps when out_dir is given.
-    Defaults are our lab, relative to the repo root; another place passes its own labels folder and maps folder."""
+    Defaults are our lab, relative to the repo root; another place passes its own labels folder and maps folder.
+    blind=True is the test setting: the target's own hand labels and those of its day are not used."""
     from types import SimpleNamespace
     a = SimpleNamespace(out=out_dir, models=models, desk_size=list(desk_size) if desk_size else None, desks=n_desks)
     if out_dir:
@@ -79,8 +80,8 @@ def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None, LB=LB
     erase = occ & (((p > thr) & (pers < HI)) | ((pers < LO) & (cov >= min(3, len(other_days)))))
     log = [f'{T}: {int(occ.sum())} occupied cells; {len(other_days)} sessions from other days, {len(everyone)} sessions in all; models {models}, threshold {thr:.2f}',
            f'1. model + other days: erase {int(erase.sum())} (model alone would erase {int((occ & (p > thr)).sum())})']
-    own = cv2.imread(f'{LB}/{T}_label.png', -1) if os.path.exists(f'{LB}/{T}_label.png') else np.zeros(raw.shape, np.uint8)
-    car, used, d_erase = carried_labels(T, tm, own, LB, maps_dir)
+    own = cv2.imread(f'{LB}/{T}_label.png', -1) if (os.path.exists(f'{LB}/{T}_label.png') and not blind) else np.zeros(raw.shape, np.uint8)
+    car, used, d_erase = carried_labels(T, tm, own, LB, maps_dir, same_day=not blind)
     before = erase.copy()
     erase[(own == 1) | (car == 1)] = False; erase[occ & ((own == 2) | (car == 2))] = True
     log.append(f'   hand labels: own keep {int((own == 1).sum())} / erase {int((own == 2).sum())}, carried from {used}: keep {int((car == 1).sum())} / erase {int((car == 2).sum())}; '
