@@ -131,7 +131,7 @@ itself. MIT Stata: the 14 map pieces ROSE2 was run on.
 | Erase-only U-Net pre-trained on simulation + Semantic2D, fine-tuned on lab maps (`s2dft_*`) | 96.8 % / 72.8 % (94.1 / 64.9) | 0 | 96.4 % / 69.8 % | 97.4 % / 25.8 % | 6.7 cm |
 | **Generative U-Net** (same data; outputs the whole map; no threshold) | | | | | |
 | Generative U-Net trained on simulated maps (`redraw_sim`) | 87.6 % / 85.8 % (83.0 / 80.2) | 0 | 89.6 % / 90.0 % | 97.4 % / 27.3 % | 7.8 cm |
-| Generative U-Net pre-trained on simulation, fine-tuned on lab maps (`redrawft_*`) | 97.7 % / 69.2 % (95.5 / 57.7) | 0 | 97.9 % / 73.8 % | 98.6 % / 18.1 %, about 100 invented cells | 8.4 cm |
+| Generative U-Net pre-trained on simulation, fine-tuned on lab maps (`redrawft_*`) | 97.7 % / 69.2 % (95.5 / 57.7) | 0 | 97.9 % / 73.8 % | 98.6 % / 18.1 % | 8.4 cm |
 | **Combinations** | | | | | |
 | Erase-only U-Net (lab only) + ROSE2 kept cells | 99.8 % / 19.0 % | 0 | 99.5 % / 23.7 % | 97.4 % / 23.4 % | 4.5 cm |
 | Fine-tuned erase-only U-Net + session agreement, before clean-up | 98.3 % / 77.1 % (98.0 / 69.8) | 0 | 97.7 % / 81.0 % | needs repeat maps | 8.7 cm |
@@ -153,7 +153,8 @@ itself. MIT Stata: the 14 map pieces ROSE2 was run on.
   furniture counts as clutter.
 - Localisation: every erase-only U-Net with lab maps stays between 5.9 and 8.3 cm on the same-session drive (raw:
   4.8 cm; a map cleaned exactly to the hand labels: 7.9 cm, because the chairs stood as mapped and acted as landmarks).
-- The generative U-Net invents nothing in the lab and about 100 wall cells across the MIT Stata pieces.
+- The generative U-Net invents nothing in the lab. Across the 14 MIT Stata pieces the four fine-tuned models invent 0, 0, 4
+  and 0 wall cells (an earlier version of this file said "about 100", which was wrong).
 - Basis of the last three columns for lab-trained models: models that never saw 25 Nov, except the two rows that name
   the robot's models (`lab`, `general_ft`), which were scored on 26 Nov with those models; they trained on maps of the
   test day, at thresholds 0.26 and 0.21. On the stricter basis those two score 97.7 % / 64.9 % and 97.0 % / 73.2 % on
@@ -162,6 +163,63 @@ itself. MIT Stata: the 14 map pieces ROSE2 was run on.
   them, because it only touches floor and unknown cells.
 - The tolerance is a choice: at 5 cm ROSE2 drops to 93.2 %.
 - The hand labels started from session-agreement proposals, so they are not independent of the methods scored.
+
+## Standard metrics: precision, recall, F1, accuracy
+
+The two marks are the recall of each class. With clutter as the positive class (TP clutter erased, FN clutter left,
+TN structure kept, FP structure erased):
+
+| Number | Formula | In our terms |
+|---|---|---|
+| Clutter removed | TP / (TP + FN) | Recall of clutter |
+| Structure kept | TN / (TN + FP) | Recall of structure (specificity) |
+| Precision | TP / (TP + FP) | Share of erased cells that were clutter |
+| F1 | 2 P R / (P + R) | Low if precision or clutter removed is low |
+| Accuracy | (TP + TN) / all | About 0.7 x structure kept + 0.3 x clutter removed in the lab |
+
+The tables below count on the exact cell, with no distance tolerance, on labelled cells only. So "recall" here is
+not the scoreboard's "clutter removed" (which requires nothing left within 5 cm) and "structure recall" is not its
+"structure kept" (which accepts a wall within 10 cm).
+
+Lab, mean over the test maps of a held-out day (same models and thresholds as the scoreboard):
+
+| Method | Precision | Recall (clutter) | F1 | Accuracy | Recall (structure) |
+|---|---|---|---|---|---|
+| Raw map | undefined | 0 % | 0 % | 70.2 % | 100 % |
+| Speckle filter | 49.1 % | 10.1 % | 16.6 % | 70.1 % | 95.6 % |
+| ROSE2, filter 0.18 (default) | 50.5 % | 48.5 % | 49.2 % | 70.3 % | 79.8 % |
+| Session agreement, aggressive | 79.1 % | 62.8 % | 68.4 % | 82.3 % | 90.7 % |
+| Generative U-Net trained on simulated maps | 70.4 % | 87.1 % | 77.9 % | 85.3 % | 84.4 % |
+| Generative U-Net fine-tuned on lab maps | 90.3 % | 74.6 % | 81.6 % | 90.0 % | 96.7 % |
+| Erase-only U-Net trained on simulated maps | 84.9 % | 54.6 % | 58.7 % | 83.7 % | 95.8 % |
+| Erase-only U-Net trained on lab maps only | 88.0 % | 73.1 % | 79.7 % | 88.9 % | 95.8 % |
+| Erase-only U-Net fine-tuned on lab maps | 87.6 % | 78.4 % | 82.6 % | 90.1 % | 95.3 % |
+| Best map: fine-tuned erase-only U-Net + session agreement, then clean-up | 88.8 % | 80.6 % | 84.4 % | 91.2 % | 95.7 % |
+
+MIT Stata, pooled over the 14 pieces; 15.5 % of the labelled cells are clutter. The two erase-only U-Nets with lab
+maps are the robot's models at thresholds 0.26 and 0.21, the fine-tuned generative U-Net is the mean of the four
+day-held-out models, the simulated-only erase-only U-Net uses its own threshold:
+
+| Method | Structure kept / clutter removed (scoreboard rules) | Precision | Recall (clutter) | F1 | Accuracy |
+|---|---|---|---|---|---|
+| Raw map | 100 % / 0 % | undefined | 0 % | 0 % | 84.5 % |
+| Speckle filter | 96.8 % / 27.1 % | 56.0 % | 27.1 % | 36.5 % | 85.4 % |
+| ROSE2, filter 0.18 (default) | 72.2 % / 76.1 % | 26.9 % | 85.4 % | 40.9 % | 61.7 % |
+| Generative U-Net trained on simulated maps | 97.4 % / 27.3 % | 61.7 % | 28.9 % | 39.4 % | 86.2 % |
+| Generative U-Net fine-tuned on lab maps | 98.6 % / 18.1 % | 68.0 % | 20.2 % | 30.7 % | 85.9 % |
+| Erase-only U-Net trained on simulated maps | 91.3 % / 52.9 % | 46.2 % | 54.9 % | 50.2 % | 83.1 % |
+| Erase-only U-Net trained on lab maps only | 92.5 % / 26.9 % | 35.5 % | 30.0 % | 32.5 % | 80.7 % |
+| Erase-only U-Net fine-tuned on lab maps | 96.9 % / 32.9 % | 60.8 % | 34.8 % | 44.3 % | 86.4 % |
+
+- The ranking in the lab is the same as with the two marks: the best map and the fine-tuned erase-only U-Net lead on F1
+  and accuracy.
+- Accuracy is a weak measure here. Erasing nothing scores 70.2 % in the lab and 84.5 % in MIT Stata; the speckle
+  filter and ROSE2 score the same as erasing nothing in the lab.
+- Precision adds something the marks do not show: of the cells the fine-tuned erase-only U-Net erases in the lab,
+  87.6 % are clutter; for the speckle filter and ROSE2 it is about half.
+- From the lab to MIT Stata the fine-tuned erase-only U-Net falls from F1 82.6 % to 44.3 %. The MIT Stata labels
+  count fixed furniture as clutter, which lowers precision and F1 there for every method.
+- Scripts: `data/map_cleaning/folds/standard_metrics.py` and `standard_metrics_stata.py` (not in the repo).
 
 ## Day held out: the lab-only erase-only U-Net in detail
 
@@ -305,6 +363,8 @@ few of them labelled by hand, with a day held out.
 - The planning check is not Nav2 itself, and nothing has been driven live on a cleaned map.
 - Session agreement, used for part of the training labels, cannot tell fixed furniture from furniture that never moved.
 - Four hand-labelled maps, labelled by one person, starting from session-agreement proposals.
+- Hand labelling is needed twice: the scores rest on those four maps, and fine-tuning needs one hand-labelled map
+  of each new room.
 
 ## Live demo in the map editor
 

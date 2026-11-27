@@ -1,0 +1,25 @@
+<section id="results3">
+<p class="eyebrow">Navigation map · results and limits</p>
+<h2>A cleaner map for the patrol, in our lab only</h2>
+<div class="cols">
+<div class="col">
+<table class="mtab">
+<tr><th style="text-align:left">Method</th><th style="text-align:right">Structure<br>kept</th><th style="text-align:right">Clutter<br>removed</th><th style="text-align:right">Precision</th><th style="text-align:right">F1</th><th style="text-align:right">Accuracy</th></tr>
+<tr><td>Speckle filter</td><td class="ok" style="text-align:right">96.7 %</td><td class="no" style="text-align:right">10.1 %</td><td style="text-align:right">49.1 %</td><td style="text-align:right">16.6 %</td><td style="text-align:right">70.1 %</td></tr>
+<tr class="best-row"><td>ROSE2 (published method)</td><td class="ok" style="text-align:right">96.0 %</td><td class="no" style="text-align:right">26.3 %</td><td style="text-align:right">50.5 %</td><td style="text-align:right">49.2 %</td><td style="text-align:right">70.3 %</td></tr>
+<tr><td class="later">Session agreement</td><td class="later" style="text-align:right">94.0 %</td><td class="later" style="text-align:right">53.4 %</td><td class="later" style="text-align:right">79.1 %</td><td class="later" style="text-align:right">68.4 %</td><td class="later" style="text-align:right">82.3 %</td></tr>
+<tr><td class="later">Generative U-Net (simulated only)</td><td class="later" style="text-align:right">87.6 %</td><td class="later" style="text-align:right">85.8 %</td><td class="later" style="text-align:right">70.4 %</td><td class="later" style="text-align:right">77.9 %</td><td class="later" style="text-align:right">85.3 %</td></tr>
+<tr><td class="later">Generative U-Net fine-tuned on lab maps</td><td class="later" style="text-align:right">97.7 %</td><td class="later" style="text-align:right">69.2 %</td><td class="later" style="text-align:right">90.3 %</td><td class="later" style="text-align:right">81.6 %</td><td class="later" style="text-align:right">90.0 %</td></tr>
+<tr><td class="later">Erase-only U-Net (simulated only)</td><td class="later" style="text-align:right">97.1 %</td><td class="later" style="text-align:right">51.3 %</td><td class="later" style="text-align:right">84.9 %</td><td class="later" style="text-align:right">58.7 %</td><td class="later" style="text-align:right">83.7 %</td></tr>
+<tr><td class="later">Erase-only U-Net fine-tuned on lab maps</td><td class="later" style="text-align:right">96.6 %</td><td class="later" style="text-align:right">73.9 %</td><td class="later" style="text-align:right">87.6 %</td><td class="later" style="text-align:right">82.6 %</td><td class="later" style="text-align:right">90.1 %</td></tr>
+<tr><td class="later">Fine-tuned erase-only + session agreement</td><td class="later" style="text-align:right">98.7 %</td><td class="later" style="text-align:right">72.8 %</td><td class="later" style="text-align:right">88.8 %</td><td class="later" style="text-align:right">84.4 %</td><td class="later" style="text-align:right">91.2 %</td></tr>
+</table>
+<div class="card" style="padding:16px 24px"><table class="ftab"><tr><th style="text-align:left">Number</th><th style="text-align:left">Formula</th><th style="text-align:left">In our terms</th></tr><tr><td>Clutter removed</td><td>TP / (TP + FN)</td><td>Recall of clutter</td></tr><tr><td>Structure kept</td><td>TN / (TN + FP)</td><td>Recall of structure (specificity)</td></tr><tr><td>Precision</td><td>TP / (TP + FP)</td><td>Erased cells that were clutter</td></tr><tr><td>F1</td><td>2 · P · R / (P + R)</td><td>Low if either one is low</td></tr><tr><td>Accuracy</td><td>(TP + TN) / all</td><td>≈ 0.7 × kept + 0.3 × removed</td></tr></table></div>
+</div>
+<div class="col" style="flex:none; width:576px">
+<div style="display:flex; flex-direction:column; gap:10px"><div class="plate"><img src="/_blob/34e8a1c18bedae712f60bc44713be23c" alt="The map after ROSE2: chairs thinned" style="width:560px; height:214px; object-fit:contain"></div><p class="mapname">ROSE2 (published method)</p><p class="small">Step 3 of 9 · 96.0 % kept · 26.3 % removed</p></div>
+<div class="card"><p class="label">Limit: hand labels</p><ul class="lim"><li>Scores rest on 4 maps labelled by hand, by one person.</li><li>Labelling started from session-agreement proposals, so the labels are not independent of that method.</li><li>Fine-tuning needs one hand-labelled map of each new room.</li></ul></div>
+</div>
+</div>
+<aside>ROSE2, the published method: 26 percent of the clutter.</aside>
+</section>
