@@ -1,0 +1,36 @@
+{
+  "v": 5,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-26T17:20:00-08:00"
+  },
+  "lists": "css",
+  "format": {
+    "v": 1,
+    "shared": [
+      "project/deck.css"
+    ]
+  },
+  "title": "Navigation Map Segment",
+  "order": [
+    "problem",
+    "model",
+    "results",
+    "robot",
+    "demo",
+    "scoreboard"
+  ],
+  "cover": "problem",
+  "sections": {
+    "talk": {
+      "description": "The navigation-map segment of the team talk, about three minutes: why the patrol needs it, data and model, results and limits, and the live robot test.",
+      "start": "problem"
+    },
+    "backup": {
+      "description": "Backup for the demonstration and questions: demo cases and the scoreboard.",
+      "start": "demo"
+    }
+  },
+  "faces": {},
+  "designSystems": []
+}

@@ -1,0 +1,32 @@
+<section id="model">
+<p class="eyebrow">Navigation map · data and model</p>
+<h2>One U-Net, one dataset, two output heads</h2>
+<div class="flow">
+<div class="step"><h3>Raw map patch</h3><p class="small">3 × 256 × 256: free / occupied / unknown</p></div>
+<p class="arrow">→</p>
+<div class="step ours"><h3>U-Net</h3><p class="small">11 M parameters, trained from scratch</p></div>
+<p class="arrow">→</p>
+<div class="heads">
+<div class="flow">
+<div class="step ours"><h3>Erase-only head</h3><p class="small">score per occupied cell</p></div>
+<p class="arrow">→</p>
+<div class="step"><h3>Threshold</h3><p class="small">from a validation map</p></div>
+<p class="arrow">→</p>
+<div class="step"><h3>Cleaned map</h3><p class="small">erased cells only</p></div>
+</div>
+<div class="flow">
+<div class="step ours"><h3>Generative head</h3><p class="small">class for every cell</p></div>
+<p class="arrow">→</p>
+<div class="step" style="flex:2.12"><h3>Cleaned map</h3><p class="small">any cell may change; no threshold</p></div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="card" style="flex:1"><p class="label cyan">1. Pre-training</p><p class="body">Simulated lidar through 40,509 floor plans (HouseExpo, KTH): 81,458 patches. Labels: what each ray hit.</p></div>
+<div class="card" style="flex:1"><p class="label cyan">2. Fine-tuning</p><p class="body">8 real lab maps from other days. One hand-labelled in our editor; its labels carried to the rest.</p></div>
+<div class="card" style="flex:0.7"><p class="label">Test</p><p class="body">A whole day of maps held out.</p></div>
+</div>
+<p class="small">Both heads: same data, same schedule. Ours: lidar simulator, labelling editor, model, training, evaluation. Reused: slam_toolbox, Nav2, AMCL, HouseExpo, KTH, ROSE2.</p>
+<p class="foot">AME 505 · Group 5 · Autonomous Safety Inspection Robot · final presentation</p>
+<aside>About 50 seconds. One U-Net with 11 million parameters, trained from scratch, with two alternative output heads. The erase-only head gives one score per occupied cell, and cells above a threshold are erased; it cannot draw or move a wall. The generative head outputs the whole map again, free, occupied or unknown for every cell, so it may change any cell and has no threshold. Both are trained the same way, in two stages. Pre-training: simulated lidar drives through forty thousand public floor plans, where the label comes for free from what each ray hit. Fine-tuning: eight real maps of our lab from the days not being tested; one is labelled by hand in an editor we built and its labels are carried over to the others. For testing, a whole day of maps is held out; of our four hand-labelled maps, one is in training, one sets the threshold and two are the test. IF ASKED why two stages: trained on the lab alone the erase-only U-Net removes 65 to 68 percent of clutter, after pre-training 71 to 74.5, in every run. IF ASKED how the two heads differ in training: the erase-only head is scored on labelled occupied cells only; the generative head is scored on every cell against the input with its clutter cells removed.</aside>
+</section>

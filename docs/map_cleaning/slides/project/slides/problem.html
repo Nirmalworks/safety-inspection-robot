@@ -1,0 +1,38 @@
+<section id="problem">
+<p class="eyebrow">Navigation map · why the patrol needs it</p>
+<h2>The patrol drives on a map full of things that move</h2>
+<div class="flow">
+<div class="step ours"><h3>2D lidar map</h3><p class="small">this part of the talk</p></div>
+<p class="arrow">→</p>
+<div class="step"><h3>AMCL localization</h3></div>
+<p class="arrow">→</p>
+<div class="step"><h3>Nav2 patrol</h3></div>
+<p class="arrow">→</p>
+<div class="step"><h3>Stop at checkpoint</h3></div>
+<p class="arrow">→</p>
+<div class="step"><h3>Capture and decide</h3></div>
+</div>
+<div class="cols">
+<div class="col">
+<p class="label">The problem</p>
+<p class="body">The lidar map records chairs, bins and people. By the next patrol they have moved.</p>
+<p class="label">The question we were given</p>
+<p class="body">Can an ML model turn the raw map into a clean one the robot can use?</p>
+<div class="row">
+<div class="card" style="flex:1"><p class="label cyan">Input</p><p class="body">Raw slam_toolbox map: free, occupied, unknown</p></div>
+<div class="card" style="flex:1"><p class="label cyan">Output</p><p class="body">Same map, clutter cells erased</p></div>
+</div>
+</div>
+<div class="col">
+<div class="plate"><img src="/_blob/0c9ec721a56c6455bdc3d894b39b06ff" alt="Raw lidar map of the lab: walls, four benches, and many small star-shaped chair bases" style="width:700px; height:320px; object-fit:contain"></div>
+<p class="small">Raw map of the lab. Star shapes are chair bases.</p>
+<div class="row">
+<p class="pill">≥ 95 % of structure kept</p>
+<p class="pill">≥ 60 % of clutter removed</p>
+</div>
+<p class="small">Success criteria, against hand-labelled maps.</p>
+</div>
+</div>
+<p class="foot">AME 505 · Group 5 · Autonomous Safety Inspection Robot · final presentation</p>
+<aside>About 35 seconds. Everything the patrol does starts from the 2D lidar map: the robot localises on it and plans its route to each checkpoint on it. That map records whatever stood at lidar height on mapping day, so chairs, bins and people are in it next to the walls. By the next patrol they have moved. We were asked whether an ML model can turn the raw map into a clean one. So the task is: for every occupied cell, permanent structure or movable clutter? We call it a success if 95 percent of the structure is kept and 60 percent of the clutter is removed, against maps labelled by hand, and the patrol still plans and localises.</aside>
+</section>

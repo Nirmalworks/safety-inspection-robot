@@ -1,0 +1,20 @@
+<section id="scoreboard">
+<p class="eyebrow">Backup · navigation map · scoreboard</p>
+<h2>Scoreboard: lab, unseen building, localisation</h2>
+<table style="font-size:26px">
+<tr><th style="width:44%; text-align:left">Method</th><th style="text-align:right">Lab (4 maps)<br>structure kept / clutter removed</th><th style="text-align:right">MIT Stata (unseen)<br>kept / removed</th><th style="text-align:right">Invented<br>wall cells</th><th style="text-align:right">AMCL<br>error</th></tr>
+<tr><td>Raw map</td><td style="text-align:right">100 % / 0 %</td><td style="text-align:right">100 % / 0 %</td><td style="text-align:right">0</td><td style="text-align:right">4.8 cm</td></tr>
+<tr><td>Speckle filter</td><td style="text-align:right">96.7 % / 10.1 %</td><td style="text-align:right">96.8 % / 27.1 %</td><td style="text-align:right">0</td><td style="text-align:right">4.2 cm</td></tr>
+<tr><td>ROSE2 (published method, default filter)</td><td style="text-align:right">96.0 % / 26.3 %</td><td style="text-align:right">72.2 % / 76.1 %</td><td style="text-align:right">0</td><td style="text-align:right">5.0 cm</td></tr>
+<tr><td>Session agreement</td><td style="text-align:right">94.0 % / 53.4 %</td><td class="dim" style="text-align:right">needs repeat maps</td><td style="text-align:right">0</td><td style="text-align:right">9.8 cm</td></tr>
+<tr><td>Generative U-Net, simulated only</td><td style="text-align:right">87.6 % / 85.8 %</td><td style="text-align:right">97.4 % / 27.3 %</td><td style="text-align:right">0</td><td style="text-align:right">7.8 cm</td></tr>
+<tr><td>Generative U-Net, fine-tuned on lab maps</td><td style="text-align:right">97.7 % / 69.2 %</td><td style="text-align:right">98.6 % / 18.1 %</td><td style="text-align:right">0</td><td style="text-align:right">8.4 cm</td></tr>
+<tr><td>Erase-only U-Net, simulated only</td><td style="text-align:right">97.1 % / 51.3 %</td><td style="text-align:right">91.3 % / 52.9 %</td><td style="text-align:right">0</td><td style="text-align:right">17.9 cm</td></tr>
+<tr><td>Erase-only U-Net, lab maps only</td><td style="text-align:right">97.3 % / 68.0 %</td><td style="text-align:right">92.5 % / 26.9 %</td><td style="text-align:right">0</td><td style="text-align:right">7.6 cm</td></tr>
+<tr class="best-row"><td>Erase-only U-Net, fine-tuned on lab maps</td><td style="text-align:right">96.6 % / 73.9 %</td><td style="text-align:right">96.9 % / 32.9 %</td><td style="text-align:right">0</td><td style="text-align:right">8.3 cm</td></tr>
+<tr class="best-row"><td>Best map: fine-tuned erase-only + session agreement</td><td style="text-align:right">98.7 % / 72.8 %</td><td class="dim" style="text-align:right">needs repeat maps</td><td style="text-align:right">13</td><td style="text-align:right">7.4 cm</td></tr>
+</table>
+<p class="small">Marks: ≥ 95 % structure kept, ≥ 60 % clutter removed. Lab: held-out day. AMCL error: on one recorded drive.</p>
+<p class="foot">AME 505 · Group 5 · Autonomous Safety Inspection Robot · final presentation · backup</p>
+<aside>Backup for questions on baselines and on generalisation. No method without ML passes both marks in the lab. Before fine-tuning each U-Net fails one mark: the generative one erases too much, the erase-only one too little. Fine-tuned on lab maps both pass, and the erase-only U-Net removes more clutter and cannot draw a wall. In MIT Stata nothing passes both marks: the best that keeps 95 percent of structure removes about a third of the clutter. Every fine-tuned model localises within 9 cm on the recorded drive. IF ASKED whether real maps of other buildings were tried in training: yes, three ways (alone, added after the simulated stage, mixed into it), with the Semantic2D and Radish datasets. None beat simulated only in MIT Stata: 13 to 34 percent of clutter removed at 95 percent structure kept, against 37 percent. The full board of 29 rows, with repeat training runs, other ROSE2 settings and models trained with real maps of other buildings, is on the results page.</aside>
+</section>
