@@ -10,11 +10,13 @@ Code: `ml/map_clean/`, labelling tool: `scripts/map_labeler.py`. Data, models an
 
 ## The maps for the robot
 
-`maps/lab2d_11_25_5/maps_2d_cleaned/` holds three candidates on the same grid and origin as the raw map, so the
+`maps/lab2d_11_25_5/maps_2d_cleaned/` holds five candidates on the same grid and origin as the raw map, so the
 checkpoints in `maps/lab2d_11_25_5/checkpoints/` apply unchanged.
 
 | File | What it is |
 |---|---|
+| `lab2d_11_25_5_best` | Everything combined, straightened and enclosed; see "The best map" below |
+| `lab2d_11_25_5_best_faithful` | Everything combined, nothing drawn that no session saw |
 | `lab2d_11_25_5_model_only` | The general model fine-tuned on lab maps of other days, applied to the raw map, then the door-leak rule. The model never saw a 25 Nov map and its threshold was set on a 24 Nov map, so no hand label of this map or its day is used: 99.2 % of structure kept, 77.4 % of clutter removed (54 structure cells lost, 247 clutter cells left) |
 | `lab2d_11_25_5_cleaned` | Hand labels where given (4,750 of 5,741 occupied cells), the lab model for the 991 cells left unsure, floor that leaked through the door cut off |
 | `lab2d_11_25_5_straightened` | The cleaned map with a regular outer wall and the four benches drawn as identical rectangles (3.45 x 1.25 m) |
@@ -30,6 +32,39 @@ the same routes with and without this step.
 Recommended for driving: `cleaned`, because nothing real is missing from it. `model_only` is what the ML produces
 unaided. `straightened` is the polished version, to be used once a live run confirms it. None has been driven live yet.
 One object marked keep, 15 cells at about (-6.57, 4.47) in the map frame, is erased in `model_only`; the planned leg from checkpoint 7 to 8 passes 10 cm from it.
+
+## The best map: everything combined
+
+`maps/lab2d_11_25_5/maps_2d_cleaned/lab2d_11_25_5_best` (and `_best_faithful`), made by `ml/map_clean/best_map.py`.
+
+![Raw, best faithful, best straight](fig/best_map.png)
+
+1. **Decide every occupied cell with the model and the other days together.** Erase when the model says erase and
+   fewer than 85 % of the other days' sessions have a wall there, or when fewer than 20 % of them have one. The model
+   is the mean of the two fine-tuned copies that never saw 25 Nov. With a day held out on the four hand-labelled maps
+   this rule keeps 98.3 % of structure (worst map 98.0 %) and removes 77.1 % of clutter (worst 69.8 %); the model
+   alone gives 96.6 % (94.8 %) and 73.9 % (69.0 %).
+2. **Hand labels overrule.** The map's own labels, then labels of the three other labelled sessions carried to the
+   same place. They changed the decision on 359 of 5,741 cells.
+3. **Cut the door leak** (9.0 m2).
+4. **Use what the other 16 sessions saw where this one saw nothing,** inside the room only: 1.97 m2 of floor that
+   most sessions show, and 92 wall cells that at least half the sessions have at exactly that cell and that no hand
+   label calls clutter. Mostly bench edges hidden behind chairs on that day.
+5. `_best_faithful` stops here, with the remaining 1.0 m2 of unseen patches turned into floor. Nothing in it was
+   drawn that no session saw.
+6. `_best` goes on: the four benches as identical rectangles (3.45 x 1.25 m), the outer wall regularised along the
+   room's two directions, 10 gaps in it closed with 88 drawn wall cells (one opening of 1.8 m is left), the inside
+   known except the benches.
+
+| Map | Structure within 10 / 20 cm | Clutter removed | Tour | Route cells too close to real structure | AMCL, drive from another session |
+|---|---|---|---|---|---|
+| Raw | 100 % / 100 % | 0 % | 47.6 m | 0 | 18.8 cm |
+| Best, faithful | 100 % / 100 % | 94.8 % | 42.3 m | 0 | 19.8 cm |
+| Best (straight) | 71.1 % / 92.9 % | 90.7 % | 42.6 m | 0 | 18.0 cm |
+
+The scores against this map's own hand labels are high by construction, since those labels are used; the fair figure
+for the method is the day-held-out one in step 1. The straight version moves walls and bench edges by up to 20 cm and
+draws wall where no session saw one. AMCL differences of a centimetre are within what one replay can show.
 
 ## The model
 
