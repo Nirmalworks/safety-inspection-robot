@@ -4,7 +4,7 @@
     python3 scripts/map_labeler.py [--labels data/map_cleaning/labels] [--maps maps] [--port 8507] [--host 127.0.0.1]
     open http://127.0.0.1:8507
 
-Lists every map with a <name>_prelabel.png in the labels directory. Opening a map loads <name>_label.png
+Lists every map with a <name>_prelabel.png in the labels directory (with --all-maps: every map in the maps folder). Opening a map loads <name>_label.png
 if it exists, else the prelabel; occupied cells that neither file labels start as unsure.
 Label PNGs: 8-bit, same size as maps/<name>/maps_2d/<name>.pgm, 0 = not occupied, 1 = keep, 2 = erase, 3 = unsure.
 Save writes <name>_label.png atomically (temp file + rename) after copying the old one to <name>_label.bak.png.
@@ -34,6 +34,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LABELS = MAPS = ''
 DESKS, DESK_SIZE = 4, None
+ALL_MAPS = False
 METHOD_LOCK = threading.Lock()                # one model call at a time
 SAVE_LOCK = threading.Lock()
 
@@ -49,7 +50,9 @@ def lab_path(n, suffix):
 def list_maps():
     if not os.path.isdir(LABELS):
         return []
-    names = [f[:-len('_prelabel.png')] for f in os.listdir(LABELS) if f.endswith('_prelabel.png')]
+    names = {f[:-len('_prelabel.png')] for f in os.listdir(LABELS) if f.endswith('_prelabel.png')}
+    if ALL_MAPS and os.path.isdir(MAPS):                  # also maps with no starting labels, e.g. a map of another building
+        names |= set(os.listdir(MAPS))
     return sorted(n for n in names if n and os.path.isfile(pgm_path(n)))
 
 
@@ -372,11 +375,13 @@ if __name__ == '__main__':
     ap.add_argument('--maps', default=os.path.join(ROOT, 'maps'))
     ap.add_argument('--port', type=int, default=8507)
     ap.add_argument('--host', default='127.0.0.1')
+    ap.add_argument('--all-maps', action='store_true', help='list every map in the maps folder, also those with no <name>_prelabel.png (unseen buildings)')
     ap.add_argument('--desks', type=int, default=4, help='identical desks the Straighten button redraws (0 = none)')
     ap.add_argument('--desk-size', type=float, nargs=2, default=None, help='desk size in metres, long and short side; default: measured from the map')
     a = ap.parse_args()
     LABELS, MAPS = os.path.abspath(a.labels), os.path.abspath(a.maps)
     DESKS, DESK_SIZE = a.desks, a.desk_size
+    ALL_MAPS = a.all_maps
     os.chdir(ROOT)                                # the method code reads maps/ and data/map_cleaning/ relative to the repo root
     print(f'Map labeler: http://{a.host}:{a.port}/   (labels in {LABELS}, maps in {MAPS}, {len(list_maps())} maps)', flush=True)
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()

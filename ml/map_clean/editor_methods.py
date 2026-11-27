@@ -89,7 +89,7 @@ def vote_map(name, raw, labels_dir, maps_dir):
 def available(name, labels_dir):
     """Buttons to offer for this map: [{id, label, group, note}]"""
     out = [{'id': 'raw', 'label': 'Raw (keep all)', 'group': 'noml'}, {'id': 'speckle', 'label': 'Speckle filter', 'group': 'noml'}]
-    if os.path.exists(os.path.join(labels_dir, name + '_prelabel.png')):
+    if os.path.exists(os.path.join(labels_dir, name + '_prelabel.png')) and _pairs(name, labels_dir)[0]:   # only where the file really is session agreement
         out += [{'id': 'agree_c', 'label': 'Session agreement, cautious', 'group': 'noml'}, {'id': 'agree_a', 'label': 'Session agreement, aggressive', 'group': 'noml'}]
     if _pairs(name, labels_dir)[0]:
         out.append({'id': 'vote', 'label': 'Vote of the other sessions', 'group': 'noml'})
