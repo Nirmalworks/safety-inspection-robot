@@ -60,7 +60,8 @@ def list_maps(P):
 
 def default_places(labels, maps, all_maps, desks, desk_size, unseen):
     """A place is one building; its maps are sessions or drives of it. The first place is the --labels / --maps pair.
-    Every folder <unseen>/<id>/ with maps/ (and labels/, title.txt) is one more place."""
+    Every folder <unseen>/<id>/ with maps/ (and labels/, title.txt) is one more place; with blind.txt in it the method
+    buttons are off, for labelling a map from blank."""
     out = [{'id': 'lab', 'title': 'Our lab', 'labels': labels, 'maps': maps, 'all': all_maps, 'prefix': '', 'desks': desks, 'desk_size': desk_size}]
     more = []
     for d in sorted(os.listdir(unseen)) if unseen and os.path.isdir(unseen) else []:
@@ -69,7 +70,7 @@ def default_places(labels, maps, all_maps, desks, desk_size, unseen):
             continue
         t = os.path.join(base, 'title.txt')
         more.append({'id': d, 'title': open(t).read().strip() if os.path.exists(t) else d, 'labels': os.path.join(base, 'labels'), 'maps': os.path.join(base, 'maps'),
-                     'all': True, 'prefix': '', 'desks': 0, 'desk_size': None})
+                     'all': True, 'prefix': '', 'desks': 0, 'desk_size': None, 'blind': os.path.exists(os.path.join(base, 'blind.txt'))})
     out += sorted(more, key=lambda P: P['title'].lower())
     return [P for P in out if list_maps(P)] or out[:1]
 
@@ -151,8 +152,8 @@ class Handler(BaseHTTPRequestHandler):
             (P, n), em = self.name(), methods()
             if n is None or em is None:
                 return self.send([] if p == '/api/methods' else {'ok': False, 'msg': 'methods are not available'})
-            if p == '/api/methods':
-                return self.send(em.available(n, P['labels']))
+            if p == '/api/methods':                         # a blind place is for labelling from blank: no method may suggest anything
+                return self.send([] if P.get('blind') else em.available(n, P['labels']))
             try:
                 cls = classes(n, P)
                 with METHOD_LOCK:
