@@ -56,15 +56,17 @@ def carried_labels(target, tm, own):
     return out, used, de
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('target'); ap.add_argument('--out', default='data/map_cleaning/best')
-    ap.add_argument('--models', nargs='*', default=None, help='fine-tuned copies that never saw the target day; default: by day')
-    ap.add_argument('--desk-size', type=float, nargs=2, default=[3.45, 1.25]); ap.add_argument('--desks', type=int, default=4)
-    a = ap.parse_args()
-    T = a.target; os.makedirs(a.out, exist_ok=True)
+def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None):
+    """-> {'raw', 'erase' (mask of the target's occupied cells), 'faithful', 'straight', 'log'}; writes the maps when out_dir is given.
+    Paths are relative to the repo root (maps/, data/map_cleaning/)."""
+    from types import SimpleNamespace
+    a = SimpleNamespace(out=out_dir, models=models, desk_size=list(desk_size) if desk_size else None, desks=n_desks)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     models = a.models or (['ftfold_A1', 'ftfold_A2'] if day(T) == '25' else ['ftfold_B1', 'ftfold_B2'] if day(T) == '24' else ['general_ft'])
     tm, other_days, _ = stack(T, other_days_only=True); _, everyone, _ = stack(T)
+    if len(other_days) < 3:
+        raise ValueError(f'{T}: only {len(other_days)} sessions from other days line up with it; the best map needs at least 3')
     raw = tm['cls']; occ = raw == OCC; res = tm['res']
     dev = 'cuda' if torch.cuda.is_available() else 'cpu'
     ps, thrs = [], []
@@ -109,12 +111,25 @@ def main():
     log.append(f"5. straight: main direction {info['angle_deg']:.1f} deg, {len(info['desks'])} desks redrawn at {a.desk_size[0]} x {a.desk_size[1]} m, {cinfo['gaps_closed']} wall gaps closed with "
                f"{cinfo['wall_cells_drawn']} drawn cells, openings left {cinfo['openings_left_m'] or 'none'}, {cinfo['filled_m2']:.2f} m2 inside made floor")
     y = yaml.safe_load(open(f'maps/{T}/maps_2d/{T}.yaml'))
-    for name, m in (('raw', raw), ('decided', apply_erase(raw, erase.astype(np.float32), 0.5)), ('faithful', faithful), ('straight', straight)):
+    for name, m in (('raw', raw), ('decided', apply_erase(raw, erase.astype(np.float32), 0.5)), ('faithful', faithful), ('straight', straight)) if a.out else ():
         cv2.imwrite(f'{a.out}/{T}_{name}.pgm', PGM[m]); y2 = dict(y); y2['image'] = f'{T}_{name}.pgm'
         yaml.safe_dump(y2, open(f'{a.out}/{T}_{name}.yaml', 'w'), default_flow_style=None, sort_keys=False)
     for k, m in (('faithful', faithful), ('straight', straight)):
         log.append(f'   {k}: {int((m == OCC).sum())} occupied cells, {(m == FREE).sum() * res * res:.1f} m2 of floor, {int(((m == UNK) & room).sum())} unknown cells inside the room')
-    open(f'{a.out}/{T}_log.txt', 'w').write('\n'.join(log) + '\n'); print('\n'.join(log))
+    if a.out:
+        open(f'{a.out}/{T}_log.txt', 'w').write('\n'.join(log) + '\n')
+    return {'raw': raw, 'erase': erase, 'faithful': faithful, 'straight': straight, 'log': log,
+            'summary': f'{len(other_days)} sessions from other days and {len(everyone)} in all, {len(models)} model(s), hand labels changed {int((before != erase).sum())} cells, '
+                       f'{int(add_wall.sum())} wall cells and {add_free.sum() * res * res:.1f} m2 of floor taken from other sessions'}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('target'); ap.add_argument('--out', default='data/map_cleaning/best')
+    ap.add_argument('--models', nargs='*', default=None, help='fine-tuned copies that never saw the target day; default: by day')
+    ap.add_argument('--desk-size', type=float, nargs=2, default=[3.45, 1.25]); ap.add_argument('--desks', type=int, default=4)
+    a = ap.parse_args()
+    print('\n'.join(build(a.target, a.models, a.desks, a.desk_size, a.out)['log']))
 
 
 if __name__ == '__main__':

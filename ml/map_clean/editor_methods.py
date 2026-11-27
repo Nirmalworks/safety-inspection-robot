@@ -2,7 +2,7 @@
 """The cleaning methods behind the buttons of scripts/map_labeler.py.
 
 propose(): a method marks every occupied cell of a map keep (1) or erase (2). Without ML: speckle filter, agreement
-between sessions, ROSE2 (loaded from a file made beforehand, see ROSE_DIR). With ML: the erase-only models, and the
+between sessions, ROSE2 (loaded from a file made beforehand, see ROSE_DIR). Everything combined: the best map of best_map.py. With ML: the erase-only models, and the
 earlier model that redraws the map. The vote of the other sessions and the earlier model make a new map, so they
 return that map as well (the editor shows it in the result view) next to keep / erase marks derived from it.
 result(): the map that the current marks give, then the clean-up steps: cut the door leak, straighten, connect the
@@ -104,6 +104,8 @@ def available(name, labels_dir):
                 out.append({'id': k, 'label': lbl, 'group': 'ml'})
     except ImportError:
         pass
+    if any(m['group'] == 'ml' for m in out) and _pairs(name, labels_dir)[0]:
+        out += [{'id': 'best_f', 'label': 'Best map, faithful', 'group': 'best'}, {'id': 'best_s', 'label': 'Best map, straight', 'group': 'best'}]
     return out
 
 
@@ -116,7 +118,7 @@ def _erase_model(key):
     return _cache[key]
 
 
-def propose(name, method, cls_lab, labels_dir, maps_dir=None):
+def propose(name, method, cls_lab, labels_dir, maps_dir=None, n_desks=4, desk_size=None):
     """-> (marks: 0 not occupied, 1 keep, 2 erase, 3 unsure; message; the method's own map, or None when the marks say it all)"""
     raw = to_common(cls_lab); occ = raw == OCC
     lab = np.zeros(raw.shape, np.uint8); lab[occ] = 1
@@ -156,6 +158,15 @@ def propose(name, method, cls_lab, labels_dir, maps_dir=None):
         near = cv2.dilate((out == OCC).astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
         lab[occ & ~near] = 2; view = out
         msg = f'Earlier model (redraws the map): its own map is shown in the result view. The marks say erase where it left no wall within 10 cm. It drew {int(((out == OCC) & ~occ).sum())} wall cells of its own.'
+    elif method in ('best_f', 'best_s'):
+        from .best_map import build
+        key = ('best', name, n_desks, tuple(desk_size) if desk_size else None)
+        if key not in _cache:                               # everything combined: see best_map.py (run from the repo root)
+            _cache[key] = build(name, None, n_desks, desk_size or (3.45, 1.25))
+        b = _cache[key]
+        lab[occ & b['erase']] = 2; view = b['faithful'] if method == 'best_f' else b['straight']
+        msg = ('Best map, ' + ('faithful (nothing drawn that no session saw)' if method == 'best_f' else 'straight (identical desks, regular outline, walls connected)')
+               + ': the model and the other days decide together, the saved hand labels overrule, other sessions fill in what this one did not see. ' + b['summary'] + '.')
     elif method in MODELS:
         torch, _ = _torch()
         from .erase import predict

@@ -12,7 +12,8 @@ Needs only numpy and OpenCV (stdlib HTTP server, no CDN).
 
 Second toolbar (needs ml/map_clean, and PyTorch for the ML buttons): a method marks the whole map keep / erase
 (without ML: speckle filter, session agreement, the vote of the other sessions, ROSE2 from a file; with ML: the
-earlier model and the erase-only models; the vote and the earlier model draw a map of their own, shown in the result view), you correct the
+earlier model and the erase-only models; everything combined: the best map of ml/map_clean/best_map.py; the vote,
+the earlier model and the best map draw a map of their own, shown in the result view), you correct the
 marks by hand, then the clean-up buttons (cut door leak, straighten, fill unseen patches, connect walls) and "Show result" give the
 map those marks produce, scored against the saved hand labels. "Export map" writes it to data/map_cleaning/exports/.
 """
@@ -131,7 +132,7 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 cls = classes(n)
                 with METHOD_LOCK:
-                    lab, msg, view = em.propose(n, parse_qs(urlparse(self.path).query).get('method', [''])[0], cls, LABELS, MAPS)
+                    lab, msg, view = em.propose(n, parse_qs(urlparse(self.path).query).get('method', [''])[0], cls, LABELS, MAPS, DESKS, DESK_SIZE)
                     out = view if view is not None else em.result(cls, lab, [])[0]
                     sc = em.score_text(n, out, cls, LABELS)
                 d = {'ok': True, 'label': base64.b64encode(lab.tobytes()).decode(), 'msg': msg, 'score': sc}
@@ -215,7 +216,8 @@ button.on{background:#3d7bfd;border-color:#3d7bfd}
 <div class="bar" id="bar2">
 <span class="grp"><b>1 Without ML</b><span id="m_noml" class="grp"></span></span>
 <span class="grp"><b>2 With ML</b><span id="m_ml" class="grp"></span></span>
-<span class="grp"><b>3 Clean-up</b><button class="stepb" data-s="leak">Cut door leak</button><button class="stepb" data-s="straighten">Straighten</button><button class="stepb" data-s="fill">Fill unseen</button><button class="stepb" data-s="connect">Connect walls</button>
+<span class="grp"><b>3 Everything combined</b><span id="m_best" class="grp"></span></span>
+<span class="grp"><b>4 Clean-up</b><button class="stepb" data-s="leak">Cut door leak</button><button class="stepb" data-s="straighten">Straighten</button><button class="stepb" data-s="fill">Fill unseen</button><button class="stepb" data-s="connect">Connect walls</button>
 <span class="sep"></span><button id="result">Show result (R)</button><button id="export">Export map</button></span>
 <span id="score" style="flex-basis:100%"></span>
 </div>
@@ -326,7 +328,7 @@ async function showResult(exp){if(!W||busy)return;if(stroke)end();lock(true);msg
   catch(e){msg('Failed: '+e.message)}lock(false)}
 function toggleResult(){if(resView)return leaveResult();showResult(false)}
 async function loadMethods(){const l=await(await fetch('/api/methods?name='+encodeURIComponent(cur))).json();
-  for(const gp of['noml','ml']){const box=$('m_'+gp);box.innerHTML='';for(const m of l.filter(x=>x.group==gp)){const b=document.createElement('button');b.className='meth';b.textContent=m.label;b.onclick=()=>{applyMethod(m.id,b);b.blur()};box.appendChild(b)}
+  for(const gp of['noml','ml','best']){const box=$('m_'+gp);box.innerHTML='';for(const m of l.filter(x=>x.group==gp)){const b=document.createElement('button');b.className='meth';b.textContent=m.label;b.onclick=()=>{applyMethod(m.id,b);b.blur()};box.appendChild(b)}
     if(!box.children.length)box.textContent=' not available '}}
 function b64(t){const b=atob(t),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
 async function load(n){msg('Loading '+n+'...');const r=await fetch('/api/map?name='+encodeURIComponent(n));if(!r.ok)throw new Error('Could not load '+n);const d=await r.json();
@@ -375,5 +377,6 @@ if __name__ == '__main__':
     a = ap.parse_args()
     LABELS, MAPS = os.path.abspath(a.labels), os.path.abspath(a.maps)
     DESKS, DESK_SIZE = a.desks, a.desk_size
+    os.chdir(ROOT)                                # the method code reads maps/ and data/map_cleaning/ relative to the repo root
     print(f'Map labeler: http://{a.host}:{a.port}/   (labels in {LABELS}, maps in {MAPS}, {len(list_maps())} maps)', flush=True)
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()
