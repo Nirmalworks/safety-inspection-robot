@@ -4,7 +4,9 @@
     python3 scripts/map_labeler.py [--labels data/map_cleaning/labels] [--maps maps] [--port 8507] [--host 127.0.0.1]
     open http://127.0.0.1:8507
 
-Lists every map with a <name>_prelabel.png in the labels directory (with --all-maps: every map in the maps folder). Opening a map loads <name>_label.png
+Choose a place, then a map. The first place, "Our lab", is --labels / --maps and lists every map with a
+<name>_prelabel.png there (with --all-maps: every map in the maps folder). Maps of other buildings under --unseen
+(default data/map_cleaning/unseen, with maps/ and labels/) appear as further places, grouped by the first word of the map name. Opening a map loads <name>_label.png
 if it exists, else the prelabel; occupied cells that neither file labels start as unsure.
 Label PNGs: 8-bit, same size as maps/<name>/maps_2d/<name>.pgm, 0 = not occupied, 1 = keep, 2 = erase, 3 = unsure.
 Save writes <name>_label.png atomically (temp file + rename) after copying the old one to <name>_label.bak.png.
@@ -33,42 +35,53 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LABELS = MAPS = ''
-DESKS, DESK_SIZE = 4, None
-ALL_MAPS = False
+PLACES = []                                    # [{id, title, labels, maps, all, prefix, desks, desk_size}]
+UNSEEN_TITLES = {'temple': 'Temple University lobbies (Semantic2D)', 'mit': 'MIT Stata Center', 'radish': 'Other buildings (Radish benchmark)'}
 METHOD_LOCK = threading.Lock()                # one model call at a time
 SAVE_LOCK = threading.Lock()
 
 
-def pgm_path(n):
-    return os.path.join(MAPS, n, 'maps_2d', n + '.pgm')
+def pgm_path(n, P):
+    return os.path.join(P['maps'], n, 'maps_2d', n + '.pgm')
 
 
-def lab_path(n, suffix):
-    return os.path.join(LABELS, n + suffix + '.png')
+def lab_path(n, suffix, P):
+    return os.path.join(P['labels'], n + suffix + '.png')
 
 
-def list_maps():
-    if not os.path.isdir(LABELS):
-        return []
-    names = {f[:-len('_prelabel.png')] for f in os.listdir(LABELS) if f.endswith('_prelabel.png')}
-    if ALL_MAPS and os.path.isdir(MAPS):                  # also maps with no starting labels, e.g. a map of another building
-        names |= set(os.listdir(MAPS))
-    return sorted(n for n in names if n and os.path.isfile(pgm_path(n)))
+def list_maps(P):
+    names = set()
+    if os.path.isdir(P['labels']):
+        names = {f[:-len('_prelabel.png')] for f in os.listdir(P['labels']) if f.endswith('_prelabel.png')}
+    if P['all'] and os.path.isdir(P['maps']):             # also maps with no starting labels, e.g. a map of another building
+        names |= set(os.listdir(P['maps']))
+    return sorted(n for n in names if n and n.startswith(P['prefix']) and os.path.isfile(pgm_path(n, P)))
 
 
-def classes(n):
+def default_places(labels, maps, all_maps, desks, desk_size, unseen):
+    """The first place is the --labels / --maps pair. Maps under `unseen` are grouped into places by the first word of their name."""
+    out = [{'id': 'lab', 'title': 'Our lab', 'labels': labels, 'maps': maps, 'all': all_maps, 'prefix': '', 'desks': desks, 'desk_size': desk_size}]
+    um = os.path.join(unseen, 'maps')
+    if unseen and os.path.isdir(um):
+        for pre in sorted({d.split('_')[0] for d in os.listdir(um)}):
+            out.append({'id': pre, 'title': UNSEEN_TITLES.get(pre, pre.capitalize()), 'labels': os.path.join(unseen, 'labels'), 'maps': um,
+                        'all': True, 'prefix': pre + '_', 'desks': 0, 'desk_size': None})
+    return [P for P in out if list_maps(P)] or out[:1]
+
+
+def classes(n, P):
     """0 free, 1 unknown, 2 occupied"""
-    img = cv2.imread(pgm_path(n), cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread(pgm_path(n, P), cv2.IMREAD_GRAYSCALE)
     c = np.ones(img.shape, np.uint8)
     c[img < 100], c[img > 250] = 2, 0
     return c
 
 
-def load_labels(n, cls):
+def load_labels(n, cls, P):
     occ = cls == 2
     lab, src = np.zeros(cls.shape, np.uint8), 'none'
     for suffix in ('_label', '_prelabel'):
-        p = lab_path(n, suffix)
+        p = lab_path(n, suffix, P)
         if not os.path.exists(p):
             continue
         a = cv2.imread(p, cv2.IMREAD_UNCHANGED)
@@ -108,36 +121,39 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def name(self):
-        n = parse_qs(urlparse(self.path).query).get('name', [''])[0]
-        return n if n in list_maps() else None
+        """-> (place, map name), or (place, None) when the map is not in that place"""
+        q = parse_qs(urlparse(self.path).query)
+        P = next((x for x in PLACES if x['id'] == q.get('place', [''])[0]), PLACES[0])
+        n = q.get('name', [''])[0]
+        return P, (n if n in list_maps(P) else None)
 
     def do_GET(self):
         p = urlparse(self.path).path
         if p == '/':
             return self.send(PAGE.encode(), 'text/html; charset=utf-8')
-        if p == '/api/maps':
-            return self.send(list_maps())
+        if p == '/api/places':
+            return self.send([{'id': P['id'], 'title': P['title'], 'maps': list_maps(P)} for P in PLACES])
         if p == '/api/map':
-            n = self.name()
+            P, n = self.name()
             if n is None:
                 return self.send({'error': 'no such map'}, code=404)
-            cls = classes(n)
-            lab, src = load_labels(n, cls)
+            cls = classes(n, P)
+            lab, src = load_labels(n, cls, P)
             return self.send({'name': n, 'w': cls.shape[1], 'h': cls.shape[0], 'source': src,
                               'base': base64.b64encode(cls.tobytes()).decode(),
                               'label': base64.b64encode(lab.tobytes()).decode()})
         if p in ('/api/methods', '/api/propose'):
-            n, em = self.name(), methods()
+            (P, n), em = self.name(), methods()
             if n is None or em is None:
                 return self.send([] if p == '/api/methods' else {'ok': False, 'msg': 'methods are not available'})
             if p == '/api/methods':
-                return self.send(em.available(n, LABELS))
+                return self.send(em.available(n, P['labels']))
             try:
-                cls = classes(n)
+                cls = classes(n, P)
                 with METHOD_LOCK:
-                    lab, msg, view = em.propose(n, parse_qs(urlparse(self.path).query).get('method', [''])[0], cls, LABELS, MAPS, DESKS, DESK_SIZE)
+                    lab, msg, view = em.propose(n, parse_qs(urlparse(self.path).query).get('method', [''])[0], cls, P['labels'], P['maps'], P['desks'], P['desk_size'])
                     out = view if view is not None else em.result(cls, lab, [])[0]
-                    sc = em.score_text(n, out, cls, LABELS)
+                    sc = em.score_text(n, out, cls, P['labels'])
                 d = {'ok': True, 'label': base64.b64encode(lab.tobytes()).decode(), 'msg': msg, 'score': sc}
                 if view is not None:                         # a method that draws its own map: show that map, not only the marks
                     d['view'] = base64.b64encode(em.to_labeler(view).tobytes()).decode()
@@ -150,10 +166,10 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path not in ('/api/save', '/api/result', '/api/export'):
             return self.send({'ok': False, 'msg': 'not found'}, code=404)
-        n = self.name()
+        P, n = self.name()
         if n is None:
             return self.send({'ok': False, 'msg': 'no such map'}, code=404)
-        cls = classes(n)
+        cls = classes(n, P)
         size = int(self.headers.get('Content-Length') or 0)
         if size != cls.size:
             return self.send({'ok': False, 'msg': f'expected {cls.size} bytes, got {size}'}, code=400)
@@ -168,15 +184,16 @@ class Handler(BaseHTTPRequestHandler):
                 steps = [t for t in parse_qs(urlparse(self.path).query).get('steps', [''])[0].split(',') if t]
                 lab = np.where(cls == 2, a, 0).astype(np.uint8)
                 with METHOD_LOCK:
-                    out, msg = em.result(cls, lab, steps, DESKS, DESK_SIZE)
-                    sc = em.score_text(n, out, cls, LABELS)
+                    out, msg = em.result(cls, lab, steps, P['desks'], P['desk_size'])
+                    sc = em.score_text(n, out, cls, P['labels'])
                     if path == '/api/export':
-                        msg = 'Exported ' + em.export(n, out, pgm_path(n)[:-4] + '.yaml') + '. ' + msg
+                        msg = 'Exported ' + em.export(n, out, pgm_path(n, P)[:-4] + '.yaml') + '. ' + msg
                 return self.send({'ok': True, 'cls': base64.b64encode(em.to_labeler(out).tobytes()).decode(), 'msg': msg, 'score': sc})
             except Exception as e:                           # noqa: BLE001
                 return self.send({'ok': False, 'msg': f'{type(e).__name__}: {e}'})
         out = np.where(cls == 2, a, 0).astype(np.uint8)
-        dst, bak, tmp = lab_path(n, '_label'), lab_path(n, '_label.bak'), lab_path('.' + n, '_label.tmp')
+        dst, bak, tmp = lab_path(n, '_label', P), lab_path(n, '_label.bak', P), lab_path('.' + n, '_label.tmp', P)
+        os.makedirs(P['labels'], exist_ok=True)
         with SAVE_LOCK:
             if not cv2.imwrite(tmp, out) or not np.array_equal(cv2.imread(tmp, cv2.IMREAD_UNCHANGED), out):
                 return self.send({'ok': False, 'msg': 'could not write ' + tmp}, code=500)
@@ -202,7 +219,7 @@ button.on{background:#3d7bfd;border-color:#3d7bfd}
 #c{flex:1;min-height:0;width:100%;display:block;touch-action:none;cursor:crosshair}
 </style></head><body>
 <div class="bar">
-<label>Map <select id="map"></select></label><span id="dirty"></span>
+<label>Place <select id="place"></select></label><label>Map <select id="map"></select></label><span id="dirty"></span>
 <button id="save">Save</button><button id="undo">Undo</button><button id="redo">Redo</button>
 <span class="sep"></span>
 <button class="cls" data-v="1"><span class="sw" style="background:#191919"></span>Keep (K)</button>
@@ -229,7 +246,7 @@ button.on{background:#3d7bfd;border-color:#3d7bfd}
 <script>
 const $=id=>document.getElementById(id),cv=$('c'),g=cv.getContext('2d'),off=document.createElement('canvas'),og=off.getContext('2d');
 const PAL=[null,[25,25,25],[230,40,40],[255,150,0]],NAMES=['','keep','erase','unsure'];
-let W=0,H=0,base=null,lab=null,img=null,cur='',cls=1,tool='brush',bsize=3,hide=false,resView=false,res=null,resVer=-1,resSteps='',busy=false;
+let places=[],place='',W=0,H=0,base=null,lab=null,img=null,cur='',cls=1,tool='brush',bsize=3,hide=false,resView=false,res=null,resVer=-1,resSteps='',busy=false;
 let s=1,ox=0,oy=0,dpr=1,undo=[],redo=[],sid=0,savedId=0,stroke=null,dr=null,down=null,last=null,axis=null,pan=null,space=false,mouse=null,poly=[],boxA=null,hl=null,ver=0,clu=[],cluVer=-1,cluI=-1;
 const cnt=[0,0,0,0];
 const msg=t=>$('msg').textContent=t;
@@ -321,26 +338,26 @@ function lock(v){busy=v;document.querySelectorAll('#bar2 button').forEach(b=>b.d
 function setAll(nw){begin();for(let i=0;i<W*H;i++){if(base[i]!=2||lab[i]==nw[i]||nw[i]<1)continue;stroke.set(i,lab[i]);put(i,nw[i])}end()}
 function leaveResult(){if(resView){resView=false;$('result').classList.remove('on');repaintAll()}}
 async function applyMethod(id,btn){if(!W||busy)return;if(stroke)end();leaveResult();lock(true);msg('Running '+btn.textContent+'...');
-  try{const d=await(await fetch('/api/propose?name='+encodeURIComponent(cur)+'&method='+id)).json();
+  try{const d=await(await fetch('/api/propose?place='+place+'&name='+encodeURIComponent(cur)+'&method='+id)).json();
     if(!d.ok){msg(d.msg)}else{setAll(b64(d.label));document.querySelectorAll('.meth').forEach(b=>b.classList.toggle('on',b==btn));msg(d.msg+' One undo step.');$('score').textContent=d.score;
       if(d.view){res=b64(d.view);resView=true;$('result').classList.add('on');repaintAll()}}}
   catch(e){msg('Failed: '+e.message)}lock(false)}
 async function showResult(exp){if(!W||busy)return;if(stroke)end();lock(true);msg(exp?'Exporting...':'Building the result...');
-  try{const d=await(await fetch('/api/'+(exp?'export':'result')+'?name='+encodeURIComponent(cur)+'&steps='+steps(),{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:lab})).json();
+  try{const d=await(await fetch('/api/'+(exp?'export':'result')+'?place='+place+'&name='+encodeURIComponent(cur)+'&steps='+steps(),{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:lab})).json();
     if(!d.ok){msg(d.msg)}else{res=b64(d.cls);resVer=ver;resSteps=steps();resView=true;$('result').classList.add('on');repaintAll();msg(d.msg);$('score').textContent=d.score}}
   catch(e){msg('Failed: '+e.message)}lock(false)}
 function toggleResult(){if(resView)return leaveResult();showResult(false)}
-async function loadMethods(){const l=await(await fetch('/api/methods?name='+encodeURIComponent(cur))).json();
+async function loadMethods(){const l=await(await fetch('/api/methods?place='+place+'&name='+encodeURIComponent(cur))).json();
   for(const gp of['noml','ml','best']){const box=$('m_'+gp);box.innerHTML='';for(const m of l.filter(x=>x.group==gp)){const b=document.createElement('button');b.className='meth';b.textContent=m.label;b.onclick=()=>{applyMethod(m.id,b);b.blur()};box.appendChild(b)}
     if(!box.children.length)box.textContent=' not available '}}
 function b64(t){const b=atob(t),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
-async function load(n){msg('Loading '+n+'...');const r=await fetch('/api/map?name='+encodeURIComponent(n));if(!r.ok)throw new Error('Could not load '+n);const d=await r.json();
+async function load(n){msg('Loading '+n+'...');const r=await fetch('/api/map?place='+place+'&name='+encodeURIComponent(n));if(!r.ok)throw new Error('Could not load '+n);const d=await r.json();
   W=d.w;H=d.h;base=b64(d.base);lab=b64(d.label);off.width=W;off.height=H;img=new ImageData(W,H);cur=n;
   cnt.fill(0);for(let i=0;i<W*H;i++)if(base[i]==2)cnt[lab[i]]++;
   undo=[];redo=[];savedId=0;stroke=null;down=null;poly=[];boxA=null;hl=null;ver++;cluVer=-1;resView=false;res=null;$('result').classList.remove('on');$('score').textContent='';
   repaintAll();fit();showState();loadMethods().catch(()=>{});msg(`${n}: ${W} x ${H} cells, labels from ${d.source=='label'?n+'_label.png':d.source=='prelabel'?n+'_prelabel.png':'nothing (all unsure)'}.`)}
 async function save(){if(!W)return;if(stroke)end();const id=topId();msg('Saving...');
-  try{const r=await(await fetch('/api/save?name='+encodeURIComponent(cur),{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:lab})).json();
+  try{const r=await(await fetch('/api/save?place='+place+'&name='+encodeURIComponent(cur),{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:lab})).json();
     msg(r.msg);if(r.ok){savedId=id;showState()}}catch(e){msg('Save failed: '+e.message)}}
 $('map').onchange=async()=>{const n=$('map').value;$('map').blur();
   if(isDirty()&&!confirm('Discard the unsaved changes on '+cur+'?')){$('map').value=cur;return}
@@ -364,8 +381,13 @@ document.addEventListener('keydown',e=>{if(e.target.tagName=='SELECT')return;con
 document.addEventListener('keyup',e=>{if(e.key==' '){e.preventDefault();space=false;if(!pan)cv.style.cursor='crosshair'}});
 window.addEventListener('blur',()=>{space=false});
 setCls(1);setTool('brush');setSize(3);resize();
-fetch('/api/maps').then(r=>r.json()).then(l=>{$('map').innerHTML=l.map(n=>`<option>${n}</option>`).join('');
-  if(!l.length)return msg('No <name>_prelabel.png found in the labels directory.');$('map').value=l[0];load(l[0]).catch(e=>msg(e.message))});
+function fillMaps(){const l=(places.find(p=>p.id==place)||{maps:[]}).maps;$('map').innerHTML=l.map(n=>`<option>${n}</option>`).join('');return l}
+$('place').onchange=async()=>{const np=$('place').value;$('place').blur();
+  if(isDirty()&&!confirm('Discard the unsaved changes on '+cur+'?')){$('place').value=place;return}
+  const old=place;place=np;const l=fillMaps();if(!l.length){msg('No maps in this place.');return}
+  try{$('map').value=l[0];await load(l[0])}catch(e){msg(e.message);place=old;$('place').value=old;fillMaps();$('map').value=cur}};
+fetch('/api/places').then(r=>r.json()).then(ps=>{places=ps;$('place').innerHTML=ps.map(p=>`<option value="${p.id}">${p.title} (${p.maps.length})</option>`).join('');
+  if(!ps.length)return msg('No maps found.');place=ps[0].id;const l=fillMaps();if(!l.length)return msg('No maps found in '+ps[0].title+'.');$('map').value=l[0];load(l[0]).catch(e=>msg(e.message))});
 </script></body></html>"""
 
 
@@ -375,13 +397,13 @@ if __name__ == '__main__':
     ap.add_argument('--maps', default=os.path.join(ROOT, 'maps'))
     ap.add_argument('--port', type=int, default=8507)
     ap.add_argument('--host', default='127.0.0.1')
+    ap.add_argument('--unseen', default=os.path.join(ROOT, 'data', 'map_cleaning', 'unseen'), help="folder with maps/ and labels/ of other buildings; shown as further places, grouped by the first word of the map name ('' = none)")
     ap.add_argument('--all-maps', action='store_true', help='list every map in the maps folder, also those with no <name>_prelabel.png (unseen buildings)')
     ap.add_argument('--desks', type=int, default=4, help='identical desks the Straighten button redraws (0 = none)')
     ap.add_argument('--desk-size', type=float, nargs=2, default=None, help='desk size in metres, long and short side; default: measured from the map')
     a = ap.parse_args()
     LABELS, MAPS = os.path.abspath(a.labels), os.path.abspath(a.maps)
-    DESKS, DESK_SIZE = a.desks, a.desk_size
-    ALL_MAPS = a.all_maps
+    PLACES = default_places(LABELS, MAPS, a.all_maps, a.desks, a.desk_size, os.path.abspath(a.unseen) if a.unseen else '')
     os.chdir(ROOT)                                # the method code reads maps/ and data/map_cleaning/ relative to the repo root
-    print(f'Map labeler: http://{a.host}:{a.port}/   (labels in {LABELS}, maps in {MAPS}, {len(list_maps())} maps)', flush=True)
+    print(f'Map labeler: http://{a.host}:{a.port}/   places: ' + ', '.join(f"{P['title']} ({len(list_maps(P))} maps)" for P in PLACES), flush=True)
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()

@@ -234,13 +234,10 @@ hand labels; "Export map" writes it to `data/map_cleaning/exports/`.
 4. Clean-up: cut door leak, straighten, fill unseen patches, connect walls (gaps in the outer wall up to 1.5 m are
    drawn as wall, a doorway included, and everything inside becomes floor except the desks; `connect_walls.py`).
 
-Unseen buildings: `--all-maps` lists every map in the maps folder, also one with no starting labels. The speckle
-filter and the models then run on it; session agreement, the vote and the best map need other sessions of the same
+Choose a place, then a map. "Our lab" comes first; maps of other buildings under `data/map_cleaning/unseen/`
+(`maps/` and `labels/`) appear as further places, grouped by the first word of the map name. On those the speckle
+filter and the models run; session agreement, the vote and the best map need other sessions of the same
 room and do not appear. Scores show only where a `<name>_label.png` exists.
-
-```
-python3 scripts/map_labeler.py --port 8508 --labels data/map_cleaning/unseen/labels --maps data/map_cleaning/unseen/maps --all-maps --desks 0
-```
 
 ## Reproduce
 

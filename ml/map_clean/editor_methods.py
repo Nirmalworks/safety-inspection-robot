@@ -213,11 +213,11 @@ def score_text(name, out_common, cls_lab, labels_dir):
     """Scores against the saved hand labels of this map, if there are any."""
     f = os.path.join(labels_dir, name + '_label.png')
     if not os.path.exists(f):
-        return 'No saved hand labels for this map, so no score.'
+        return 'No saved labels for this map, so no score.'
     from .score2 import score2
     hand = cv2.imread(f, cv2.IMREAD_UNCHANGED)
     s = score2(out_common, to_common(cls_lab), hand)
-    return (f"Against the saved hand labels: structure kept {s['kept'] * 100:.1f} %, clutter removed {s['removed'] * 100:.1f} %, "
+    return (f"Against the saved labels: structure kept {s['kept'] * 100:.1f} %, clutter removed {s['removed'] * 100:.1f} %, "
             f"invented wall cells {s['invented']}, added floor {s['added_floor_m2']:.1f} m2.")
 
 
