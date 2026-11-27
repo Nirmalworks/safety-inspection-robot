@@ -22,7 +22,7 @@ OLD_MODEL = os.path.join(ROOT, 'data', 'map_cleaning', 'models', 'unet_ce.pt')
 ROSE_DIR = os.path.join(ROOT, 'data', 'map_cleaning', 'rose2')            # <name>.png, 255 where ROSE2 keeps an occupied cell
 EXPORT_DIR = os.path.join(ROOT, 'data', 'map_cleaning', 'exports')
 # erase thresholds: set on a hand-labelled validation map to keep 95 % of structure (general model: its own, from simulation)
-MODELS = {'ft': ('Fine-tuned general model', 'general_ft.pt', 0.21), 'lab': ('Lab model', 'lab.pt', 0.26), 'general': ('General model (simulated only)', 'general_sim.pt', None)}
+MODELS = {'ft': ('Erase-only U-Net, fine-tuned on lab maps', 'general_ft.pt', 0.21), 'lab': ('Erase-only U-Net, lab maps only', 'lab.pt', 0.26), 'general': ('Erase-only U-Net, simulated only', 'general_sim.pt', None)}
 _cache = {}
 
 
@@ -113,15 +113,13 @@ def available(name, labels_dir):
         out.append({'id': 'rose', 'label': 'ROSE2 (from file)', 'group': 'noml'})
     try:
         _torch()
-        if os.path.exists(OLD_MODEL):
-            out.append({'id': 'earlier', 'label': 'Earlier model (redraws)', 'group': 'ml'})
         for k, (lbl, f, _) in MODELS.items():
             if os.path.exists(os.path.join(MODEL_DIR, f)):
                 out.append({'id': k, 'label': lbl, 'group': 'ml'})
     except ImportError:
         pass
     if any(m['group'] == 'ml' for m in out) and os.path.exists(os.path.join(labels_dir, 'pairs.json')):   # one best map per place
-        out += [{'id': 'best_f', 'label': 'Best map of this place, faithful', 'group': 'best'}, {'id': 'best_s', 'label': 'Best map of this place, straight', 'group': 'best'}]
+        out += [{'id': 'best_f', 'label': 'Best map of this place', 'group': 'best'}]
     return out
 
 
