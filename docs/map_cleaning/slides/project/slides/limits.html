@@ -1,0 +1,14 @@
+<section id="limits">
+<p class="eyebrow">Navigation map · limits</p>
+<h2>What these results do not show</h2>
+<div class="lgrid">
+<div class="card"><p class="label">One room</p><p class="body">Both marks are passed in our lab only. In a building no model saw, a third of the clutter is removed and F1 falls from 82.6 % to 44.3 %.</p></div>
+<div class="card"><p class="label">Hand labels</p><p class="body">Scores rest on 4 maps labelled by hand, by one person, starting from session-agreement proposals. Fine-tuning needs one hand-labelled map of each new room.</p></div>
+<div class="card"><p class="label">Few training runs</p><p class="body">The fine-tuned erase-only U-Net was trained three times: 3.5 points of spread in clutter removed. Differences of a few points between models are not established.</p></div>
+<div class="card"><p class="label">The best map</p><p class="body">It needs other mapping sessions of the same room, and its score depends on which hand labels exist: 72.8 % or 69.0 % of clutter removed.</p></div>
+<div class="card"><p class="label">Unseen-building labels</p><p class="body">MIT Stata labels come from floor plans without furniture, so fixed furniture counts as clutter. Every score there is lowered by an unknown amount.</p></div>
+<div class="card"><p class="label">On the robot</p><p class="body">[After the 30 Nov test: what the live patrol did and did not show. Until then: nothing has been driven live on a cleaned map; planning and localisation were checked on recordings.]</p></div>
+</div>
+<p class="small">Next step: fine-tune on a few hand-labelled maps of a second building and test there.</p>
+<aside>All the limits in one place. One room: the method passes both marks only in our lab; in MIT Stata, which no model saw, the fine-tuned erase-only U-Net keeps 96.9 percent of structure and removes 32.9 percent of clutter, and its F1 falls from 82.6 to 44.3 percent. Hand labels: the scores rest on four lab maps labelled by one person, and the labelling started from session-agreement proposals, so the labels are not independent of that method; fine-tuning also needs one hand-labelled map of each new room. Few training runs: three seeds of the fine-tuned erase-only U-Net differ by 3.5 points of clutter removed, the lab-only U-Net was trained twice, everything else once. The best map needs repeat mapping sessions of the same room, and with the labels as they are since 26 Nov it removes 69.0 percent instead of 72.8. MIT Stata labels count fixed furniture as clutter. The last card is a placeholder: rewrite it after the 30 Nov robot test. Next step: fine-tune on a few hand-labelled maps of a second building, for both U-Nets, and test there with a day held out.</aside>
+</section>

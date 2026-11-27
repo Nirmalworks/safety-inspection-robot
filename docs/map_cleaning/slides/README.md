@@ -1,8 +1,8 @@
 # Navigation Map Segment: slide sources
 
-Source of the deck for the map-cleaning part of the final presentation (27 Nov 2026), 15 slides: problem, model,
+Source of the deck for the map-cleaning part of the final presentation (27 Nov 2026), 16 slides: problem, model,
 results in nine steps (`results`, `results2` … `results9`: one slide per method, so that stepping through works in
-PowerPoint and Google Slides), on the robot, scoreboard for the lab, scoreboard for the unseen building, demo recording.
+PowerPoint and Google Slides), on the robot, scoreboard for the lab, scoreboard for the unseen building, limits, demo recording.
 
 - `project/deck.json`: slide order. `project/deck.css`: shared styles. `project/slides/*.html`: one file per slide,
   with the speaker notes in `<aside>`.

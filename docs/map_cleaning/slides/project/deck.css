@@ -46,13 +46,16 @@ li { margin-top: 10px; margin-bottom: 10px; }
 /* equation under a table heading */
 .eq { font-size: 21px; font-weight: 400; color: #9AA6BD; white-space: nowrap; }
 /* formula table on the results slide */
-.ftab { font-size: 23px; }
+.ftab { font-size: 20px; }
 .ftab th { color: #5ED3F3; }
-.ftab td, .ftab th { padding: 3px 14px 3px 0; white-space: nowrap; }
+.ftab td, .ftab th { padding: 3px 10px 3px 0; white-space: nowrap; }
 /* method table with five number columns on the results slide */
-.mtab { font-size: 24px; }
+.mtab { font-size: 23px; }
 .mtab td, .mtab th { white-space: nowrap; }
 .mtab td + td, .mtab th + th { padding-left: 9px; }
 /* limit bullets on the results slide */
 .lim { font-size: 23px; line-height: 1.25; padding-left: 26px; }
 .lim li { margin-top: 4px; margin-bottom: 4px; }
+/* limits slide: three cards per row */
+.lgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.lgrid .body { font-size: 26px; }
