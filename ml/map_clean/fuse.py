@@ -21,15 +21,16 @@ def day(name):
     return name.split('_')[2] if name.startswith('lab2d_') else name
 
 
-def stack(target, labels=LB, max_median=0.12, other_days_only=False, extra=None):
+def stack(target, labels=LB, max_median=0.12, other_days_only=False, extra=None, maps_dir='maps'):
     """-> (target map dict, [(name, class map on the target grid)], pairs of the target). `extra`: {name: array on that session's grid} warped too."""
     pj = json.load(open(os.path.join(labels, 'pairs.json'))); pairs, res = pj['pairs'][target], pj['res']
-    tm = load_map(f'maps/{target}/maps_2d/{target}.yaml')
+    mp = lambda n: os.path.join(maps_dir, n, 'maps_2d', n + '.yaml')
+    tm = load_map(mp(target))
     out, ex = [], []
     for s, p in sorted(pairs.items()):
-        if p['median_m'] > max_median or not os.path.exists(f'maps/{s}/maps_2d/{s}.yaml') or (other_days_only and day(s) == day(target)):
+        if p['median_m'] > max_median or not os.path.exists(mp(s)) or (other_days_only and day(s) == day(target)):
             continue
-        sm = load_map(f'maps/{s}/maps_2d/{s}.yaml'); R, t = np.array(p['R']), np.array(p['t'])
+        sm = load_map(mp(s)); R, t = np.array(p['R']), np.array(p['t'])
         w = warp((sm['cls'] + 10).astype(np.uint8), res, sm['origin'], R, t, tm['cls'].shape, tm['origin'])
         o = np.full(w.shape, UNK, np.uint8); m = w >= 10; o[m] = w[m] - 10
         out.append((s, o))

@@ -36,7 +36,7 @@ from .straighten import straighten
 LO, HI = 0.20, 0.85
 
 
-def carried_labels(target, tm, own):
+def carried_labels(target, tm, own, LB=LB, maps_dir='maps'):
     """Hand labels of other sessions at the same place (within 2 cells), for cells the target's own labels leave open."""
     pj = json.load(open(f'{LB}/pairs.json')); pairs, res = pj['pairs'][target], pj['res']
     occ = tm['cls'] == OCC
@@ -45,7 +45,7 @@ def carried_labels(target, tm, own):
         f = f'{LB}/{s}_label.png'
         if s == target or not os.path.exists(f) or p['median_m'] > 0.12:
             continue
-        sm = load_map(f'maps/{s}/maps_2d/{s}.yaml'); sl = cv2.imread(f, -1)
+        sm = load_map(os.path.join(maps_dir, s, 'maps_2d', s + '.yaml')); sl = cv2.imread(f, -1)
         w = warp((sl + 10).astype(np.uint8), res, sm['origin'], np.array(p['R']), np.array(p['t']), occ.shape, tm['origin'])
         dk = np.minimum(dk, cv2.distanceTransform((w != 11).astype(np.uint8), cv2.DIST_L2, 3))
         de = np.minimum(de, cv2.distanceTransform((w != 12).astype(np.uint8), cv2.DIST_L2, 3)); used.append(s)
@@ -56,17 +56,17 @@ def carried_labels(target, tm, own):
     return out, used, de
 
 
-def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None):
+def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None, LB=LB, maps_dir='maps'):
     """-> {'raw', 'erase' (mask of the target's occupied cells), 'faithful', 'straight', 'log'}; writes the maps when out_dir is given.
-    Paths are relative to the repo root (maps/, data/map_cleaning/)."""
+    Defaults are our lab, relative to the repo root; another place passes its own labels folder and maps folder."""
     from types import SimpleNamespace
     a = SimpleNamespace(out=out_dir, models=models, desk_size=list(desk_size) if desk_size else None, desks=n_desks)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
     models = a.models or (['ftfold_A1', 'ftfold_A2'] if day(T) == '25' else ['ftfold_B1', 'ftfold_B2'] if day(T) == '24' else ['general_ft'])
-    tm, other_days, _ = stack(T, other_days_only=True); _, everyone, _ = stack(T)
-    if len(other_days) < 3:
-        raise ValueError(f'{T}: only {len(other_days)} sessions from other days line up with it; the best map needs at least 3')
+    tm, other_days, _ = stack(T, LB, other_days_only=True, maps_dir=maps_dir); _, everyone, _ = stack(T, LB, maps_dir=maps_dir)
+    if len(other_days) < 2:
+        raise ValueError(f'{T}: only {len(other_days)} other sessions line up with it; the best map needs at least 2')
     raw = tm['cls']; occ = raw == OCC; res = tm['res']
     dev = 'cuda' if torch.cuda.is_available() else 'cpu'
     ps, thrs = [], []
@@ -76,11 +76,11 @@ def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None):
             ps.append(predict(raw, G, dev)); thrs.append(ck['thr'])
     p, thr = np.mean(ps, 0), float(np.mean(thrs))
     pers, _, cov = persistence(other_days)
-    erase = occ & (((p > thr) & (pers < HI)) | ((pers < LO) & (cov >= 3)))
+    erase = occ & (((p > thr) & (pers < HI)) | ((pers < LO) & (cov >= min(3, len(other_days)))))
     log = [f'{T}: {int(occ.sum())} occupied cells; {len(other_days)} sessions from other days, {len(everyone)} sessions in all; models {models}, threshold {thr:.2f}',
            f'1. model + other days: erase {int(erase.sum())} (model alone would erase {int((occ & (p > thr)).sum())})']
     own = cv2.imread(f'{LB}/{T}_label.png', -1) if os.path.exists(f'{LB}/{T}_label.png') else np.zeros(raw.shape, np.uint8)
-    car, used, d_erase = carried_labels(T, tm, own)
+    car, used, d_erase = carried_labels(T, tm, own, LB, maps_dir)
     before = erase.copy()
     erase[(own == 1) | (car == 1)] = False; erase[occ & ((own == 2) | (car == 2))] = True
     log.append(f'   hand labels: own keep {int((own == 1).sum())} / erase {int((own == 2).sum())}, carried from {used}: keep {int((car == 1).sum())} / erase {int((car == 2).sum())}; '
@@ -97,7 +97,7 @@ def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None):
     ncov = np.maximum(np.stack([cv2.dilate((m != UNK).astype(np.uint8), np.ones((21, 21), np.uint8)) for _, m in everyone]).sum(0), 1)
     occ_x = np.stack([(m == OCC) for _, m in everyone]).sum(0) / ncov
     fre_x = np.stack([(m == FREE) for _, m in everyone]).sum(0) / ncov
-    unk = (out == UNK) & room & (ncov >= 4)
+    unk = (out == UNK) & room & (ncov >= min(4, len(everyone)))
     add_wall = unk & (occ_x >= 0.5) & (d_erase > 1.5)          # not where another session's hand label says clutter
     add_free = unk & (fre_x >= 0.6) & ~add_wall
     out[add_free] = FREE; out[add_wall] = OCC
@@ -110,7 +110,7 @@ def build(T, models=None, n_desks=4, desk_size=(3.45, 1.25), out_dir=None):
     straight, cinfo = connect_walls(st_, lab, a.desks, a.desk_size)
     log.append(f"5. straight: main direction {info['angle_deg']:.1f} deg, {len(info['desks'])} desks redrawn at {a.desk_size[0]} x {a.desk_size[1]} m, {cinfo['gaps_closed']} wall gaps closed with "
                f"{cinfo['wall_cells_drawn']} drawn cells, openings left {cinfo['openings_left_m'] or 'none'}, {cinfo['filled_m2']:.2f} m2 inside made floor")
-    y = yaml.safe_load(open(f'maps/{T}/maps_2d/{T}.yaml'))
+    y = yaml.safe_load(open(os.path.join(maps_dir, T, 'maps_2d', T + '.yaml')))
     for name, m in (('raw', raw), ('decided', apply_erase(raw, erase.astype(np.float32), 0.5)), ('faithful', faithful), ('straight', straight)) if a.out else ():
         cv2.imwrite(f'{a.out}/{T}_{name}.pgm', PGM[m]); y2 = dict(y); y2['image'] = f'{T}_{name}.pgm'
         yaml.safe_dump(y2, open(f'{a.out}/{T}_{name}.yaml', 'w'), default_flow_style=None, sort_keys=False)

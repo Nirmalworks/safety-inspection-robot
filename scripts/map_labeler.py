@@ -163,6 +163,8 @@ class Handler(BaseHTTPRequestHandler):
                 if view is not None:                         # a method that draws its own map: show that map, not only the marks
                     d['view'] = base64.b64encode(em.to_labeler(view).tobytes()).decode()
                 return self.send(d)
+            except LookupError as e:                         # the method belongs to another map of this place: the page opens it and asks again
+                return self.send({'ok': False, 'open': str(e.args[0]), 'msg': f'The best map of this place is drawn on {e.args[0]}.'})
             except Exception as e:                           # noqa: BLE001
                 return self.send({'ok': False, 'msg': f'{type(e).__name__}: {e}'})
         self.send({'error': 'not found'}, code=404)
@@ -344,7 +346,9 @@ function setAll(nw){begin();for(let i=0;i<W*H;i++){if(base[i]!=2||lab[i]==nw[i]|
 function leaveResult(){if(resView){resView=false;$('result').classList.remove('on');repaintAll()}}
 async function applyMethod(id,btn){if(!W||busy)return;if(stroke)end();leaveResult();lock(true);msg('Running '+btn.textContent+'...');
   try{const d=await(await fetch('/api/propose?place='+place+'&name='+encodeURIComponent(cur)+'&method='+id)).json();
-    if(!d.ok){msg(d.msg)}else{setAll(b64(d.label));document.querySelectorAll('.meth').forEach(b=>b.classList.toggle('on',b==btn));msg(d.msg+' One undo step.');$('score').textContent=d.score;
+    if(!d.ok&&d.open&&d.open!=cur){if(isDirty()&&!confirm('The best map of this place is drawn on '+d.open+'. Open it and discard the unsaved changes on '+cur+'?')){msg(d.msg)}
+      else{lock(false);$('map').value=d.open;await load(d.open);await new Promise(r=>setTimeout(r,300));const nb=[...document.querySelectorAll('.meth')].find(b=>b.textContent==btn.textContent);if(nb)return applyMethod(id,nb)}}
+    else if(!d.ok){msg(d.msg)}else{setAll(b64(d.label));document.querySelectorAll('.meth').forEach(b=>b.classList.toggle('on',b==btn));msg(d.msg+' One undo step.');$('score').textContent=d.score;
       if(d.view){res=b64(d.view);resView=true;$('result').classList.add('on');repaintAll()}}}
   catch(e){msg('Failed: '+e.message)}lock(false)}
 async function showResult(exp){if(!W||busy)return;if(stroke)end();lock(true);msg(exp?'Exporting...':'Building the result...');

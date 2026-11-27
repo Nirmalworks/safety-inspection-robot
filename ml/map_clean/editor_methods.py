@@ -86,6 +86,22 @@ def vote_map(name, raw, labels_dir, maps_dir):
     return vote, K
 
 
+def best_reference(labels_dir, maps_dir):
+    """The session a place's best map is drawn on: the one that has checkpoints, else the one most other sessions line up with."""
+    f = os.path.join(labels_dir, 'pairs.json')
+    if not os.path.exists(f):
+        return None
+    import json
+    pairs = json.load(open(f))['pairs']
+    names = [n for n in pairs if os.path.exists(os.path.join(maps_dir, n, 'maps_2d', n + '.pgm'))]
+    with_cp = [n for n in names if os.path.isdir(os.path.join(maps_dir, n, 'checkpoints'))]
+    if with_cp:
+        return sorted(with_cp)[-1]
+    fit = lambda n: [p['median_m'] for o, p in pairs[n].items() if o in names and p['median_m'] <= 0.12]
+    names = [n for n in names if len(fit(n)) >= 2]
+    return max(names, key=lambda n: (len(fit(n)), -float(np.mean(fit(n))))) if names else None
+
+
 def available(name, labels_dir):
     """Buttons to offer for this map: [{id, label, group, note}]"""
     out = [{'id': 'raw', 'label': 'Raw (keep all)', 'group': 'noml'}, {'id': 'speckle', 'label': 'Speckle filter', 'group': 'noml'}]
@@ -104,8 +120,8 @@ def available(name, labels_dir):
                 out.append({'id': k, 'label': lbl, 'group': 'ml'})
     except ImportError:
         pass
-    if any(m['group'] == 'ml' for m in out) and _pairs(name, labels_dir)[0]:
-        out += [{'id': 'best_f', 'label': 'Best map, faithful', 'group': 'best'}, {'id': 'best_s', 'label': 'Best map, straight', 'group': 'best'}]
+    if any(m['group'] == 'ml' for m in out) and os.path.exists(os.path.join(labels_dir, 'pairs.json')):   # one best map per place
+        out += [{'id': 'best_f', 'label': 'Best map of this place, faithful', 'group': 'best'}, {'id': 'best_s', 'label': 'Best map of this place, straight', 'group': 'best'}]
     return out
 
 
@@ -160,12 +176,17 @@ def propose(name, method, cls_lab, labels_dir, maps_dir=None, n_desks=4, desk_si
         msg = f'Earlier model (redraws the map): its own map is shown in the result view. The marks say erase where it left no wall within 10 cm. It drew {int(((out == OCC) & ~occ).sum())} wall cells of its own.'
     elif method in ('best_f', 'best_s'):
         from .best_map import build
-        key = ('best', name, n_desks, tuple(desk_size) if desk_size else None)
-        if key not in _cache:                               # everything combined: see best_map.py (run from the repo root)
-            _cache[key] = build(name, None, n_desks, desk_size or (3.45, 1.25))
+        ref = best_reference(labels_dir, maps_dir)
+        if ref is None:
+            raise ValueError('fewer than 3 sessions of this place line up, so it has no best map')
+        if ref != name:
+            raise LookupError(ref)                           # the place has one best map, drawn on its reference session
+        key = ('best', labels_dir, name, n_desks, tuple(desk_size) if desk_size else None)
+        if key not in _cache:                               # everything combined: see best_map.py
+            _cache[key] = build(name, None, n_desks, desk_size or ((3.45, 1.25) if n_desks else None), None, labels_dir, maps_dir)
         b = _cache[key]
         lab[occ & b['erase']] = 2; view = b['faithful'] if method == 'best_f' else b['straight']
-        msg = ('Best map, ' + ('faithful (nothing drawn that no session saw)' if method == 'best_f' else 'straight (identical desks, regular outline, walls connected)')
+        msg = (f'Best map of this place, drawn on its reference session {name}, ' + ('faithful (nothing drawn that no session saw)' if method == 'best_f' else 'straight (identical desks, regular outline, walls connected)')
                + ': the model and the other days decide together, the saved hand labels overrule, other sessions fill in what this one did not see. ' + b['summary'] + '.')
     elif method in MODELS:
         torch, _ = _torch()
