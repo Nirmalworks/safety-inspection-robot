@@ -4,9 +4,10 @@
     python3 scripts/map_labeler.py [--labels data/map_cleaning/labels] [--maps maps] [--port 8507] [--host 127.0.0.1]
     open http://127.0.0.1:8507
 
-Choose a place, then a map. The first place, "Our lab", is --labels / --maps and lists every map with a
-<name>_prelabel.png there (with --all-maps: every map in the maps folder). Maps of other buildings under --unseen
-(default data/map_cleaning/unseen, with maps/ and labels/) appear as further places, grouped by the first word of the map name. Opening a map loads <name>_label.png
+Choose a place, then a map. A place is one building and its maps are sessions or drives of that building.
+The first place, "Our lab", is --labels / --maps and lists every map with a <name>_prelabel.png there (with
+--all-maps: every map in the maps folder). Each folder <unseen>/<id>/ (default data/map_cleaning/unseen) holding
+maps/, and optionally labels/ and title.txt, is one more place. Opening a map loads <name>_label.png
 if it exists, else the prelabel; occupied cells that neither file labels start as unsure.
 Label PNGs: 8-bit, same size as maps/<name>/maps_2d/<name>.pgm, 0 = not occupied, 1 = keep, 2 = erase, 3 = unsure.
 Save writes <name>_label.png atomically (temp file + rename) after copying the old one to <name>_label.bak.png.
@@ -36,7 +37,6 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LABELS = MAPS = ''
 PLACES = []                                    # [{id, title, labels, maps, all, prefix, desks, desk_size}]
-UNSEEN_TITLES = {'temple': 'Temple University lobbies (Semantic2D)', 'mit': 'MIT Stata Center', 'radish': 'Other buildings (Radish benchmark)'}
 METHOD_LOCK = threading.Lock()                # one model call at a time
 SAVE_LOCK = threading.Lock()
 
@@ -59,13 +59,18 @@ def list_maps(P):
 
 
 def default_places(labels, maps, all_maps, desks, desk_size, unseen):
-    """The first place is the --labels / --maps pair. Maps under `unseen` are grouped into places by the first word of their name."""
+    """A place is one building; its maps are sessions or drives of it. The first place is the --labels / --maps pair.
+    Every folder <unseen>/<id>/ with maps/ (and labels/, title.txt) is one more place."""
     out = [{'id': 'lab', 'title': 'Our lab', 'labels': labels, 'maps': maps, 'all': all_maps, 'prefix': '', 'desks': desks, 'desk_size': desk_size}]
-    um = os.path.join(unseen, 'maps')
-    if unseen and os.path.isdir(um):
-        for pre in sorted({d.split('_')[0] for d in os.listdir(um)}):
-            out.append({'id': pre, 'title': UNSEEN_TITLES.get(pre, pre.capitalize()), 'labels': os.path.join(unseen, 'labels'), 'maps': um,
-                        'all': True, 'prefix': pre + '_', 'desks': 0, 'desk_size': None})
+    more = []
+    for d in sorted(os.listdir(unseen)) if unseen and os.path.isdir(unseen) else []:
+        base = os.path.join(unseen, d)
+        if not os.path.isdir(os.path.join(base, 'maps')):
+            continue
+        t = os.path.join(base, 'title.txt')
+        more.append({'id': d, 'title': open(t).read().strip() if os.path.exists(t) else d, 'labels': os.path.join(base, 'labels'), 'maps': os.path.join(base, 'maps'),
+                     'all': True, 'prefix': '', 'desks': 0, 'desk_size': None})
+    out += sorted(more, key=lambda P: P['title'].lower())
     return [P for P in out if list_maps(P)] or out[:1]
 
 
@@ -397,7 +402,7 @@ if __name__ == '__main__':
     ap.add_argument('--maps', default=os.path.join(ROOT, 'maps'))
     ap.add_argument('--port', type=int, default=8507)
     ap.add_argument('--host', default='127.0.0.1')
-    ap.add_argument('--unseen', default=os.path.join(ROOT, 'data', 'map_cleaning', 'unseen'), help="folder with maps/ and labels/ of other buildings; shown as further places, grouped by the first word of the map name ('' = none)")
+    ap.add_argument('--unseen', default=os.path.join(ROOT, 'data', 'map_cleaning', 'unseen'), help="folder of other buildings, one sub-folder per building with maps/, labels/ and title.txt ('' = none)")
     ap.add_argument('--all-maps', action='store_true', help='list every map in the maps folder, also those with no <name>_prelabel.png (unseen buildings)')
     ap.add_argument('--desks', type=int, default=4, help='identical desks the Straighten button redraws (0 = none)')
     ap.add_argument('--desk-size', type=float, nargs=2, default=None, help='desk size in metres, long and short side; default: measured from the map')
