@@ -23,6 +23,16 @@ from launch_ros.parameter_descriptions import ParameterValue
 from ame505_bringup.paths import hiwonder_pkg
 
 
+
+def sim_start():
+    """AME505_SIM_START="x,y,yaw": where the simulated robot really is (default: the map origin),
+    e.g. to test that navigation finds it with the lidar when it doesn't start at home."""
+    v = os.environ.get('AME505_SIM_START', '')
+    if not v:
+        return {}
+    x, y, yaw = (float(t) for t in v.split(','))
+    return {'start_x': x, 'start_y': y, 'start_yaw': yaw}
+
 def include(pkg_path, rel, args=None, condition=None):
     return IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_path, rel)),
@@ -60,8 +70,9 @@ def sim_description(desc, me):
         DeclareLaunchArgument('use_camera', default_value='false'),      # accepted, not simulated
         DeclareLaunchArgument('use_teleop', default_value='true'),
         DeclareLaunchArgument('use_rviz', default_value='false'),
-        DeclareLaunchArgument('sim_world',
-                              default_value=os.path.join(me, 'sim', 'sim_hall_world.yaml')),
+        DeclareLaunchArgument('sim_world',   # $AME505_SIM_WORLD: simulate a real map, e.g. through the dashboard
+                              default_value=os.environ.get('AME505_SIM_WORLD',
+                                                           os.path.join(me, 'sim', 'sim_hall_world.yaml'))),
         DeclareLaunchArgument('sim_people', default_value='',
                               description="'' = nobody, 'default' = <world>_people.yaml, or a yaml path"),
         Node(package='robot_state_publisher', executable='robot_state_publisher',
@@ -71,7 +82,7 @@ def sim_description(desc, me):
              name='joint_state_publisher', parameters=[{'rate': 5.0}]),
         Node(package='ame505_bringup', executable='sim_robot', name='sim_robot', output='screen',
              parameters=[{'world': LaunchConfiguration('sim_world'),
-                          'people': LaunchConfiguration('sim_people')}]),
+                          'people': LaunchConfiguration('sim_people'), **sim_start()}]),
         include(me, 'launch/teleop.launch.py', condition=IfCondition(LaunchConfiguration('use_teleop'))),
         Node(package='rviz2', executable='rviz2', name='rviz2', output='screen',
              arguments=['-d', os.path.join(me, 'rviz', 'robot.rviz')],

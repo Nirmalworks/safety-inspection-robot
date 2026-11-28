@@ -98,6 +98,12 @@ def main():
         print('No camera images. Is the robot software running WITH the camera '
               '(dashboard "camera" ticked / use_camera:=true)?')
         return 1
+    # This is a new process: its TF buffer has the odom frame within a few hundred ms but AMCL's
+    # map -> odom only after its next broadcast, so the first frames used to be saved with an odom
+    # pose. During navigation, wait for the map pose (up to 4 s; mapping / drive have none).
+    t0 = time.time()
+    while node.pose()[0] != 'map' and time.time() - t0 < 4:
+        rclpy.spin_once(node, timeout_sec=0.2)
 
     saved = 0
     tag = f'{a.scene}_{a.hazard}_{time.strftime("%H%M%S")}'

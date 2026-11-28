@@ -33,7 +33,8 @@ rooms, 5 cm cells. The robot starts at the map origin, in the hallway 2 m from t
 | `sim_hall_checkpoints.yaml` | sample 8-checkpoint patrol route |
 
 To use a real map: copy the robot's `maps_2d/<name>.pgm/.yaml` into `~/ame505_sim_data/maps_2d/`
-and launch with `map:=<name> sim_world:=<path to that .yaml>`.
+and launch with `map:=<name> sim_world:=<path to that .yaml>`. When the stack is started from the
+dashboard (which can't pass `sim_world`), set `AME505_SIM_WORLD=<path to that .yaml>` instead.
 
 ## What is and is not simulated
 
