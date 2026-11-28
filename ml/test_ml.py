@@ -69,3 +69,12 @@ def test_hog_shape_and_response():
     h = hog(edge)
     assert flat.shape == h.shape == (11 * 15 * 2 * 2 * 9,)
     assert h.max() > 0 and flat.max() == 0
+
+
+def test_floor_fit_ignores_close_door():
+    from fake_dataset import render
+    from ground import fit_floor_constrained, hha
+    depth = render(wall_x=1.2)                       # floor + a wall (door) 1.2 m ahead filling most of the view
+    f = fit_floor_constrained(depth)
+    assert f['ok'] and abs(f['pitch_deg']) < 1.5 and abs(f['height_m'] - 0.207) < 0.02, f
+    assert hha(depth, f).shape == depth.shape + (3,)

@@ -1,0 +1,32 @@
+day,session,checkpoint,labelled_as,action,label,split,reason
+2026-11-24,run1,cp_01,obstructed_walkway,exclude,,,mixed views (hallway / chairs / seated person); same scene as run2 cp_01 labelled normal
+2026-11-24,run1,cp_01,blocked_exit,exclude,,,mixed views: clear closed door, black panel, open door to hallway
+2026-11-24,run1,cp_01,normal,exclude,,,2 frames only
+2026-11-24,run1,cp_03,obstructed_walkway,exclude,,,only people standing among chairs; person in zone counts as normal by the protocol - team to decide
+2026-11-24,run1,cp_04,normal,keep,normal,train,clear aisle
+2026-11-24,run1,cp_05,blocked_exit,keep,blocked_exit,train,bin and bag in front of the exit door
+2026-11-24,run1,cp_07,normal,keep,normal,test,open hallway door frame clear
+2026-11-24,run1,cp_08,normal,keep,normal,train,clear aisle to the door
+2026-11-24,run2,cp_01,normal,exclude,,,same scene as run1 cp_01 labelled obstructed_walkway
+2026-11-24,run2,cp_02,blocked_exit,relabel,normal,train,closed door with nothing in front (same scene is normal on 2026-11-25 run3_clean)
+2026-11-24,run2,cp_03,multiple,exclude,,,no single hazard type; chairs and a seated person
+2026-11-24,run2,cp_04,normal,keep,normal,train,seated person at the bench, aisle clear
+2026-11-24,run2,cp_05,blocked_exit,exclude,,,only people standing in front of the door; person in zone counts as normal by the protocol - team to decide
+2026-11-24,run2,cp_08,normal,keep,normal,val,clear aisle (frames with <20 % valid depth are dropped)
+2026-11-25,run1,cp_07,normal,keep,normal,val,people walking in the hallway, door clear
+2026-11-25,run1,cp_08,normal,keep,normal,train,clear aisle
+2026-11-25,run1_clear,cp_01,normal,keep,normal,train,clear aisle between benches
+2026-11-25,run1_obstruction_walkway,cp_08,obstructed_walkway,keep,obstructed_walkway,train,chairs and wires in the aisle
+2026-11-25,run2,cp_07,blocked_exit,keep,blocked_exit,val,bin and person in front of the door
+2026-11-25,run2,cp_08,obstructed_walkway,keep,obstructed_walkway,val,chair in the aisle
+2026-11-25,run2_clear,cp_02,normal,keep,normal,test,clear aisle between benches
+2026-11-25,run3_clean,cp_02,normal,keep,normal,train,closed exit door with nothing in front
+2026-11-25,run5_obstructed,cp_02,blocked_exit,keep,blocked_exit,train,toolbox in front of the exit door
+2026-11-25,run5_obstructed,cp_02,obstructed_walkway,relabel,blocked_exit,train,bin in front of the exit door is a blocked exit
+2026-11-25,run5_open_door,cp_05,normal,relabel,open_door,train,the door is open (only open-door burst; too few to test)
+2026-11-25,run6,cp_06,blocked_exit,keep,blocked_exit,test,wet-floor bucket in front of the door; cp_06 appears in no other burst
+2026-11-25,run6_blocked,cp_01,obstructed_walkway,keep,obstructed_walkway,test,bin and bag in the aisle
+2026-11-25,run6_blocked,cp_03,obstructed_walkway,keep,obstructed_walkway,test,bin and bag in the aisle (4 frames)
+2026-11-25,run8_obstructed,cp_03,blocked_exit,exclude,,,no clear obstruction visible in front of an exit
+2026-11-25,run8_obstructed,cp_04,blocked_exit,exclude,,,seated person at the bench; no clear obstruction
+2026-11-25,run8_run3_clean,cp_05,normal,keep,normal,test,closed door with nothing in front
