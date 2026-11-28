@@ -15,6 +15,7 @@ Runs on a laptop with Python 3, NumPy, OpenCV and PyYAML. No ROS, no robot.
 | Leave-one-scene-out | `python3 ml/loso_eval.py <dataset> [--save-final M.pkl] [--save-folds DIR]` | depth rule, HOG+SVM and frozen ResNet-18 (RGB, HHA, both) scored on bursts they never saw |
 | Predict | `python3 ml/predict.py <model.pkl or .pt> <image or folder>` | new photos: decision, confidence, "check" when unsure, burst decision |
 | Synthetic data | `python3 ml/cutpaste.py <dataset>` then `python3 ml/synth_eval.py <dataset>` | RGB-D cut-and-paste hazard frames; leak-free leave-one-scene-out comparison with and without them |
+| Classifier + anomaly | `python3 ml/anomaly_eval.py <dataset> [--save-final M.pkl] [--save-folds DIR]` | adds "does this place look normal?" (kNN distance to clear frames); nested leave-one-scene-out; saved models for `predict.py` |
 | Tests | `python3 -m pytest ml/` | geometry of the rule, split rules, metrics, HOG, floor fit |
 | Placeholder data | `python3 ml/fake_dataset.py /tmp/fake` | rendered floor / wall / box scenes in the real file layout, to try the commands above |
 
@@ -123,6 +124,35 @@ set is not diverse. Zone crop, flip augmentation and DINOv2 features did not hel
 The limit is the number of distinct hazard scenes (9), not the model. The camera's depth and RGB images are
 not registered (offset about -14 px horizontally, +10 to +40 px vertically): enable registration in the
 Astra driver before the next collection.
+
+### Add-on: "does this checkpoint look normal?" (anomaly score), 2026-11-28
+
+The robot knows which checkpoint it is at (map + localization), so besides "does this look like an
+obstacle?" (classifier) it can ask "does this place look like it normally does?". `anomaly_eval.py`:
+anomaly = mean cosine distance of the frame's RGB+HHA features to the 5 nearest CLEAR training frames (kNN;
+the nearest ones are almost always of the same spot). Both scores become percentiles among the out-of-fold
+training scores and are averaged with equal weight (fixed in advance; 0.3 / 0.7 give AUC 0.89 / 0.94).
+Nested leave-one-scene-out, 21 bursts, threshold for 0.90 recall chosen inside training:
+
+| Model | ROC AUC | Recall | False alarms | Hazard bursts caught | Normal bursts flagged |
+|---|---|---|---|---|---|
+| Classifier alone | 0.874 | 0.89 | 0.40 | 9 / 9 | 4 / 12 |
+| Anomaly alone | 0.794 | 0.88 | 0.41 | 8 / 9 | 5 / 12 |
+| Learned stacking (logistic on both scores) | 0.860 | 0.88 | 0.39 | 8 / 9 | 5 / 12 |
+| **Classifier + anomaly, percentile average** | **0.948** | 0.80 | **0.27** | 8 / 9 | **3 / 12** |
+
+The two scores fail differently: the open door is invisible to the classifier (0.04) but "unusual for this
+place"; people walking look like obstacles to the classifier (0.72) but "normal for this place". The learned
+combiner overfits the 20 training bursts; the parameter-free average does not. Checkpoint ids are not the same
+place across the re-mapped sessions, so the reference is all clear frames (`--by-checkpoint` restricts it to
+the same checkpoint once the checkpoints are fixed on one map).
+
+```bash
+python3 ml/anomaly_eval.py data/merged --save-final data/merged/results/classifier_anomaly.pkl --save-folds data/merged/results/ca_folds
+F=data/merged/results/ca_folds        # demo: each burst judged by the model that never saw it
+python3 ml/predict.py $F/2026-11-25_run5_open_door__cp_05__open_door.pkl data/merged/2026-11-25/run5_open_door/cp_05   # open door -> HAZARD
+python3 ml/predict.py $F/2026-11-25_run1__cp_07__none.pkl data/merged/2026-11-25/run1/cp_07                        # people -> NORMAL
+```
 
 ## Train and compare (after a data session)
 

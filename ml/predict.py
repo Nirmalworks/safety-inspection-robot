@@ -3,7 +3,9 @@
 
     python3 ml/predict.py <model> <image_rgb.png | folder> [--min-confidence 0.6] [--out preds.csv] [--annotate DIR]
 
-<model> is either
+<model> is one of
+  * a .pkl from ml/anomaly_eval.py --save-final (best): classifier + "does this place look normal?" anomaly
+    score (distance to the nearest clear training frames), combined by percentiles; prints both parts.
   * a .pkl from ml/loso_eval.py --save-final (recommended): frozen ImageNet ResNet-18 features of the
     RGB image and of the HHA encoding of its depth image, then a logistic-regression head that outputs
     hazard / normal. Needs the matching *_depth.png next to every *_rgb.png (capture_dataset saves both).
@@ -62,10 +64,16 @@ def main():
 
     dev = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
     probe = a.model.endswith('.pkl')
+    anomaly = False
     if probe:
         from ground import hha
         bundle = pickle.load(open(a.model, 'rb'))
-        head, labels = bundle['model'], bundle['classes']
+        anomaly = bundle.get('kind') == 'classifier+anomaly'
+        labels = bundle['classes']
+        head = bundle['classifier'] if anomaly else bundle['model']
+        if anomaly:
+            ref = bundle['reference'].astype(np.float32)
+            lo, hi = bundle['anomaly_normal_range']
         net = torchvision.models.resnet18(weights='DEFAULT')
         net.fc = nn.Identity()
     else:
@@ -99,6 +107,29 @@ def main():
                     continue
                 x = torch.from_numpy(np.stack([prep(rgb), prep(hha(depth))])).float().to(dev)
                 feat = net(x).cpu().numpy().reshape(1, -1)                 # [RGB 512 | HHA 512]
+                if anomaly:
+                    feat = feat / np.linalg.norm(feat)
+                    pc = float(head.predict_proba(feat)[0, 1])
+                    dist = float(1 - np.sort(feat @ ref.T, 1)[0, -bundle['k']:].mean())
+                    w = bundle['weight']
+                    score = (w * np.searchsorted(bundle['p_ref'], pc) / len(bundle['p_ref'])
+                             + (1 - w) * np.searchsorted(bundle['d_ref'], dist) / len(bundle['d_ref']))
+                    k = int(score >= bundle['threshold'])
+                    margin = abs(score - bundle['threshold'])
+                    sure = margin >= 0.1
+                    look = 'looks normal' if dist <= hi else 'unusual for this place'
+                    print(f'{labels[k]:8s} combined {score:.2f} (threshold {bundle["threshold"]:.2f})  '
+                          f'classifier {pc:.2f}  anomaly {dist:.3f} [{look}; normal {lo:.3f}-{hi:.3f}]'
+                          f'{"" if sure else "  check"}  {os.path.basename(f)}')
+                    out.append({'file_rgb': f, 'pred': k, 'class': labels[k], 'confidence': f'{score:.3f}',
+                                'classifier': f'{pc:.3f}', 'anomaly': f'{dist:.4f}', 'certain': int(sure)})
+                    if a.annotate:
+                        col = (0, 160, 0) if k == 0 else (0, 0, 200)
+                        cv2.rectangle(bgr, (0, 0), (bgr.shape[1], 26), (255, 255, 255), -1)
+                        cv2.putText(bgr, f'{labels[k]} {score:.2f} (clf {pc:.2f}, anom {dist:.2f})', (6, 19),
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, col if sure else (0, 140, 255), 2)
+                        cv2.imwrite(os.path.join(a.annotate, os.path.basename(f)), bgr)
+                    continue
                 p = head.predict_proba(feat)[0]
             else:
                 p = torch.softmax(net(torch.from_numpy(prep(rgb)).unsqueeze(0).float().to(dev)), 1)[0].cpu().numpy()
@@ -122,7 +153,8 @@ def main():
         per_class[o['class']] = per_class.get(o['class'], 0) + 1
     hazard_share = np.mean([o['pred'] for o in out])
     print(f'\n{len(out)} frames: ' + ', '.join(f'{k} {v}' for k, v in sorted(per_class.items()))
-          + f'; {sum(1 for o in out if not o["certain"])} below confidence {a.min_confidence}')
+          + f'; {sum(1 for o in out if not o["certain"])} flagged "check" '
+          + ('(combined score within 0.1 of the threshold)' if anomaly else f'(confidence below {a.min_confidence})'))
     if len(out) > 1:
         print(f'BURST DECISION: {"HAZARD" if hazard_share > 0.5 else "NORMAL"} ({100 * hazard_share:.0f} % of frames hazard)')
     if a.out:
