@@ -14,6 +14,7 @@ Runs on a laptop with Python 3, NumPy, OpenCV and PyYAML. No ROS, no robot.
 | Merge + review | `python3 ml/merge_datasets.py OUT --review <csv> --day DATE=folder ...` | several burst datasets in one folder (symlinks), labels fixed per burst, whole bursts per split |
 | Leave-one-scene-out | `python3 ml/loso_eval.py <dataset> [--save-final M.pkl] [--save-folds DIR]` | depth rule, HOG+SVM and frozen ResNet-18 (RGB, HHA, both) scored on bursts they never saw |
 | Predict | `python3 ml/predict.py <model.pkl or .pt> <image or folder>` | new photos: decision, confidence, "check" when unsure, burst decision |
+| Synthetic data | `python3 ml/cutpaste.py <dataset>` then `python3 ml/synth_eval.py <dataset>` | RGB-D cut-and-paste hazard frames; leak-free leave-one-scene-out comparison with and without them |
 | Tests | `python3 -m pytest ml/` | geometry of the rule, split rules, metrics, HOG, floor fit |
 | Placeholder data | `python3 ml/fake_dataset.py /tmp/fake` | rendered floor / wall / box scenes in the real file layout, to try the commands above |
 
@@ -97,6 +98,31 @@ python3 ml/predict.py $F/2026-11-25_run5_open_door__cp_05__open_door.pkl data/me
 python3 ml/predict.py $F/2026-11-25_run1__cp_07__none.pkl data/merged/2026-11-25/run1/cp_07                    # hard: people walking
 ```
 New photos: `python3 ml/predict.py data/merged/results/probe_rgb_hha.pkl <folder with *_rgb.png + *_depth.png>`.
+
+### Raising recall (2026-11-28), all leave-one-scene-out
+
+Frame-level hazard recall / false-alarm rate of the RGB+HHA head. "Nested threshold": chosen inside the
+training scenes only (inner leave-one-scene-out) to give >= 0.90 recall there. "Synthetic": RGB-D
+cut-and-paste (`cutpaste.py`, after Dwibedi et al. 2017), used in a fold only when both the object's and the
+background's burst are training bursts (`synth_eval.py`).
+
+| Labels | Variant | Recall | False alarms | Hazard bursts caught | Normal bursts flagged |
+|---|---|---|---|---|---|
+| 21 bursts (people-only bursts excluded) | real, threshold 0.5 | 0.66 | 0.05 | 7 / 9 | 1 / 12 |
+| | real, nested threshold | 0.85 | 0.34 | 8 / 9 | 3 / 12 |
+| | real + 414 synthetic, threshold 0.5 | 0.86 | 0.40 | 8 / 9 | 4 / 12 |
+| | real + synthetic, nested threshold | 0.89 | 0.57 | 8 / 9 | 6 / 12 |
+| 28 bursts (person in the zone = normal) | real, threshold 0.5 | 0.40 | 0.14 | 4 / 9 | 2 / 19 |
+| | real + 650 synthetic, nested threshold | 0.80 | 0.52 | 8 / 9 | 9 / 19 |
+
+Findings: (1) adding people-only bursts as "normal" lowers recall (0.66 -> 0.40) because several hazard
+bursts also show a person next to the obstacle, so the model learns "person -> normal"; (2) cut-and-paste
+and the safety threshold both trade false alarms for recall; neither reaches 0.90 recall at an acceptable
+false-alarm rate; (3) the usable cut-outs are mostly two objects (a grey trash can, a bin), so the synthetic
+set is not diverse. Zone crop, flip augmentation and DINOv2 features did not help (`recall_experiments.py`).
+The limit is the number of distinct hazard scenes (9), not the model. The camera's depth and RGB images are
+not registered (offset about -14 px horizontally, +10 to +40 px vertically): enable registration in the
+Astra driver before the next collection.
 
 ## Train and compare (after a data session)
 
